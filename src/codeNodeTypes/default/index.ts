@@ -1,0 +1,3 @@
+// default
+
+export * from './register'
