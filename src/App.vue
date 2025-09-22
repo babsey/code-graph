@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { CodeGraphEditor, useCodeGraph } from 'code-graph'
+import { CodeGraphEditor, useCodeGraph } from '@code-graph'
 import { registerDefaultNodeTypes, registerExampleNodeTypes } from './codeNodeTypes'
 
 const codeGraph = useCodeGraph()

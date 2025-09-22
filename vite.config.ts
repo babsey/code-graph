@@ -15,7 +15,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'lib/index.ts'),
-      name: 'code-graph',
+      name: '@code-graph',
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled into your library
@@ -42,7 +42,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./lib', import.meta.url)),
-      'code-graph': fileURLToPath(new URL('./lib', import.meta.url)),
+      '@code-graph': fileURLToPath(new URL('./lib', import.meta.url)),
     },
   },
 })

@@ -2,7 +2,7 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeOutputInterface, TextareaInputInterface, TextInputInterface, defineCodeNode } from 'code-graph'
+import { CodeOutputInterface, TextareaInputInterface, TextInputInterface, defineCodeNode } from '@code-graph'
 
 import { stringType } from '../default/interfaceTypes'
 

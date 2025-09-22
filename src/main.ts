@@ -10,7 +10,7 @@ import { oneDark } from '@codemirror/theme-one-dark'
 // import "@baklavajs/themes/dist/classic.css";
 import '@baklavajs/themes/dist/syrup-dark.css'
 
-import 'code-graph/style.scss'
+import '@code-graph/style.scss'
 
 const extensions = [basicSetup, oneDark]
 
