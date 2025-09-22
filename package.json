@@ -1,8 +1,7 @@
 {
-  "name": "code-graph",
-  "version": "0.0.0",
+  "name": "@babsey/code-graph",
+  "version": "0.0.1",
   "author": "babsey <spreizer@web.de>",
-  "private": true,
   "license": "MIT",
   "type": "module",
   "files": [
