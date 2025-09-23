@@ -2,7 +2,7 @@
 
 import { displayInSidebar, setType } from 'baklavajs'
 
-import { CodeOutputInterface, IntegerInterface, defineCodeNode } from '@code-graph'
+import { CodeOutputInterface, IntegerInterface, defineCodeNode } from '@babsey/code-graph'
 
 import { numberType } from './interfaceTypes'
 

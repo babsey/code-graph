@@ -10,11 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import { CodeGraphEditor, useCodeGraph } from '@code-graph'
+import { CodeGraphEditor, useCodeGraph } from '@babsey/code-graph'
+
+import { MyCode } from './code'
 import { registerDefaultNodeTypes, registerExampleNodeTypes } from './codeNodeTypes'
 
-const codeGraph = useCodeGraph()
-codeGraph.code.loadTemplate(import('./templates/python.mustache?raw'))
+const codeGraph = useCodeGraph({ code: MyCode })
 
 registerDefaultNodeTypes(codeGraph)
 registerExampleNodeTypes(codeGraph)

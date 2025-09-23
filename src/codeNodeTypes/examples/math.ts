@@ -2,7 +2,7 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeOutputInterface, NumberInterface, SelectInterface, defineCodeNode } from '@code-graph'
+import { CodeOutputInterface, NumberInterface, SelectInterface, defineCodeNode } from '@babsey/code-graph'
 
 import { numberType } from '../default/interfaceTypes'
 
