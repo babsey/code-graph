@@ -57,6 +57,10 @@ export class Code {
     return this.graph.connections as Connection[]
   }
 
+  set connections(values: Connection[]) {
+    this.graph._connections = values as Connection[]
+  }
+
   get graph(): Graph {
     return this.viewModel.displayedGraph as Graph
   }
@@ -88,6 +92,10 @@ export class Code {
     return this.graph.nodes as AbstractCodeNode[]
   }
 
+  set nodes(values: AbstractCodeNode[]) {
+    this.graph._nodes = values as AbstractCodeNode[]
+  }
+
   get scriptedCodeNodes(): AbstractCodeNode[] {
     return getCodeNodes(this.graph).filter(
       (codeNode: AbstractCodeNode) => codeNode.state?.script.length > 0,
@@ -95,7 +103,7 @@ export class Code {
   }
 
   get shortId(): string {
-    return this.id.slice(0)
+    return this.id.slice(0, 6)
   }
 
   get state(): UnwrapRef<ICodeState> {
@@ -116,6 +124,7 @@ export class Code {
    * @param props optional
    */
   addNode(node: AbstractCodeNode, props?: unknown): AbstractCodeNode | undefined {
+    if (!node.code) node.code = this
     if (props) node.state.props = props
     return this.graph.addNode(node as AbstractNode) as AbstractCodeNode
   }
@@ -152,8 +161,8 @@ export class Code {
    * Clear code graph.
    */
   clear(): void {
-    this.graph._nodes = []
-    this.graph._connections = []
+    this.nodes = []
+    this.connections = []
   }
 
   findNodeById(id: string): AbstractCodeNode | undefined {
@@ -189,7 +198,7 @@ export class Code {
   /**
    * Load template from the file.
    */
-  loadTemplate(resolve: Promise<any>): void {
+  loadTemplate(resolve: Promise<{ default: string }>): void {
     resolve.then((template: { default: string }) => {
       this._state.template = template.default ?? ''
     })
@@ -256,11 +265,12 @@ export class Code {
       // nodeState.props = node.state.props;
 
       Object.entries(nodeState.inputs).forEach(([inputKey]) => {
-        if (node.inputs[inputKey]) nodeState.inputs[inputKey].hidden = node.inputs[inputKey].hidden
+        if (nodeState.inputs && node.inputs[inputKey]) nodeState.inputs[inputKey].hidden = node.inputs[inputKey].hidden
       })
 
       Object.entries(nodeState.outputs).forEach(([outputKey]) => {
-        if (node.inputs[outputKey]) nodeState.outputs[outputKey].hidden = node.outputs[outputKey].hidden
+        if (nodeState.outputs && node.outputs[outputKey])
+          nodeState.outputs[outputKey].hidden = node.outputs[outputKey].hidden
       })
     })
   }
@@ -292,8 +302,10 @@ export class Code {
 
       nodeIds = nodeIds.concat(unconnected)
 
-      // Update sorted nodes
-      this.graph._nodes = nodeIds.map((nodeId: string) => this.findNodeById(nodeId))
+      // Get sorted nodes
+      const nodes = nodeIds.map((nodeId: string) => this.findNodeById(nodeId))
+
+      if (nodes) this.nodes = nodes as AbstractCodeNode[]
     } catch {
       console.warn('Failed to sort nodes.')
     }

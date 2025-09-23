@@ -26,11 +26,14 @@ export interface ICodeGraphViewModel extends IBaklavaViewModel {
   unsubscribe: () => void
 }
 
-export function useCodeGraph(existingEditor?: Editor): ICodeGraphViewModel {
-  const viewModel = useBaklava(existingEditor) as ICodeGraphViewModel
-  addToolbarCommands(viewModel)
+export function useCodeGraph(props?: {
+  existingEditor?: Editor
+  code?: new (viewModel: ICodeGraphViewModel) => Code
+}): ICodeGraphViewModel {
+  const viewModel = useBaklava(props?.existingEditor) as ICodeGraphViewModel
+  viewModel.code = props?.code ? new props.code(viewModel) : new Code(viewModel)
 
-  viewModel.code = new Code(viewModel)
+  addToolbarCommands(viewModel)
 
   const settings: Partial<IViewSettings> = {}
   Object.keys(DEFAULT_SETTINGS).forEach((K: string) => {
@@ -59,14 +62,16 @@ export function useCodeGraph(existingEditor?: Editor): ICodeGraphViewModel {
     viewModel.engine.events.beforeRun.subscribe(token, () => {
       viewModel.engine.pause()
 
-      // update code nodes from the definition
-      viewModel.code.onCodeUpdate()
+      if (viewModel.code) {
+        // update code nodes from the definition
+        viewModel.code.onCodeUpdate()
 
-      // sort code nodes using toposort
-      viewModel.code.sortNodes()
+        // sort code nodes using toposort
+        viewModel.code.sortNodes()
 
-      // update intf.state.variableName
-      viewModel.code.updateOutputVariableNames()
+        // update intf.state.variableName
+        viewModel.code.updateOutputVariableNames()
+      }
 
       viewModel.engine.resume()
     })
@@ -80,11 +85,13 @@ export function useCodeGraph(existingEditor?: Editor): ICodeGraphViewModel {
       // transfer script from node code output to node input interface
       transferCodeScript(viewModel.displayedGraph)
 
-      // render code nodes using its code templates
-      viewModel.code.renderNodeCodes()
+      if (viewModel.code) {
+        // render code nodes using its code templates
+        viewModel.code.renderNodeCodes()
 
-      // render code from scripted code nodes
-      viewModel.code.renderCode()
+        // render code from scripted code nodes
+        viewModel.code.renderCode()
+      }
 
       viewModel.engine.resume()
     })
