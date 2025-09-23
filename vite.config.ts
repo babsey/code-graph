@@ -5,8 +5,8 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import dts from 'vite-plugin-dts'
 // import vueDevTools from 'vite-plugin-vue-devtools'
+import dts from 'unplugin-dts/vite'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -15,7 +15,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'lib/index.ts'),
-      name: '@code-graph',
+      name: '@babsey/code-graph',
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled into your library
@@ -37,12 +37,12 @@ export default defineConfig({
   plugins: [
     vue(),
     // vueDevTools(),
-    dts({ include: ['lib'] }),
+    dts({ processor: 'vue', tsconfigPath: './tsconfig.app.json', }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./lib', import.meta.url)),
-      '@code-graph': fileURLToPath(new URL('./lib', import.meta.url)),
+      '@babsey/code-graph': fileURLToPath(new URL('.', import.meta.url)),
     },
   },
 })
