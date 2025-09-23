@@ -14,7 +14,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'lib/index.ts'),
+      entry: resolve(__dirname, 'lib/main.ts'),
       name: '@babsey/code-graph',
     },
     rollupOptions: {
@@ -32,12 +32,12 @@ export default defineConfig({
         },
       },
     },
-    minify: false,
+    minify: true,
   },
   plugins: [
     vue(),
     // vueDevTools(),
-    dts({ processor: 'vue', tsconfigPath: './tsconfig.app.json', }),
+    dts({ exclude: ["./lib/main.ts"], processor: 'vue', tsconfigPath: './tsconfig.app.json', }),
   ],
   resolve: {
     alias: {
