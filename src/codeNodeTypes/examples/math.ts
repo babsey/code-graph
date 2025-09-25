@@ -2,32 +2,30 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeOutputInterface, NumberInterface, SelectInterface, defineCodeNode } from '@babsey/code-graph'
-
-import { numberType } from '../default/interfaceTypes'
+import {
+  CodeNodeOutputInterface,
+  NumberInterface,
+  SelectInterface,
+  defineCodeNode,
+  numberType,
+} from '@babsey/code-graph'
 
 export default defineCodeNode({
   type: 'math',
   inputs: {
     operation: () => new SelectInterface('Operation', 'Add', ['Add', 'Subtract']).setPort(false),
-    number1: () => new NumberInterface('Number', 1).use(setType, numberType),
-    number2: () => new NumberInterface('Number', 1).use(setType, numberType),
+    number1: () => new NumberInterface('Number', 1),
+    number2: () => new NumberInterface('Number', 1),
   },
   outputs: {
-    code: () => new CodeOutputInterface('code').use(setType, numberType),
+    code: () => new CodeNodeOutputInterface().use(setType, numberType),
   },
-  calculate({ operation, number1, number2 }) {
-    let code: string = ''
-
-    switch (operation) {
+  codeTemplate() {
+    switch (this.inputs.operation.value) {
       case 'Add':
-        code = `${number1} + ${number2}`
-        break
+        return '{{& inputs.number1 }} + {{& inputs.number2 }}'
       case 'Subtract':
-        code = `${number1} - ${number2}`
-        break
+        return '{{& inputs.number1 }} - {{& inputs.number2 }}'
     }
-
-    return { code }
   },
 })

@@ -1,19 +1,16 @@
 // text.ts
 
-import { displayInSidebar, setType } from 'baklavajs'
+import { setType } from 'baklavajs'
 
-import { CodeOutputInterface, TextInputInterface, defineCodeNode } from '@babsey/code-graph'
-
-import { stringType } from './interfaceTypes'
+import { CodeNodeOutputInterface, TextInputInterface, defineCodeNode, stringType } from '@babsey/code-graph'
 
 export default defineCodeNode({
   type: 'text',
   inputs: {
-    text: () => new TextInputInterface('text', '').use(displayInSidebar, true).use(setType, stringType).setPort(false),
+    text: () => new TextInputInterface('text', '').setPort(false),
   },
   outputs: {
-    code: () => new CodeOutputInterface().use(setType, stringType),
+    code: () => new CodeNodeOutputInterface().use(setType, stringType),
   },
-  calculate: ({ text }) => ({ code: `'${text}'` }),
-  variableName: 't',
+  codeTemplate: () => '{{& inputs.text }}',
 })

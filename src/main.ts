@@ -7,7 +7,7 @@ import { basicSetup } from 'codemirror'
 import App from './App.vue'
 
 import { oneDark } from '@codemirror/theme-one-dark'
-// import "@baklavajs/themes/dist/classic.css";
+// import '@baklavajs/themes/dist/classic.css'
 import '@baklavajs/themes/dist/syrup-dark.css'
 
 import '@babsey/code-graph/style.scss'

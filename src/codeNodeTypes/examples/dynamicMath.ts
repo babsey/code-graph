@@ -2,9 +2,13 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeOutputInterface, NumberInterface, SelectInterface, defineDynamicCodeNode } from '@babsey/code-graph'
-
-import { numberType } from '../default/interfaceTypes'
+import {
+  CodeNodeOutputInterface,
+  NumberInterface,
+  SelectInterface,
+  defineDynamicCodeNode,
+  numberType,
+} from '@babsey/code-graph'
 
 export default defineDynamicCodeNode({
   type: 'dynamicMath',
@@ -13,37 +17,32 @@ export default defineDynamicCodeNode({
     operation: () => new SelectInterface('Operation', 'Addition', ['Addition', 'Subtraction', 'Sine']).setPort(false),
   },
   outputs: {
-    code: () => new CodeOutputInterface('').use(setType, numberType),
+    code: () => new CodeNodeOutputInterface('').use(setType, numberType),
   },
   onUpdate({ operation }) {
     if (operation === 'Sine') {
       return {
         inputs: {
-          number1: () => new NumberInterface('number', 0).use(setType, numberType),
+          number1: () => new NumberInterface('number', 0),
         },
       }
     } else {
       return {
         inputs: {
-          number1: () => new NumberInterface('number', 0).use(setType, numberType),
-          number2: () => new NumberInterface('number', 0).use(setType, numberType),
+          number1: () => new NumberInterface('number', 0),
+          number2: () => new NumberInterface('number', 0),
         },
       }
     }
   },
-  calculate(inputs) {
-    let code: string = ''
-    switch (inputs.operation) {
+  codeTemplate() {
+    switch (this.inputs.operation.value) {
       case 'Addition':
-        code = `${inputs.number1} + ${inputs.number2}`
-        break
+        return '{{& inputs.number1 }} + {{& inputs.number2 }}'
       case 'Subtraction':
-        code = `${inputs.number1} - ${inputs.number2}`
-        break
+        return '{{& inputs.number1 }} - {{& inputs.number2 }}'
       case 'Sine':
-        code = `sin(${inputs.number1})`
-        break
+        return 'sin({{& inputs.number1 }})'
     }
-    return { code }
   },
 })

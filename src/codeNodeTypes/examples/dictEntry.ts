@@ -2,9 +2,13 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeOutputInterface, TextareaInputInterface, TextInputInterface, defineCodeNode } from '@babsey/code-graph'
-
-import { stringType } from '../default/interfaceTypes'
+import {
+  CodeNodeOutputInterface,
+  TextareaInputInterface,
+  TextInputInterface,
+  defineCodeNode,
+  stringType,
+} from '@babsey/code-graph'
 
 export default defineCodeNode({
   type: 'dictEntry',
@@ -14,8 +18,7 @@ export default defineCodeNode({
     value: () => new TextareaInputInterface('value', '').use(setType, stringType),
   },
   outputs: {
-    code: () => new CodeOutputInterface(),
+    code: () => new CodeNodeOutputInterface(),
   },
-  calculate: ({ key, value }) => ({ code: `'${key}': ${value}` }),
-  codeTemplate: () => '{{ &inputs.key }}: {{ &inputs.value }}',
+  codeTemplate: () => '{{& inputs.key }}: {{& inputs.value }}',
 })

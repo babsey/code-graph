@@ -1,19 +1,16 @@
 // number.ts
 
-import { displayInSidebar, setType } from 'baklavajs'
+import { setType } from 'baklavajs'
 
-import { CodeOutputInterface, IntegerInterface, defineCodeNode } from '@babsey/code-graph'
-
-import { numberType } from './interfaceTypes'
+import { CodeNodeOutputInterface, IntegerInterface, defineCodeNode, numberType } from '@babsey/code-graph'
 
 export default defineCodeNode({
   type: 'number',
   inputs: {
-    number: () => new IntegerInterface('number', 0).use(displayInSidebar, true).use(setType, numberType).setPort(false),
+    number: () => new IntegerInterface('number', 0).setPort(false),
   },
   outputs: {
-    code: () => new CodeOutputInterface().use(setType, numberType),
+    code: () => new CodeNodeOutputInterface().use(setType, numberType),
   },
-  calculate: ({ number }) => ({ code: `${number}` }),
-  variableName: 'n',
+  codeTemplate: () => '{{& inputs.number }}',
 })

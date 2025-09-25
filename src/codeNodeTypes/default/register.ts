@@ -2,15 +2,16 @@
 
 import type { IBaklavaViewModel } from 'baklavajs'
 
-import add from './add'
+import { addDefaultInterfaceTypes } from '@babsey/code-graph'
+
+import boolean from './boolean'
 import number from './number'
 import text from './text'
-import { addDefaultTypes } from './interfaceTypes'
 
 export const registerDefaultNodeTypes = (viewModel: IBaklavaViewModel) => {
-  addDefaultTypes(viewModel)
+  addDefaultInterfaceTypes(viewModel)
 
-  viewModel.editor.registerNodeType(add)
+  viewModel.editor.registerNodeType(boolean)
   viewModel.editor.registerNodeType(number)
   viewModel.editor.registerNodeType(text)
 }

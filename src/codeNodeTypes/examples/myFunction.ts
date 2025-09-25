@@ -1,21 +1,39 @@
 // text.ts
 
-import { setType } from 'baklavajs'
-
-import { CodeOutputInterface, NumberInterface, TextInputInterface, defineCodeNode } from '@babsey/code-graph'
-
-import { numberType, stringType } from '../default/interfaceTypes'
+import {
+  CheckboxInterface,
+  CodeNodeOutputInterface,
+  CodeNodeInputInterface,
+  IntegerInterface,
+  NumberInterface,
+  SelectInterface,
+  SliderInterface,
+  TextInputInterface,
+  TextareaInputInterface,
+  defineCodeNode,
+  formatInputs,
+  setOptional,
+} from '@babsey/code-graph'
 
 export default defineCodeNode({
   type: 'myFunction',
   title: 'my function',
   inputs: {
-    arg1: () => new TextInputInterface('arg1', 'a').use(setType, stringType),
-    arg2: () => new NumberInterface('arg2', 1).use(setType, numberType),
+    code_node_input: () => new CodeNodeInputInterface('code node input'),
+    checkbox: () => new CheckboxInterface('checkbox', true).use(setOptional, true),
+    integer: () => new IntegerInterface('integer', 1).use(setOptional, true),
+    number: () => new NumberInterface('number', 1).use(setOptional, true),
+    select: () => new SelectInterface('select', 'a', ['a', 'b', 'c']).use(setOptional, true),
+    slider: () => new SliderInterface('slider', 0.5, 0, 1).use(setOptional, true),
+    text_input: () => new TextInputInterface('text input', 'a').use(setOptional, true),
+    textarea_input: () => new TextareaInputInterface('textarea input', 'a').use(setOptional, true),
   },
   outputs: {
-    code: () => new CodeOutputInterface(),
+    code: () => new CodeNodeOutputInterface(),
+    custom: () => new CodeNodeOutputInterface('.custom', '.custom'),
   },
-  calculate: ({ arg1, arg2 }) => ({ code: `myFunction(${arg1}, ${arg2})` }),
-  codeTemplate: () => 'myFunction({{ &inputs.arg1 }}, {{ &inputs.arg2 }})',
+  codeTemplate() {
+    return `myFunction(${formatInputs(this.codeNodeInputs).join(', ')})`
+  },
+  variableName: 'a',
 })
