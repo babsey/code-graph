@@ -1,6 +1,6 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.0.9",
+  "version": "0.0.13",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
@@ -41,7 +41,7 @@
     "vue-codemirror": "~6.1"
   },
   "devDependencies": {
-    "@tsconfig/node22": "~22.0",
+    "@tsconfig/node-lts": "~22.0",
     "@types/mustache": "~4.2",
     "@types/node": "~24.5",
     "@types/toposort": "~2.0",
