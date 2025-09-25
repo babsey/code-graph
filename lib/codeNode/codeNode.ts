@@ -3,6 +3,7 @@ import {
   Connection,
   Graph,
   NodeInterface,
+  sortTopologically,
   type CalculateFunction,
   type INodeState,
   type NodeInterfaceDefinition,
@@ -11,7 +12,7 @@ import mustache from 'mustache'
 import { reactive, type UnwrapRef } from 'vue'
 
 import type { Code } from '@/code'
-import type { CodeNodeInterface } from '@/codeNodeInterfaces'
+import type { CodeNodeInputInterface, CodeNodeInterface } from '@/codeNodeInterfaces'
 
 interface IAbstractCodeNodeState {
   codeTemplate: string
@@ -27,6 +28,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   public state: UnwrapRef<IAbstractCodeNodeState>
   public code: Code | undefined
   public isCodeNode = true
+  public codeTemplate: () => string = () => '{{ &outputs.code }}'
 
   public inputs: Record<string, NodeInterface<unknown>> = {}
   public outputs: Record<string, NodeInterface<unknown>> = {}
@@ -38,7 +40,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     this.twoColumn = true
 
     this.state = reactive({
-      codeTemplate: '{{ &outputs.code }}',
+      codeTemplate: '',
       hidden: false,
       integrated: false,
       modules: [],
@@ -47,8 +49,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
     })
   }
 
-  get codeTemplate(): string {
-    return this.state.codeTemplate
+  get codeNodeInputs(): Record<string, CodeNodeInputInterface> {
+    return Object.fromEntries(Object.entries(this.inputs).filter(([_, intf]) => intf.type != 'node')) as Record<
+      string,
+      CodeNodeInputInterface
+    >
   }
 
   get idx(): number {
@@ -57,6 +62,14 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
   get idxByVariableNames(): number {
     return this.code?.getNodesBySameVariableNames(this.state.variableName).indexOf(this) ?? -1
+  }
+
+  get optionalInputs(): Record<string, CodeNodeInputInterface> {
+    return Object.fromEntries(Object.entries(this.codeNodeInputs).filter(([_, intf]) => intf.optional))
+  }
+
+  get requiredInputs(): Record<string, CodeNodeInputInterface> {
+    return Object.fromEntries(Object.entries(this.codeNodeInputs).filter(([_, intf]) => !intf.optional))
   }
 
   get script(): string {
@@ -110,20 +123,22 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Render code of this node.
    */
   renderCode(): void {
+    this.state.codeTemplate = this.codeTemplate.call(this)
+
     const inputs: Record<string, unknown> = {}
     Object.keys(this.inputs).forEach((intfKey: string) => {
       if (intfKey === '_node') return
       const intf = this.inputs[intfKey] as CodeNodeInterface
-      const value = intf.isString ? `'${intf.value}'` : intf.value
+      const value = serializeValue(intf)
 
       if (intf && intf.state) inputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : value
     })
 
-    const outputs: Record<string, any> = {}
+    const outputs: Record<string, unknown> = {}
     Object.keys(this.outputs).forEach((intfKey: string) => {
       if (intfKey === '_node') return
       const intf = this.outputs[intfKey] as CodeNodeInterface
-      const value = intf.isString ? `'${intf.value}'` : intf.value
+      const value = serializeValue(intf)
 
       if (intf && intf.state) outputs[intfKey] = value
       // if (intf && intf.state) outputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : value;
@@ -131,6 +146,22 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
     this.state.script = mustache.render(this.state.codeTemplate, { inputs, outputs })
     if (this.outputs.code) this.outputs.code.state.script = this.state.script
+  }
+
+  updateCodeNodeInputInterfaces() {
+    if (!this.graph) return
+
+    const { connectionsFromNode } = sortTopologically(this.graph)
+
+    if (!connectionsFromNode.has(this)) return
+
+    connectionsFromNode.get(this)!.forEach((c) => {
+      const srcNode = this.graph?.findNodeById(c.from.nodeId) as AbstractCodeNode
+      if (!srcNode) return
+
+      srcNode.renderCode()
+      if (c.from.isCodeNode && c.to.isCodeNode) c.to.state.script = c.from.script
+    })
   }
 
   updateOutputVariableName(): void {
@@ -175,6 +206,26 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
 }
 
 export type AbstractCodeNodeConstructor = new () => AbstractCodeNode
+
+/**
+ * Format inputs for mustache templates.
+ * @param intfs code node input interfaces
+ * @returns a list of string
+ */
+export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>): string[] => {
+  const args: string[] = []
+
+  const inputKeys = Object.keys(intfs)
+  inputKeys.forEach((inputKey: string) => {
+    const intf = intfs[inputKey]
+    if (intf?.hidden) return
+
+    const keyword = args.length < inputKeys.indexOf(inputKey) ? `${inputKey}=` : ''
+    args.push(`${keyword}{{& inputs.${inputKey} }}`)
+  })
+
+  return args
+}
 
 /**
  * Load node state.
@@ -233,4 +284,30 @@ export const saveNodeState = (graph: Graph | undefined, nodeState: ICodeNodeStat
     if (outputKey === '_node') return
     if (codeNode.outputs[outputKey]) outputItem.hidden = codeNode.outputs[outputKey].hidden
   })
+}
+
+/**
+ * Serialize value of code node interface
+ * @param intf code node interface
+ * @returns pythonic string
+ */
+const serializeValue = (intf: CodeNodeInterface): string => {
+  let value: string
+
+  if (intf.value == undefined) return 'None'
+
+  switch (intf.type) {
+    case 'boolean':
+      value = intf.value ? 'True' : 'False'
+      break
+    case 'string':
+      value = `'${intf.value}'`
+      break
+    case undefined:
+      value = 'None'
+      break
+    default:
+      value = `${intf.value}`
+  }
+  return value
 }

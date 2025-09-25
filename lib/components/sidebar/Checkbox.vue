@@ -1,7 +1,7 @@
 <template>
   <div
     class="baklava-checkbox"
-    :class="{ '--checked': inversed ? !modelValue : modelValue }"
+    :class="{ '--checked': inversed ? !modelValue : modelValue, '--disabled': disabled }"
     :title="name"
     @click="emit('update:modelValue', !modelValue)"
   >
@@ -18,8 +18,9 @@
 
 <script setup lang="ts">
 defineProps<{
-  modelValue: boolean
+  disabled?: boolean
   inversed?: boolean
+  modelValue: boolean
   name?: string
 }>()
 

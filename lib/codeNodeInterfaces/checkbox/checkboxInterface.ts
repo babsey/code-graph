@@ -1,12 +1,18 @@
-// checkbox.ts
+// checkboxInterface.ts
 
-import { type ComponentOptions, markRaw } from 'vue'
-import { CheckboxInterfaceComponent } from 'baklavajs'
+import { markRaw } from 'vue'
+import { CheckboxInterfaceComponent, displayInSidebar, setType } from 'baklavajs'
 
-import { CodeNodeInterface } from '../codeNode/codeNodeInterface'
+import { CodeNodeInputInterface } from '../codeNodeInput/codeNodeInputInterface'
+import { booleanType } from '@/interfaceTypes'
 
-export class CheckboxInterface extends CodeNodeInterface<boolean> {
-  component = markRaw(CheckboxInterfaceComponent) as ComponentOptions
+export class CheckboxInterface extends CodeNodeInputInterface<boolean> {
+  public constructor(name: string, value: boolean) {
+    super(name, value)
+    this.setComponent(markRaw(CheckboxInterfaceComponent))
+
+    this.use(setType, booleanType).use(displayInSidebar, true)
+  }
 }
 
 export { CheckboxInterfaceComponent }

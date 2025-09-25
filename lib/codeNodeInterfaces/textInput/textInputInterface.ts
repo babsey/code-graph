@@ -1,11 +1,11 @@
+// textInputInterface.ts
+
 import { type ComponentOptions, markRaw } from 'vue'
 import { TextInputInterfaceComponent } from 'baklavajs'
 
-import { CodeNodeInterface } from '../codeNode/codeNodeInterface'
+import { BaseStringInterface } from '../baseStringInterface'
 
-export class TextInputInterface extends CodeNodeInterface<string> {
-  public isString: boolean = true
-
+export class TextInputInterface extends BaseStringInterface {
   component = markRaw(TextInputInterfaceComponent) as ComponentOptions
 }
 

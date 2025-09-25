@@ -1,6 +1,6 @@
 // settings.ts
 
-import { AbstractNode, DEFAULT_TOOLBAR_COMMANDS, type IViewSettings } from 'baklavajs'
+import { DEFAULT_TOOLBAR_COMMANDS, type IViewSettings } from 'baklavajs'
 import { computed } from 'vue'
 
 import { type ICodeGraphViewModel } from './viewModel'
@@ -23,8 +23,7 @@ export const addToolbarCommands = (viewModel: ICodeGraphViewModel) => {
   // Clear all nodes from the graph
   const CLEAR_ALL_COMMAND = 'CLEAR_ALL'
   viewModel.commandHandler.registerCommand(CLEAR_ALL_COMMAND, {
-    execute: () =>
-      viewModel.displayedGraph.nodes.forEach((node: AbstractNode) => viewModel.displayedGraph.removeNode(node)),
+    execute: () => viewModel.code.clear(),
     canExecute: () => viewModel.displayedGraph.nodes.length > 0,
   })
 

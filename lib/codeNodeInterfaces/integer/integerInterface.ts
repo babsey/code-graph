@@ -1,5 +1,6 @@
-import { type ComponentOptions, markRaw } from 'vue'
+// integerInterface.ts
 
+import { type ComponentOptions, markRaw } from 'vue'
 import { IntegerInterfaceComponent } from 'baklavajs'
 
 import { BaseNumericInterface } from '../baseNumericInterface'

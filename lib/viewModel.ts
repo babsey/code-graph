@@ -2,6 +2,7 @@
 
 import {
   applyResult,
+  type BeforeNodeCalculationEventData,
   type CalculationResult,
   DependencyEngine,
   Editor,
@@ -11,8 +12,8 @@ import {
 } from 'baklavajs'
 import { type UnwrapRef, reactive } from 'vue'
 
-import type { AbstractCodeNode } from './codeNode/codeNode'
-import { Code, transferCodeScript } from './code'
+import type { AbstractCodeNode } from './codeNode'
+import { Code } from './code'
 import { addToolbarCommands, DEFAULT_SETTINGS } from './settings'
 
 export interface ICodeGraphViewModel extends IBaklavaViewModel {
@@ -70,11 +71,37 @@ export function useCodeGraph(props?: {
         viewModel.code.sortNodes()
 
         // update intf.state.variableName
-        viewModel.code.updateOutputVariableNames()
+        // viewModel.code.updateOutputVariableNames()
       }
 
       viewModel.engine.resume()
     })
+
+    viewModel.engine.events.beforeNodeCalculation.subscribe(token, (data: BeforeNodeCalculationEventData) => {
+      viewModel.engine.pause()
+
+      const codeNode = data.node as AbstractCodeNode
+      // console.log(codeNode.title, data.inputValues)
+
+      if (codeNode.isCodeNode) {
+        codeNode.updateOutputVariableName()
+        codeNode.updateCodeNodeInputInterfaces()
+      }
+
+      viewModel.engine.resume()
+    })
+
+    // viewModel.engine.events.afterNodeCalculation.subscribe(token, (data: AfterNodeCalculationEventData) => {
+    //   viewModel.engine.pause()
+
+    //   const codeNode = data.node as AbstractCodeNode
+
+    //   console.log(codeNode.title, data.outputValues)
+
+    //   // codeNode.renderCode()
+
+    //   viewModel.engine.resume()
+    // })
 
     viewModel.engine.events.afterRun.subscribe(token, (result: CalculationResult) => {
       viewModel.engine.pause()
@@ -83,7 +110,7 @@ export function useCodeGraph(props?: {
       applyResult(result, viewModel.editor)
 
       // transfer script from node code output to node input interface
-      transferCodeScript(viewModel.displayedGraph)
+      // transferCodeScript(viewModel.displayedGraph)
 
       if (viewModel.code) {
         // render code nodes using its code templates

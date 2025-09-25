@@ -1,11 +1,11 @@
-// textareaInpoutInteface.ts
+// textareaInputInteface.ts
 
 import { type ComponentOptions, markRaw } from 'vue'
 import { TextareaInputInterfaceComponent } from 'baklavajs'
 
-import { CodeNodeInterface } from '../codeNode/codeNodeInterface'
+import { BaseStringInterface } from '../baseStringInterface'
 
-export class TextareaInputInterface extends CodeNodeInterface<string> {
+export class TextareaInputInterface extends BaseStringInterface {
   component = markRaw(TextareaInputInterfaceComponent) as ComponentOptions
 }
 

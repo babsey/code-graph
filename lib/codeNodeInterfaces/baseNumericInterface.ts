@@ -1,7 +1,10 @@
-import { computed, nextTick, type Ref, ref, watch } from 'vue'
-import { NodeInterface } from 'baklavajs'
+// baseNumericInterface.ts
 
-import { CodeNodeInterface } from './codeNode/codeNodeInterface'
+import { computed, nextTick, type Ref, ref, watch } from 'vue'
+import { displayInSidebar, NodeInterface, setType } from 'baklavajs'
+
+import { CodeNodeInputInterface } from './codeNodeInput/codeNodeInputInterface'
+import { numberType } from '@/interfaceTypes'
 
 const MAX_STRING_LENGTH = 9
 
@@ -13,7 +16,7 @@ function isValidator(intf: any): intf is IValidator {
   return 'validate' in intf
 }
 
-export class BaseNumericInterface extends CodeNodeInterface<number> implements IValidator {
+export class BaseNumericInterface extends CodeNodeInputInterface<number> implements IValidator {
   public min?: number
   public max?: number
 
@@ -21,6 +24,8 @@ export class BaseNumericInterface extends CodeNodeInterface<number> implements I
     super(name, value)
     this.min = min
     this.max = max
+
+    this.use(setType, numberType).use(displayInSidebar, true)
   }
 
   public validate(v: number) {

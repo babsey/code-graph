@@ -7,21 +7,28 @@ import CodeNodeInterfaceComponent from './CodeNodeInterface.vue'
 import type { Code } from '@/code'
 
 interface ICodeNodeInterfaceState {
+  optional: boolean
   script: string
 }
 
 export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
-  public optional: boolean = false
+  public isCodeNode: boolean = true
   public code: Code | undefined
   public state: UnwrapRef<ICodeNodeInterfaceState>
+  public type: string | null = null
 
   constructor(name: string, value: T) {
     super(name, value)
     this.setComponent(markRaw(CodeNodeInterfaceComponent))
 
     this.state = reactive({
+      optional: false,
       script: '',
     })
+  }
+
+  get optional(): boolean {
+    return this.state.optional
   }
 
   get shortId(): string {
@@ -36,4 +43,8 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
   //   super.value = value;
   //   if (this.name !== '_node') this.setHidden(false);
   // }
+}
+
+export const setOptional = (intf: CodeNodeInterface, value: boolean) => {
+  intf.state.optional = value
 }

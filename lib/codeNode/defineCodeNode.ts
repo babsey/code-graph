@@ -2,15 +2,13 @@ import {
   Node,
   NodeInterface,
   allowMultipleConnections,
-  setType,
-  type CalculationContext,
-  type INodeDefinition,
-  type NodeInterfaceDefinition,
+  setType, type INodeDefinition,
+  type NodeInterfaceDefinition
 } from 'baklavajs'
 
 import { type AbstractCodeNode, CodeNode } from './codeNode'
-import { nodeType } from '../../src/codeNodeTypes/default/interfaceTypes'
 import { CodeNodeInterface } from '@/codeNodeInterfaces'
+import { nodeType } from '../interfaceTypes'
 
 export type NodeConstructor<I, O> = new () => Node<I, O>
 export type NodeInstanceOf<T> = T extends new () => Node<infer A, infer B> ? Node<A, B> : never
@@ -38,8 +36,8 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
       this._title = definition.title ?? definition.type
       this.updateModules(definition.modules)
-      if (definition.codeTemplate) this.state.codeTemplate = definition.codeTemplate(this)
       if (definition.variableName) this.state.variableName = definition.variableName
+      if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate
 
       this.addInput(
         '_node',
@@ -56,12 +54,12 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       definition.onCreate?.call(this)
     }
 
-    public calculate = definition.calculate
-      ? (inputs: I, globalValues: CalculationContext) => ({
-          ...definition.calculate!.call(this, inputs, globalValues),
-          _node: null,
-        })
-      : undefined
+    // public calculate = definition.calculate
+    //   ? (inputs: I, globalValues: CalculationContext) => ({
+    //       ...definition.calculate!.call(this, inputs, globalValues),
+    //       _node: null,
+    //     })
+    //   : undefined
 
     public onPlaced() {
       definition.onPlaced?.call(this)

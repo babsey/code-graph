@@ -13,6 +13,7 @@
       <div style="display: flex">
         <Checkbox
           v-model="intf.hidden"
+          :disabled="!intf.optional"
           inversed
           style="margin-right: 8px"
           @update:model-value="() => node?.events.update.emit(null)"
@@ -66,9 +67,9 @@ const styles = computed(() => ({
 }))
 
 const displayedInterfaces = computed(() => {
-  if (!node.value) return []
+  if (!codeNode.value) return []
 
-  const allIntfs = [...Object.values(node.value.inputs), ...Object.values(node.value.outputs)]
+  const allIntfs = [...Object.values(codeNode.value.inputs), ...Object.values(codeNode.value.outputs)]
   return allIntfs.filter((intf) => intf.displayInSidebar && intf.component)
 })
 

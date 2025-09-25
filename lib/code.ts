@@ -161,8 +161,10 @@ export class Code {
    * Clear code graph.
    */
   clear(): void {
+    this.state.modules = {}
     this.nodes = []
     this.connections = []
+    this.state.script = "";
   }
 
   findNodeById(id: string): AbstractCodeNode | undefined {

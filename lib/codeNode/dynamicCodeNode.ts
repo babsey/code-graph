@@ -2,7 +2,6 @@
 
 import {
   type CalculateFunction,
-  type CalculationContext,
   type IDynamicNodeDefinition,
   type INodeState,
   IntegerInterface,
@@ -16,8 +15,8 @@ import {
 } from 'baklavajs'
 
 import { type AbstractCodeNode, CodeNode, type ICodeNodeState, loadNodeState } from './codeNode'
-import { nodeType, numberType, stringType } from '../../src/codeNodeTypes/default/interfaceTypes'
-import { CodeNodeInterface, CodeOutputInterface } from '@/codeNodeInterfaces'
+import { CodeNodeInterface, CodeNodeOutputInterface } from '@/codeNodeInterfaces'
+import { nodeType, numberType, stringType } from '@/interfaceTypes'
 
 type Dynamic<T> = T & Record<string, unknown>
 
@@ -74,7 +73,8 @@ export function defineDynamicCodeNode<I, O>(
 
       this._title = definition.title ?? definition.type
       this.updateModules(definition.modules)
-      if (definition.codeTemplate) this.state.codeTemplate = definition.codeTemplate(this)
+
+      if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate
       if (definition.variableName) this.state.variableName = definition.variableName
 
       this.addInput(
@@ -92,12 +92,12 @@ export function defineDynamicCodeNode<I, O>(
       this.executeFactory('input', definition.inputs)
       this.executeFactory('output', definition.outputs)
 
-      if (definition.calculate) {
-        this.calculate = (inputs: Dynamic<I>, globalValues: CalculationContext) => ({
-          ...definition.calculate?.call(this, inputs, globalValues),
-          _node: null,
-        })
-      }
+      // if (definition.calculate) {
+      //   this.calculate = (inputs: Dynamic<I>, globalValues: CalculationContext) => ({
+      //     ...definition.calculate?.call(this, inputs, globalValues),
+      //     _node: null,
+      //   })
+      // }
 
       definition.onCreate?.call(this)
     }
@@ -179,7 +179,7 @@ export function defineDynamicCodeNode<I, O>(
         if (this.staticOutputKeys.includes(k)) continue
 
         if (!this.outputs[k]) {
-          const outputInterface = new CodeOutputInterface(k)
+          const outputInterface = new CodeNodeOutputInterface(k)
           this.addOutput(k, outputInterface)
         }
 
