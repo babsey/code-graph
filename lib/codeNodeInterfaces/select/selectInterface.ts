@@ -1,6 +1,6 @@
 // selectInterface.ts
 
-import { type ComponentOptions, markRaw } from 'vue'
+import { markRaw, type ComponentOptions } from 'vue'
 import { SelectInterfaceComponent } from 'baklavajs'
 
 import { BaseStringInterface } from '../baseStringInterface'
@@ -21,5 +21,3 @@ export class SelectInterface<V = string> extends BaseStringInterface {
     this.items = items
   }
 }
-
-export { SelectInterfaceComponent }

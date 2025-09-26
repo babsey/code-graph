@@ -9,15 +9,12 @@
     stroke-width="2"
     stroke-linecap="round"
     stroke-linejoin="round"
-    class="baklava-icon icon icon-tabler icons-tabler-outline icon-tabler-schema"
+    class="baklava-icon icon icon-tabler icons-tabler-outline icon-tabler-transition-bottom"
   >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <path d="M5 2h5v4h-5z" />
-    <path d="M15 10h5v4h-5z" />
-    <path d="M5 18h5v4h-5z" />
-    <path d="M5 10h5v4h-5z" />
-    <path d="M10 12h5" />
-    <path d="M7.5 6v4" />
-    <path d="M7.5 14v4" />
+    <path d="M21 18a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3" />
+    <path d="M3 3m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v0a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" />
+    <path d="M12 9v8" />
+    <path d="M9 14l3 3l3 -3" />
   </svg>
 </template>

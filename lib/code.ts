@@ -6,17 +6,19 @@ import {
   AbstractNode,
   Connection,
   Graph,
-  type IEditorState,
-  type INodeState,
   NodeInterface,
   sortTopologically,
+  type IEditorState,
+  type INodeState,
 } from 'baklavajs'
 import { reactive, type UnwrapRef } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
-import type { AbstractCodeNode } from './codeNode'
+import { AbstractCodeNode } from './codeNode'
 import type { CodeNodeInterface } from './codeNodeInterfaces'
 import type { ICodeGraphViewModel } from './viewModel'
+
+mustache.escape = (value: string) => value
 
 interface IPosition {
   x: number
@@ -98,7 +100,7 @@ export class Code {
 
   get scriptedCodeNodes(): AbstractCodeNode[] {
     return getCodeNodes(this.graph).filter(
-      (codeNode: AbstractCodeNode) => codeNode.state?.script.length > 0,
+      (codeNode: AbstractCodeNode) => !codeNode.state?.integrated,
     ) as AbstractCodeNode[]
   }
 
@@ -164,7 +166,7 @@ export class Code {
     this.state.modules = {}
     this.nodes = []
     this.connections = []
-    this.state.script = "";
+    this.state.script = ''
   }
 
   findNodeById(id: string): AbstractCodeNode | undefined {
@@ -241,6 +243,10 @@ export class Code {
     this.state.script = mustache.render(this.state.template || '', this)
   }
 
+  resetInputInterfaceScript(): void {
+    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.resetInputInterfaceScript())
+  }
+
   /**
    * Save code graph.
    * @returns graph state
@@ -266,13 +272,12 @@ export class Code {
       // nodeState.integrated = node.state.integrated;
       // nodeState.props = node.state.props;
 
-      Object.entries(nodeState.inputs).forEach(([inputKey]) => {
-        if (nodeState.inputs && node.inputs[inputKey]) nodeState.inputs[inputKey].hidden = node.inputs[inputKey].hidden
+      Object.entries(nodeState.inputs).forEach(([inputKey, inputVal]) => {
+        if (nodeState.inputs && node.inputs[inputKey]) inputVal.hidden = node.inputs[inputKey].hidden
       })
 
-      Object.entries(nodeState.outputs).forEach(([outputKey]) => {
-        if (nodeState.outputs && node.outputs[outputKey])
-          nodeState.outputs[outputKey].hidden = node.outputs[outputKey].hidden
+      Object.entries(nodeState.outputs).forEach(([outputKey, inputVal]) => {
+        if (nodeState.outputs && node.outputs[outputKey]) inputVal.hidden = node.outputs[outputKey].hidden
       })
     })
   }
@@ -313,24 +318,28 @@ export class Code {
     }
   }
 
+  updateCodeTemplates(): void {
+    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateCodeTemplate())
+  }
+
   updateOutputVariableNames(): void {
     this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateOutputVariableName())
   }
 }
 
 /**
- * Get nodes of current graph.
+ * Get code nodes of current graph.
  * @param graph graph / subgraph
  * @returns list of code nodes
  */
 export const getCodeNodes = (graph: Graph): AbstractCodeNode[] => {
   let nodes: AbstractCodeNode[] = []
 
-  graph.nodes.forEach((node: AbstractCodeNode | AbstractNode) => {
+  graph.nodes.forEach((node: AbstractCodeNode) => {
     if (node.subgraph) {
       nodes = nodes.concat(getCodeNodes(node.subgraph))
     } else if (node.isCodeNode) {
-      nodes.push(node)
+      nodes.push(node as AbstractCodeNode)
     }
   })
 

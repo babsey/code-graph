@@ -1,6 +1,6 @@
 // sliderInterface.ts
 
-import { type ComponentOptions, markRaw } from 'vue'
+import { markRaw, type ComponentOptions } from 'vue'
 import { SliderInterfaceComponent } from 'baklavajs'
 
 import { BaseNumericInterface } from '../baseNumericInterface'
@@ -15,6 +15,6 @@ export class SliderInterface extends BaseNumericInterface {
     this.min = min
     this.max = max
   }
-}
 
-export { SliderInterfaceComponent }
+  override getValue = (): string => `${Math.round(this.value * 1000) / 1000}`
+}

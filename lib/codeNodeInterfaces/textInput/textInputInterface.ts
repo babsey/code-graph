@@ -1,6 +1,6 @@
 // textInputInterface.ts
 
-import { type ComponentOptions, markRaw } from 'vue'
+import { markRaw, type ComponentOptions } from 'vue'
 import { TextInputInterfaceComponent } from 'baklavajs'
 
 import { BaseStringInterface } from '../baseStringInterface'
@@ -8,5 +8,3 @@ import { BaseStringInterface } from '../baseStringInterface'
 export class TextInputInterface extends BaseStringInterface {
   component = markRaw(TextInputInterfaceComponent) as ComponentOptions
 }
-
-export { TextInputInterfaceComponent }

@@ -1,20 +1,20 @@
 // dynamicCodeNode.ts
 
 import {
-  type CalculateFunction,
-  type IDynamicNodeDefinition,
-  type INodeState,
   IntegerInterface,
-  type InterfaceFactory,
   NodeInterface,
-  type NodeInterfaceDefinition,
   TextInputInterface,
   allowMultipleConnections,
   displayInSidebar,
   setType,
+  type CalculateFunction,
+  type IDynamicNodeDefinition,
+  type INodeState,
+  type InterfaceFactory,
+  type NodeInterfaceDefinition,
 } from 'baklavajs'
 
-import { type AbstractCodeNode, CodeNode, type ICodeNodeState, loadNodeState } from './codeNode'
+import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from './codeNode'
 import { CodeNodeInterface, CodeNodeOutputInterface } from '@/codeNodeInterfaces'
 import { nodeType, numberType, stringType } from '@/interfaceTypes'
 
@@ -50,6 +50,7 @@ export interface DynamicNodeUpdateResult {
 
 export interface IDynamicCodeNodeDefinition<I, O> extends IDynamicNodeDefinition<I, O> {
   codeTemplate?: (node?: AbstractCodeNode) => string
+  name?: string
   modules?: string[]
   onCodeUpdate?: (node?: AbstractCodeNode) => void
   variableName?: string
@@ -72,6 +73,7 @@ export function defineDynamicCodeNode<I, O>(
       super()
 
       this._title = definition.title ?? definition.type
+      this.name = definition.name ?? definition.type
       this.updateModules(definition.modules)
 
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate

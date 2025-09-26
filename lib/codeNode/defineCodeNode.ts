@@ -2,11 +2,12 @@ import {
   Node,
   NodeInterface,
   allowMultipleConnections,
-  setType, type INodeDefinition,
-  type NodeInterfaceDefinition
+  setType,
+  type INodeDefinition,
+  type NodeInterfaceDefinition,
 } from 'baklavajs'
 
-import { type AbstractCodeNode, CodeNode } from './codeNode'
+import { CodeNode, type AbstractCodeNode } from './codeNode'
 import { CodeNodeInterface } from '@/codeNodeInterfaces'
 import { nodeType } from '../interfaceTypes'
 
@@ -20,6 +21,7 @@ export type InterfaceFactory<T> = {
 
 export interface ICodeNodeDefinition<I, O> extends INodeDefinition<I, O> {
   codeTemplate?: (node?: AbstractCodeNode) => string
+  name?: string
   modules?: string[]
   onCodeUpdate?: (node?: AbstractCodeNode) => void
   variableName?: string
@@ -35,6 +37,7 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       super()
 
       this._title = definition.title ?? definition.type
+      this.name = definition.name ?? definition.type
       this.updateModules(definition.modules)
       if (definition.variableName) this.state.variableName = definition.variableName
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate

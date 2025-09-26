@@ -15,7 +15,7 @@
           v-model="intf.hidden"
           :disabled="!intf.optional"
           inversed
-          style="margin-right: 8px"
+          style="padding-right: 8px"
           @update:model-value="() => node?.events.update.emit(null)"
         />
         <component :is="intf.component" v-model="intf.value" :node="node" :intf="intf" style="width: 100%" />

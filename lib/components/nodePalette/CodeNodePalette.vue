@@ -11,8 +11,8 @@
     </div>
 
     <section v-for="c in filterCategoryBySearch()" :key="c.name">
-      <h3 v-if="c.name !== 'default'" style="display: flex; justify-content: space-between;">
-        <div @click="searchQuery=c.name" style="cursor: pointer;">{{ c.name }}</div>
+      <h3 v-if="c.name !== 'default'" style="display: flex; justify-content: space-between">
+        <div @click="searchQuery = c.name" style="cursor: pointer">{{ c.name }}</div>
 
         <div
           v-if="filterNodesBySearch(c.nodeTypes).length < Object.values(c.nodeTypes).length"

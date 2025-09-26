@@ -9,8 +9,9 @@ export const listType = new NodeInterfaceType<object>('list')
 export const nodeType = new NodeInterfaceType<null>('node')
 export const numberType = new NodeInterfaceType<number>('number')
 export const stringType = new NodeInterfaceType<string>('string')
+export const tupleType = new NodeInterfaceType<object>('tuple')
 
 export const addDefaultInterfaceTypes = (baklavaView: IBaklavaViewModel) => {
   const nodeInterfaceTypes = new BaklavaInterfaceTypes(baklavaView.editor, { viewPlugin: baklavaView })
-  nodeInterfaceTypes.addTypes(booleanType, dictType, listType, nodeType, numberType, stringType)
+  nodeInterfaceTypes.addTypes(booleanType, dictType, listType, nodeType, numberType, stringType, tupleType)
 }

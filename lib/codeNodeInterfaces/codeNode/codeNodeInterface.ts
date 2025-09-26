@@ -1,7 +1,7 @@
 // codeNodeInterface.ts
 
-import { markRaw, reactive, type UnwrapRef } from 'vue'
 import { NodeInterface } from 'baklavajs'
+import { markRaw, reactive, type UnwrapRef } from 'vue'
 
 import CodeNodeInterfaceComponent from './CodeNodeInterface.vue'
 import type { Code } from '@/code'
@@ -35,16 +35,10 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
     return this.id.slice(0, 6)
   }
 
-  // override get value(): T {
-  //   return super.value
-  // }
-
-  // override set value(value: T) {
-  //   super.value = value;
-  //   if (this.name !== '_node') this.setHidden(false);
-  // }
+  getValue = (): string => `${this.value ?? 'None'}`
 }
 
 export const setOptional = (intf: CodeNodeInterface, value: boolean) => {
   intf.state.optional = value
+  intf.setHidden(value)
 }

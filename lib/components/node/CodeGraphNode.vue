@@ -26,6 +26,8 @@
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="!node.subgraph">
+            <CodeVariable class="--clickable mx-1" @click="setIntegrated(false)" v-if="node.state.integrated" />
+            <TransitionBottom class="--clickable mx-1" @click="setIntegrated(true)" v-else />
             <LayoutSidebarRightExpand
               class="--clickable mx-1"
               @click="openSidebar"
@@ -39,15 +41,8 @@
               "
             />
             <LayoutSidebarRightCollapse class="--clickable mx-1" @click="closeSidebar" v-else />
-            <!-- <icon
-              :icon="node.state?.commented ? 'mdi:mdi-pound' : 'mdi:mdi-code-tags'"
-              class="mx-1 --clickable"
-              size="xsmall"
-              @click="toggleCommented"
-            />
-            <v-icon icon="mdi:mdi-pencil" class="mx-1 --clickable" size="xsmall" @click="openSidebar" /> -->
           </template>
-          <VerticalDots class="--clickable mx-1" @click="openContextMenu" />
+          <DotsVertical class="--clickable mx-1" @click="openContextMenu" />
           <ContextMenu v-model="showContextMenu" :x="0" :y="0" :items="contextMenuItems" @click="onContextMenuClick" />
         </div>
       </template>
@@ -88,7 +83,7 @@
           </div>
 
           <slot v-else name="nodeInterface" type="output" :node :intf="output">
-            <NodeInterface :node :intf="output" />
+            <NodeInterface :node :intf="output" :title="output.type" />
           </slot>
         </template>
       </div>
@@ -108,7 +103,7 @@
           </div>
 
           <slot v-else :node :intf="input" name="nodeInterface" type="input">
-            <NodeInterface :node :intf="input" :title="input.name" />
+            <NodeInterface :node :intf="input" :title="input.type" />
           </slot>
         </template>
       </div>
@@ -122,7 +117,14 @@ import { AbstractNode, Components, GRAPH_NODE_TYPE_PREFIX, type IGraphNode, useG
 
 import type { AbstractCodeNode } from '@/codeNode'
 import CodeGraphNodeInterface from '../nodeInterface/CodeGraphNodeInterface.vue'
-import { LayoutSidebarRight, LayoutSidebarRightCollapse, LayoutSidebarRightExpand, VerticalDots } from '@/icons'
+import {
+  CodeVariable,
+  DotsVertical,
+  LayoutSidebarRight,
+  LayoutSidebarRightCollapse,
+  LayoutSidebarRightExpand,
+  TransitionBottom,
+} from '@/icons'
 
 const ContextMenu = Components.ContextMenu
 const NodeInterface = Components.NodeInterface
@@ -273,11 +275,11 @@ const startResize = (ev: MouseEvent) => {
 //   emit("update");
 // };
 
-// const toggleIntegrated = () => {
-//   if (!node.value.state) return;
-//   node.value.state.integrated = !node.value.state.integrated;
-//   emit("update");
-// };
+const setIntegrated = (value: boolean) => {
+  if (!node.value.state) return
+  node.value.state.integrated = value
+  emit('update')
+}
 
 const doResize = (ev: MouseEvent) => {
   if (!isResizing.value) return

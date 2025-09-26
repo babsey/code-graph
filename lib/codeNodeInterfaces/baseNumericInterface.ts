@@ -1,7 +1,7 @@
 // baseNumericInterface.ts
 
-import { computed, nextTick, type Ref, ref, watch } from 'vue'
-import { displayInSidebar, NodeInterface, setType } from 'baklavajs'
+import { computed, nextTick, ref, watch, type Ref } from 'vue'
+import { NodeInterface, setType } from 'baklavajs'
 
 import { CodeNodeInputInterface } from './codeNodeInput/codeNodeInputInterface'
 import { numberType } from '@/interfaceTypes'
@@ -25,7 +25,7 @@ export class BaseNumericInterface extends CodeNodeInputInterface<number> impleme
     this.min = min
     this.max = max
 
-    this.use(setType, numberType).use(displayInSidebar, true)
+    this.use(setType, numberType)
   }
 
   public validate(v: number) {

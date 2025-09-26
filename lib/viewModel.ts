@@ -70,8 +70,11 @@ export function useCodeGraph(props?: {
         // sort code nodes using toposort
         viewModel.code.sortNodes()
 
-        // update intf.state.variableName
-        // viewModel.code.updateOutputVariableNames()
+        // update code templates
+        viewModel.code.updateCodeTemplates()
+
+        // reset scripts of input interfaces
+        viewModel.code.resetInputInterfaceScript()
       }
 
       viewModel.engine.resume()
@@ -81,27 +84,16 @@ export function useCodeGraph(props?: {
       viewModel.engine.pause()
 
       const codeNode = data.node as AbstractCodeNode
-      // console.log(codeNode.title, data.inputValues)
-
       if (codeNode.isCodeNode) {
+        // update variable name of output (outputs.code)
         codeNode.updateOutputVariableName()
-        codeNode.updateCodeNodeInputInterfaces()
+
+        // update connected input interfaces (with code rendering of source nodes)
+        codeNode.updateConnectedInputInterfaces()
       }
 
       viewModel.engine.resume()
     })
-
-    // viewModel.engine.events.afterNodeCalculation.subscribe(token, (data: AfterNodeCalculationEventData) => {
-    //   viewModel.engine.pause()
-
-    //   const codeNode = data.node as AbstractCodeNode
-
-    //   console.log(codeNode.title, data.outputValues)
-
-    //   // codeNode.renderCode()
-
-    //   viewModel.engine.resume()
-    // })
 
     viewModel.engine.events.afterRun.subscribe(token, (result: CalculationResult) => {
       viewModel.engine.pause()
@@ -109,10 +101,10 @@ export function useCodeGraph(props?: {
       // apply results from calculation on editor
       applyResult(result, viewModel.editor)
 
-      // transfer script from node code output to node input interface
-      // transferCodeScript(viewModel.displayedGraph)
-
       if (viewModel.code) {
+        // transfer script from node code output to node input interface
+        // transferCodeScript(viewModel.displayedGraph)
+
         // render code nodes using its code templates
         viewModel.code.renderNodeCodes()
 
