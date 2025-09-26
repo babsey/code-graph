@@ -1,6 +1,6 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.0.14",
+  "version": "0.0.17",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
@@ -31,6 +31,7 @@
     "format": "prettier --write lib/ src/"
   },
   "dependencies": {
+    "@codemirror/lang-python": "~6.2",
     "@codemirror/theme-one-dark": "~6.1",
     "@vueuse/core": "~13.9",
     "baklavajs": "~2.7",
@@ -52,8 +53,8 @@
     "@vue/language-core": "~3.0",
     "@vue/tsconfig": "~0.8",
     "eslint": "~9.36",
-    "eslint-plugin-vue": "~10.4",
-    "jiti": "~2.5",
+    "eslint-plugin-vue": "~10.5",
+    "jiti": "~2.6",
     "npm-run-all2": "~8.0",
     "prettier": "~3.6",
     "rimraf": "~6.0",
