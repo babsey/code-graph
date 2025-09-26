@@ -2,12 +2,12 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, numberType } from '@babsey/code-graph'
+import { CodeNodeOutputInterface, IntegerInterface, defineCodeNode, numberType } from '@babsey/code-graph'
 
 export default defineCodeNode({
-  type: 'number',
+  type: 'integer',
   inputs: {
-    number: () => new NumberInterface('number', 0).setPort(false),
+    number: () => new IntegerInterface('number', 0).setPort(false),
   },
   outputs: {
     code: () => new CodeNodeOutputInterface().use(setType, numberType),

@@ -23,9 +23,9 @@ export default defineCodeNode({
   codeTemplate() {
     switch (this.inputs.operation.value) {
       case 'Add':
-        return '{{& inputs.number1 }} + {{& inputs.number2 }}'
+        return '{{ inputs.number1 }} + {{ inputs.number2 }}'
       case 'Subtract':
-        return '{{& inputs.number1 }} - {{& inputs.number2 }}'
+        return '{{ inputs.number1 }} - {{ inputs.number2 }}'
     }
   },
 })

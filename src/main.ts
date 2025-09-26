@@ -2,20 +2,19 @@
 
 import { createApp } from 'vue'
 import VueCodemirror from 'vue-codemirror'
-import { basicSetup } from 'codemirror'
 
 import App from './App.vue'
 
+import { basicSetup } from 'codemirror'
 import { oneDark } from '@codemirror/theme-one-dark'
+import { python } from '@codemirror/lang-python'
+
 // import '@baklavajs/themes/dist/classic.css'
 import '@baklavajs/themes/dist/syrup-dark.css'
-
 import '@babsey/code-graph/style.scss'
-
-const extensions = [basicSetup, oneDark]
 
 const app = createApp(App)
 
-app.use(VueCodemirror, { extensions })
+app.use(VueCodemirror, { tabSize: 2, extensions: [basicSetup, oneDark, python()] })
 
 app.mount('#app')

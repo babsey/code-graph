@@ -14,5 +14,5 @@ export default defineCodeNode({
     code: () => new CodeNodeOutputInterface().use(setType, numberType),
   },
   calculate: ({ arg1, arg2 }) => ({ code: `${arg1} + ${arg2}` }),
-  codeTemplate: () => '{{& inputs.arg1 }} + {{& inputs.arg2 }}',
+  codeTemplate: () => '{{ inputs.arg1 }} + {{ inputs.arg2 }}',
 })

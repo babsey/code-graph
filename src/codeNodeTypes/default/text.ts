@@ -12,5 +12,5 @@ export default defineCodeNode({
   outputs: {
     code: () => new CodeNodeOutputInterface().use(setType, stringType),
   },
-  codeTemplate: () => '{{& inputs.text }}',
+  codeTemplate: () => '{{ inputs.text }}',
 })

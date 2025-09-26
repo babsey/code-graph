@@ -12,5 +12,5 @@ export default defineCodeNode({
   outputs: {
     code: () => new CodeNodeOutputInterface().use(setType, booleanType),
   },
-  codeTemplate: () => '{{& inputs.boolean }}',
+  codeTemplate: () => '{{ inputs.boolean }}',
 })

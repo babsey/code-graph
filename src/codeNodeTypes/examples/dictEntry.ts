@@ -20,5 +20,5 @@ export default defineCodeNode({
   outputs: {
     code: () => new CodeNodeOutputInterface(),
   },
-  codeTemplate: () => '{{& inputs.key }}: {{& inputs.value }}',
+  codeTemplate: () => '{{ inputs.key }}: {{ inputs.value }}',
 })
