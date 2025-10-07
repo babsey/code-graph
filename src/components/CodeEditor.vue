@@ -1,0 +1,54 @@
+<template>
+  <div class="code-editor" style="height: 100%">
+    <div class="code-buttons">
+      <button v-if="locked" class="baklava-button" title="The code is locked." @click="lockCode(false)">
+        <LockCode />
+      </button>
+      <CopyToClipboard :text="modelValue" />
+    </div>
+    <codemirror v-model="model" class="codemirror" style="height: 100%" @keydown="lockCode(true)" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { LockCode } from '@/icons';
+
+import CopyToClipboard from './CopyToClipboard.vue';
+
+const model = defineModel({ required: true })
+defineProps({ locked: Boolean })
+
+const emit = defineEmits<{
+  (e: 'update:locked', v: boolean): void
+}>()
+
+const lockCode = (v: boolean) => {
+  emit('update:locked', v)
+}
+</script>
+
+<style lang="scss">
+.code-editor {
+  position: relative;
+  min-height: 60px;
+
+  .code-buttons {
+    position: absolute;
+    display: flex;
+    right: 0;
+    z-index: 1;
+    margin: 8px;
+
+    .baklava-button {
+      border-radius: 8px;
+      margin: 0 2px;
+    }
+  }
+
+  .codemirror {
+    font-size: 13px !important;
+    padding: 0;
+    border: 0;
+  }
+}
+</style>

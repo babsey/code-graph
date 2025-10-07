@@ -1,10 +1,19 @@
 <template>
   <div style="display: flex; overflow: hidden">
     <div style="width: 70vw; height: 100vh">
-      <CodeGraphEditor :view-model="codeGraph" />
+      <CodeGraphEditor :view-model="codeGraph">
+        <template #sidebarCodeEditor="{ node }">
+          <CodeEditor v-model="node.script" :locked="node.lockCode" @update:locked="(v) => (node.lockCode = v)" />
+        </template>
+      </CodeGraphEditor>
     </div>
+
     <div style="width: 30vw; height: 100vh">
-      <codemirror v-model="codeGraph.code.state.script" class="codemirror" style="height: 100%" />
+      <CodeEditor
+        v-model="codeGraph.code.script"
+        :locked="codeGraph.code.lockCode"
+        @update:locked="(v) => (codeGraph.code.lockCode = v)"
+      />
     </div>
   </div>
 </template>
@@ -13,21 +22,24 @@
 import { CodeGraphEditor, useCodeGraph } from '@babsey/code-graph'
 
 import { MyCode } from './code'
-import { registerDefaultNodeTypes, registerExampleNodeTypes } from './codeNodeTypes'
+import {
+  registerDefaultNodeTypes,
+  registerExampleNodeTypes,
+  registerNESTNodeTypes,
+  registerNumpyNodeTypes,
+} from './codeNodeTypes'
+import CodeEditor from './components/CodeEditor.vue'
 
 const codeGraph = useCodeGraph({ code: MyCode })
 
 registerDefaultNodeTypes(codeGraph)
 registerExampleNodeTypes(codeGraph)
+registerNESTNodeTypes(codeGraph)
+registerNumpyNodeTypes(codeGraph)
 </script>
 
-<style>
+<style lang="scss">
 body {
   margin: 0;
-}
-
-.codemirror {
-  padding: 0;
-  border: 0;
 }
 </style>
