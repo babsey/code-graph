@@ -19,7 +19,7 @@ export default defineDynamicCodeNode({
   outputs: {
     code: () => new CodeNodeOutputInterface('').use(setType, numberType),
   },
-  onUpdate({ operation }) {
+  onUpdate({ operation }: { operation: string }) {
     if (operation === 'Sine') {
       return {
         inputs: {
