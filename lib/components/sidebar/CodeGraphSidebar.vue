@@ -1,39 +1,62 @@
 <template>
-  <div ref="el" class="baklava-sidebar" :class="{ '--open': graph.sidebar.visible }" :style="styles">
+  <div :class="{ '--open': graph.sidebar.visible }" :style="styles" class="baklava-sidebar" ref="el">
     <div v-if="resizable" class="__resizer" @mousedown="startResize" />
 
-    <div class="__header">
-      <button tabindex="-1" class="__close" @click="close">&times;</button>
-      <div class="__node-name">
-        <b>{{ node ? node.title : '' }}</b>
+    <template v-if="node">
+      <div class="__header">
+        <button tabindex="-1" class="__close" @click="close">&times;</button>
+        <div class="__node-name">
+          <b>{{ node.title }}</b>
+        </div>
       </div>
-    </div>
 
-    <div v-for="intf in displayedInterfaces" :key="intf.id" class="__interface">
-      <div style="display: flex">
-        <Checkbox
-          v-model="intf.hidden"
-          :disabled="!intf.optional"
-          inversed
-          style="padding-right: 8px"
-          @update:model-value="() => node?.events.update.emit(null)"
-        />
-        <component :is="intf.component" v-model="intf.value" :node="node" :intf="intf" style="width: 100%" />
-      </div>
-    </div>
+      <div class="__interfaces">
+        <div class="__inputs">
+          <div v-for="intf in displayedInputInterfaces" :key="intf.id" class="__interface">
+            <div style="display: flex">
+              <Checkbox
+                v-model="intf.hidden"
+                :disabled="!intf.optional"
+                inversed
+                style="padding-right: 8px"
+                @update:model-value="() => node?.events.update.emit(null)"
+              />
+              <component :is="intf.component" v-model="intf.value" :node="node" :intf="intf" style="width: 100%" />
+            </div>
+          </div>
+        </div>
 
-    <template v-if="codeNode && codeNode.state">
-      <div class="__interface">
-        <label>Variable name</label>
-        <input
-          v-model="codeNode.state.variableName"
-          type="text"
-          class="baklava-input"
-          title="Variable name"
-          @blur="doneRenaming"
-          @keydown.enter="doneRenaming"
-        />
+        <div class="__outputs">
+          <template v-if="codeNode && codeNode.state">
+            <div class="__interface">
+              <label>Variable name</label>
+              <input
+                v-model="codeNode.state.variableName"
+                type="text"
+                class="baklava-input"
+                title="Variable name"
+                @blur="doneRenaming"
+                @keydown.enter="doneRenaming"
+              />
+            </div>
+          </template>
+
+          <div v-for="intf in displayedOutputInterfaces" :key="intf.id" class="__interface">
+            <div style="display: flex">
+              <Checkbox
+                v-model="intf.hidden"
+                :disabled="!intf.optional"
+                inversed
+                style="padding-right: 8px"
+                @update:model-value="() => node?.events.update.emit(null)"
+              />
+              <component :is="intf.component" v-model="intf.value" :node="node" :intf="intf" style="width: 100%" />
+            </div>
+          </div>
+        </div>
       </div>
+
+      <slot name="codeEditor" :node />
     </template>
   </div>
 </template>
@@ -66,11 +89,16 @@ const styles = computed(() => ({
   width: `${width.value}px`,
 }))
 
-const displayedInterfaces = computed(() => {
+const displayedInputInterfaces = computed(() => {
   if (!codeNode.value) return []
 
-  const allIntfs = [...Object.values(codeNode.value.inputs), ...Object.values(codeNode.value.outputs)]
-  return allIntfs.filter((intf) => intf.displayInSidebar && intf.component)
+  return Object.values(codeNode.value.inputs).filter((intf) => intf.displayInSidebar && intf.component)
+})
+
+const displayedOutputInterfaces = computed(() => {
+  if (!codeNode.value) return []
+
+  return Object.values(codeNode.value.outputs).filter((intf) => intf.displayInSidebar && intf.component)
 })
 
 const close = () => {
@@ -106,3 +134,12 @@ const onMouseMove = (event: MouseEvent) => {
   width.value = newWidth
 }
 </script>
+
+<style lang="scss">
+.__interfaces {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+</style>

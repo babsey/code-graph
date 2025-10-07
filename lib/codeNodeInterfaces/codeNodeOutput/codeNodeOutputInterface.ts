@@ -13,7 +13,8 @@ export class CodeNodeOutputInterface extends CodeNodeInterface<string> {
     this.setComponent(markRaw(CodeNodeInterfaceComponent))
   }
 
-  get script(): string {
-    return this.name.length > 0 ? this.name : this.state.script
+  override get script(): string {
+    if (this.name) return this.name
+    return this.state.script
   }
 }

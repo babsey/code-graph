@@ -31,12 +31,22 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
     return this.state.optional
   }
 
+  get script(): string {
+    return this.state.script
+  }
+
+  set script(value: string) {
+    this.state.script = value
+  }
+
   get shortId(): string {
     return this.id.slice(0, 6)
   }
 
   getValue = (): string => `${this.value ?? 'None'}`
 }
+
+export { CodeNodeInterfaceComponent }
 
 export const setOptional = (intf: CodeNodeInterface, value: boolean) => {
   intf.state.optional = value

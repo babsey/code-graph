@@ -1,14 +1,15 @@
 // viewModel.ts
 
 import {
+  DependencyEngine,
+  Editor,
   applyResult,
   type BeforeNodeCalculationEventData,
   type CalculationResult,
-  DependencyEngine,
-  Editor,
   type IBaklavaViewModel,
+  type IConnection,
   type IViewSettings,
-  useBaklava,
+  useBaklava
 } from 'baklavajs'
 import { type UnwrapRef, reactive } from 'vue'
 
@@ -36,6 +37,8 @@ export function useCodeGraph(props?: {
 
   addToolbarCommands(viewModel)
 
+  // viewModel.commandHandler.unregisterCommand('Delete')
+
   const settings: Partial<IViewSettings> = {}
   Object.keys(DEFAULT_SETTINGS).forEach((K: string) => {
     settings[K] =
@@ -58,14 +61,28 @@ export function useCodeGraph(props?: {
 
     const token = Symbol()
 
-    viewModel.displayedGraph.events.addNode.subscribe(token, (node: AbstractCodeNode) => (node.code = viewModel.code))
+    const graph = viewModel.displayedGraph
+
+    graph.events.addNode.subscribe(token, (node: AbstractCodeNode) => {
+      node.code = viewModel.code
+    })
+
+    graph.events.addConnection.subscribe(token, (data: IConnection) => {
+      viewModel.code.findNodeById(data.to.nodeId)?.onConnected()
+      viewModel.code.findNodeById(data.from.nodeId)?.onConnected()
+    })
+
+    graph.events.removeConnection.subscribe(token, (data: IConnection) => {
+      viewModel.code.findNodeById(data.to.nodeId)?.onUnconnected()
+      viewModel.code.findNodeById(data.from.nodeId)?.onUnconnected()
+    })
 
     viewModel.engine.events.beforeRun.subscribe(token, () => {
       viewModel.engine.pause()
 
       if (viewModel.code) {
-        // update code nodes from the definition
-        viewModel.code.onCodeUpdate()
+        // update code nodes
+        viewModel.code.updateCodeNodes()
 
         // sort code nodes using toposort
         viewModel.code.sortNodes()
@@ -86,7 +103,7 @@ export function useCodeGraph(props?: {
       const codeNode = data.node as AbstractCodeNode
       if (codeNode.isCodeNode) {
         // update variable name of output (outputs.code)
-        codeNode.updateOutputVariableName()
+        codeNode.updateOutputNames()
 
         // update connected input interfaces (with code rendering of source nodes)
         codeNode.updateConnectedInputInterfaces()
@@ -124,6 +141,7 @@ export function useCodeGraph(props?: {
     const token = viewModel.state.token
 
     viewModel.displayedGraph.events.addNode.unsubscribe(token)
+    viewModel.displayedGraph.events.addConnection.unsubscribe(token)
     viewModel.engine.events.beforeRun.unsubscribe(token)
     viewModel.engine.events.afterRun.unsubscribe(token)
 

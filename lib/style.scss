@@ -12,7 +12,7 @@
   }
 
   &.--two-column .__content {
-    grid-template-columns: 1fr 0fr;
+    grid-template-columns: 1fr 0fr !important;
 
     .__outputs .baklava-node-interface {
       margin-left: 12px;

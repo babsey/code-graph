@@ -12,7 +12,7 @@ import mustache from 'mustache'
 import { reactive, type UnwrapRef } from 'vue'
 
 import type { Code } from '@/code'
-import type { CodeNodeInputInterface, CodeNodeInterface } from '@/codeNodeInterfaces'
+import type { CodeNodeInputInterface, CodeNodeInterface, CodeNodeOutputInterface } from '@/codeNodeInterfaces'
 
 mustache.escape = (value: string) => value
 
@@ -20,8 +20,9 @@ interface IAbstractCodeNodeState {
   codeTemplate: string
   hidden: boolean
   integrated: boolean
+  lockCode: boolean
   modules: string[]
-  // props?: unknown
+  props?: unknown | null
   script: string
   variableName: string
 }
@@ -46,7 +47,9 @@ export abstract class AbstractCodeNode extends AbstractNode {
       codeTemplate: '',
       hidden: false,
       integrated: false,
+      lockCode: false,
       modules: [],
+      props: null,
       script: '',
       variableName: '',
     })
@@ -63,12 +66,28 @@ export abstract class AbstractCodeNode extends AbstractNode {
     >
   }
 
+  get codeNodeOutputs(): Record<string, CodeNodeOutputInterface> {
+    return Object.fromEntries(Object.entries(this.outputs).filter(([_, intf]) => intf.type != 'node')) as Record<
+      string,
+      CodeNodeOutputInterface
+    >
+  }
+
   get idx(): number {
     return this.code?.codeNodes.filter((node: AbstractCodeNode) => !node.state.integrated).indexOf(this) ?? -1
   }
 
   get idxByVariableNames(): number {
     return this.code?.getNodesBySameVariableNames(this.state.variableName).indexOf(this) ?? -1
+  }
+
+  get lockCode(): boolean {
+    return this.state.lockCode
+  }
+
+  set lockCode(value: boolean) {
+    this.state.lockCode = value
+    this.events.update.emit(null)
   }
 
   get optionalInputs(): Record<string, CodeNodeInputInterface> {
@@ -83,6 +102,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return this.state.script
   }
 
+  set script(value: string) {
+    this.state.script = value
+    this.events.update.emit(null)
+  }
+
   get shortId(): string {
     return this.id.slice(0, 6)
   }
@@ -95,7 +119,19 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return this.state.variableName ? this.state.variableName + (this.idxByVariableNames + 1) : ''
   }
 
-  abstract onCodeUpdate(): void
+  abstract onConnected(): void
+  abstract onUnconnected(): void
+  abstract update(): void
+
+  /**
+   * Get connected node to the node interface.
+   * @param nodeInterface string
+   * @returns code node instance or null
+   */
+  getConnectedNodeByInterface(nodeInterface: string, type?: 'inputs' | 'outputs'): AbstractCodeNode | null {
+    const nodes = this.getConnectedNodesByInterface(nodeInterface, type)
+    return nodes.length > 0 ? (nodes[0] as AbstractCodeNode) : null
+  }
 
   /**
    * Get connected nodes to the node.
@@ -126,6 +162,41 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return nodeIds.map((nodeId: string) => this.graph?.findNodeById(nodeId)) as AbstractCodeNode[]
   }
 
+  /**
+   * Get connected nodes to the node interface.
+   * @param nodeInterface string
+   * @returns code node instances
+   */
+  getConnectedNodesByInterface(nodeInterface: string, type?: 'inputs' | 'outputs'): AbstractCodeNode[] {
+    let nodeIds: string[] = []
+
+    if (type !== 'outputs' && this.inputs[nodeInterface]) {
+      const sources = this.graph?.connections
+        .filter(
+          (c: Connection) => c.to.id === this.inputs[nodeInterface]?.id || c.from.id === this.inputs[nodeInterface]?.id,
+        )
+        .map((c: Connection) => c.from.nodeId)
+      if (sources) nodeIds = nodeIds.concat(sources)
+    }
+
+    if (type !== 'inputs' && this.outputs[nodeInterface]) {
+      const targets = this.graph?.connections
+        .filter(
+          (c: Connection) =>
+            c.from.id === this.outputs[nodeInterface]?.id || c.from.id === this.outputs[nodeInterface]?.id,
+        )
+        .map((c: Connection) => c.to.nodeId)
+      if (targets) nodeIds = nodeIds.concat(targets)
+    }
+
+    if (!nodeIds || nodeIds.length == 0) return []
+    return nodeIds.map((nodeId) => this.graph?.findNodeById(nodeId)) as AbstractCodeNode[]
+  }
+
+  /**
+   * Register code
+   * @param code
+   */
   registerCode(code: Code) {
     this.code = code
   }
@@ -136,27 +207,33 @@ export abstract class AbstractCodeNode extends AbstractNode {
   renderCode(): void {
     // this.state.codeTemplate = this.codeTemplate.call(this)
 
-    const inputs: Record<string, unknown> = {}
-    Object.keys(this.inputs).forEach((intfKey: string) => {
-      if (intfKey === '_node') return
-      const intf = this.inputs[intfKey] as CodeNodeInterface
+    if (!this.lockCode) {
+      const inputs: Record<string, unknown> = {}
+      Object.keys(this.inputs).forEach((intfKey: string) => {
+        if (intfKey === '_node') return
+        const intf = this.inputs[intfKey] as CodeNodeInterface
 
-      if (intf && intf.state) inputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : intf.getValue()
-    })
+        if (intf && intf.state) inputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : intf.getValue()
+      })
 
-    const outputs: Record<string, unknown> = {}
-    Object.keys(this.outputs).forEach((intfKey: string) => {
-      if (intfKey === '_node') return
-      const intf = this.outputs[intfKey] as CodeNodeInterface
+      const outputs: Record<string, unknown> = {}
+      Object.keys(this.outputs).forEach((intfKey: string) => {
+        if (intfKey === '_node') return
+        const intf = this.outputs[intfKey] as CodeNodeInterface
 
-      if (intf && intf.state) outputs[intfKey] = intf.getValue()
-      // if (intf && intf.state) outputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : value;
-    })
+        if (intf && intf.state) outputs[intfKey] = intf.getValue()
+        // if (intf && intf.state) outputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : value;
+      })
 
-    this.state.script = mustache.render(this.state.codeTemplate, { inputs, outputs })
-    if (this.outputs.code) this.outputs.code.state.script = this.state.script
+      this.state.script = mustache.render(this.state.codeTemplate, { inputs, outputs })
+    }
+
+    if (this.outputs.code) this.outputs.code.state.script = this.script
   }
 
+  /**
+   * Reset script of input interfaces.
+   */
   resetInputInterfaceScript() {
     Object.values(this.inputs).forEach((intf) => (intf.state.script = ''))
   }
@@ -181,21 +258,18 @@ export abstract class AbstractCodeNode extends AbstractNode {
       if (!srcNode) return
       srcNode.renderCode()
 
-      if (c.to.allowMultipleConnections) {
-        if (c.to.state.script.startsWith('[') && c.to.state.script.endsWith(']')) {
-          const script = JSON.parse(c.to.state.script)
-          c.to.state.script = JSON.stringify([...script, c.from.script])
-        } else {
-          c.to.state.script += c.from.script
-        }
-      } else {
-        c.to.state.script = c.from.script
-      }
+      c.to.script = c.from.script
     })
   }
 
-  updateOutputVariableName(): void {
-    if (this.outputs.code) this.outputs.code.name = !this.state.integrated ? this.variableName : ''
+  updateOutputNames(): void {
+    Object.values(this.codeNodeOutputs).forEach((output: CodeNodeOutputInterface) => {
+      output.name = this.state.integrated ? '' : this.variableName + output.value
+    })
+  }
+
+  updateProps(props: unknown): void {
+    this.state.props = props
   }
 }
 
@@ -242,7 +316,7 @@ export type AbstractCodeNodeConstructor = new () => AbstractCodeNode
  * @param intfs code node input interfaces
  * @returns a list of string
  */
-export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>): string[] => {
+export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>, withKeywords: boolean = true): string[] => {
   const args: string[] = []
 
   const inputKeys = Object.keys(intfs)
@@ -250,7 +324,7 @@ export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>): str
     const intf = intfs[inputKey]
     if (intf?.hidden) return
 
-    const keyword = args.length < inputKeys.indexOf(inputKey) ? `${inputKey}=` : ''
+    const keyword = withKeywords && args.length < inputKeys.indexOf(inputKey) ? `${inputKey}=` : ''
     args.push(`${keyword}{{ inputs.${inputKey} }}`)
   })
 

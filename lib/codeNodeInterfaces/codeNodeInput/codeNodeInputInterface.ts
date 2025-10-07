@@ -14,6 +14,19 @@ export class CodeNodeInputInterface<T = unknown> extends CodeNodeInterface<T> {
     this.use(displayInSidebar, true)
   }
 
+  override set script(value: string) {
+    if (this.state.script && this.allowMultipleConnections) {
+      const script = this.state.script;
+      if (script.startsWith('[') && script.endsWith(']')) {
+        value = JSON.stringify([value, ...JSON.parse(script)])
+      } else {
+        value = [value, script].join(', ')
+      }
+    }
+
+    this.state.script = value
+  }
+
   override get value(): T {
     return super.value
   }

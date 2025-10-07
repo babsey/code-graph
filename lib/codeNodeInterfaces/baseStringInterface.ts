@@ -12,5 +12,5 @@ export class BaseStringInterface extends CodeNodeInputInterface<string> {
     this.use(setType, stringType)
   }
 
-  override getValue = (): string => `'${this.value}'`
+  override getValue = (): string => `"${this.value}"`
 }

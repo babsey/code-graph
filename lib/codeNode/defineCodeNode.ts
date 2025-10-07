@@ -21,9 +21,11 @@ export type InterfaceFactory<T> = {
 
 export interface ICodeNodeDefinition<I, O> extends INodeDefinition<I, O> {
   codeTemplate?: (node?: AbstractCodeNode) => string
-  name?: string
   modules?: string[]
-  onCodeUpdate?: (node?: AbstractCodeNode) => void
+  name?: string
+  onConnected?: () => void
+  onUnconnected?: () => void
+  update?: (node?: AbstractCodeNode) => void
   variableName?: string
 }
 
@@ -39,6 +41,7 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       this._title = definition.title ?? definition.type
       this.name = definition.name ?? definition.type
       this.updateModules(definition.modules)
+
       if (definition.variableName) this.state.variableName = definition.variableName
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate
 
@@ -64,16 +67,24 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
     //     })
     //   : undefined
 
-    public onPlaced() {
+    public onPlaced(): void {
       definition.onPlaced?.call(this)
     }
 
-    public onDestroy() {
+    public onConnected(): void {
+      definition.onConnected?.call(this)
+    }
+
+    public onDestroy(): void {
       definition.onDestroy?.call(this)
     }
 
-    public onCodeUpdate() {
-      definition.onCodeUpdate?.call(this)
+    public onUnconnected(): void {
+      definition.onUnconnected?.call(this)
+    }
+
+    public update(): void {
+      definition.update?.call(this)
     }
 
     private executeFactory<V, T extends InterfaceFactory<V>>(type: 'input' | 'output', factory?: T): void {

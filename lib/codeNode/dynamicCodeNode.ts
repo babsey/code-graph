@@ -52,7 +52,9 @@ export interface IDynamicCodeNodeDefinition<I, O> extends IDynamicNodeDefinition
   codeTemplate?: (node?: AbstractCodeNode) => string
   name?: string
   modules?: string[]
-  onCodeUpdate?: (node?: AbstractCodeNode) => void
+  onConnected?: () => void
+  onUnconnected?: () => void
+  update?: (node?: AbstractCodeNode) => void
   variableName?: string
 }
 
@@ -104,7 +106,7 @@ export function defineDynamicCodeNode<I, O>(
       definition.onCreate?.call(this)
     }
 
-    public onPlaced() {
+    public onPlaced(): void {
       this.events.update.subscribe(this, (data) => {
         if (!data) return
 
@@ -120,12 +122,20 @@ export function defineDynamicCodeNode<I, O>(
       definition.onPlaced?.call(this)
     }
 
-    public onDestroy() {
+    public onConnected(): void {
+      definition.onConnected?.call(this)
+    }
+
+    public onDestroy(): void {
       definition.onDestroy?.call(this)
     }
 
-    public onCodeUpdate() {
-      definition.onCodeUpdate?.call(this)
+    public onUnconnected(): void {
+      definition.onUnconnected?.call(this)
+    }
+
+    public update(): void {
+      definition.update?.call(this)
     }
 
     public load(state: ICodeNodeState<Dynamic<I>, Dynamic<O>>): void {
@@ -246,6 +256,11 @@ export function defineDynamicCodeNode<I, O>(
           this.addOutput(k, intf)
         }
       }
+    }
+
+    override updateProps(props: unknown): void {
+      this.state.props = props
+      this.onUpdate()
     }
 
     private executeFactory<V, T extends InterfaceFactory<V>>(type: 'input' | 'output', factory?: T): void {

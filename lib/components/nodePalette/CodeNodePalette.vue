@@ -1,5 +1,5 @@
 <template>
-  <div class="baklava-node-palette" @contextmenu.stop.prevent :class="{ '--open': viewModel.settings.palette.enabled }">
+  <div :class="{ '--open': viewModel.settings.palette.enabled }" class="baklava-node-palette" @contextmenu.stop.prevent>
     <div class="baklava-node --palette" style="margin-top: -20px; margin-bottom: 20px">
       <input
         v-model="searchQuery"

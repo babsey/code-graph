@@ -16,5 +16,3 @@ export class CheckboxInterface extends CodeNodeInputInterface<boolean> {
 
   override getValue = (): string => (this.value ? 'True' : 'False')
 }
-
-export { CheckboxInterfaceComponent }

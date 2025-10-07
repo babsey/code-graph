@@ -27,6 +27,7 @@ interface IPosition {
 
 interface ICodeState {
   autosort: boolean
+  lockCode: boolean
   modules: Record<string, string>
   script: string
   template: string
@@ -44,10 +45,11 @@ export class Code {
 
     this._state = reactive({
       autosort: false,
+      lockCode: false,
       modules: {},
       script: '',
-      token: null,
       template: '',
+      token: null,
     })
   }
 
@@ -69,6 +71,15 @@ export class Code {
 
   get id(): string {
     return this._id
+  }
+
+  get lockCode(): boolean {
+    return this.state.lockCode
+  }
+
+  set lockCode(value: boolean) {
+    this.state.lockCode = value
+    this.viewModel.engine.runOnce(null)
   }
 
   get modules(): string[] {
@@ -96,6 +107,15 @@ export class Code {
 
   set nodes(values: AbstractCodeNode[]) {
     this.graph._nodes = values as AbstractCodeNode[]
+  }
+
+  get script(): string {
+    return this.state.script
+  }
+
+  set script(value: string) {
+    this.state.script = value
+    this.viewModel.engine.runOnce(null)
   }
 
   get scriptedCodeNodes(): AbstractCodeNode[] {
@@ -208,10 +228,6 @@ export class Code {
     })
   }
 
-  onCodeUpdate(): void {
-    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.onCodeUpdate())
-  }
-
   /**
    * Remove connection from the graph
    * @param connection connection between code nodes
@@ -232,6 +248,7 @@ export class Code {
    * Render node codes.
    */
   renderNodeCodes(): void {
+    if (this.state.lockCode) return
     if (this.codeNodes.length === 0) return
     this.codeNodes.forEach((node: AbstractCodeNode) => node.renderCode())
   }
@@ -240,6 +257,7 @@ export class Code {
    * Render code.
    */
   renderCode(): void {
+    if (this.state.lockCode) return
     this.state.script = mustache.render(this.state.template || '', this)
   }
 
@@ -318,12 +336,12 @@ export class Code {
     }
   }
 
-  updateCodeTemplates(): void {
-    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateCodeTemplate())
+  updateCodeNodes(): void {
+    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.update())
   }
 
-  updateOutputVariableNames(): void {
-    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateOutputVariableName())
+  updateCodeTemplates(): void {
+    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateCodeTemplate())
   }
 }
 

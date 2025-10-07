@@ -8,8 +8,12 @@
       <CodeGraphNode v-bind="nodeProps" @update="onUpdate(nodeProps.node as AbstractCodeNode)" />
     </template>
 
-    <template #sidebar="nodeProps">
-      <CodeGraphSidebar v-bind="nodeProps" />
+    <template #sidebar="sidebarProps">
+      <CodeGraphSidebar v-bind="sidebarProps">
+        <template #codeEditor="{ node }">
+          <slot name="sidebarCodeEditor" :node />
+        </template>
+      </CodeGraphSidebar>
     </template>
   </BaklavaEditor>
 </template>
@@ -19,11 +23,11 @@ import { onMounted, onUnmounted, toRef } from 'vue'
 import { BaklavaEditor } from 'baklavajs'
 
 import type { AbstractCodeNode } from '@/codeNode'
+import type { ICodeGraphViewModel } from '@/viewModel'
 
 import CodeGraphNode from './node/CodeGraphNode.vue'
 import CodeGraphSidebar from './sidebar/CodeGraphSidebar.vue'
 import CodeNodePalette from './nodePalette/CodeNodePalette.vue'
-import type { ICodeGraphViewModel } from '@/viewModel'
 
 const props = defineProps<{ viewModel: ICodeGraphViewModel }>()
 const viewModel = toRef(props, 'viewModel')

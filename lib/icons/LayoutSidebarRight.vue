@@ -5,7 +5,7 @@
     height="24"
     viewBox="0 0 24 24"
     fill="currentColor"
-    class="balkava-icon icon icon-tabler icons-tabler-filled icon-tabler-layout-sidebar-right"
+    class="baklava-icon icon icon-tabler icons-tabler-filled icon-tabler-layout-sidebar-right"
   >
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path

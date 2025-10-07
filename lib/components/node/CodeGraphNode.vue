@@ -22,10 +22,11 @@
 
       <template v-if="!renaming">
         <div class="__title-label" style="flex-grow: 1">
-          <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>{{ node.title }} ({{ node.shortId }})
+          <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>{{ node.title }}
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="!node.subgraph">
+            <LockCode class="--clickable mx-1" @click="node.lockCode = false" v-if="node.state.lockCode" />
             <CodeVariable class="--clickable mx-1" @click="setIntegrated(false)" v-if="node.state.integrated" />
             <TransitionBottom class="--clickable mx-1" @click="setIntegrated(true)" v-else />
             <LayoutSidebarRightExpand
@@ -123,6 +124,7 @@ import {
   LayoutSidebarRight,
   LayoutSidebarRightCollapse,
   LayoutSidebarRightExpand,
+  LockCode,
   TransitionBottom,
 } from '@/icons'
 
