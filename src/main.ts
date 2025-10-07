@@ -5,7 +5,7 @@ import VueCodemirror from 'vue-codemirror'
 
 import App from './App.vue'
 
-import { basicSetup } from 'codemirror'
+import { basicSetup, EditorView } from 'codemirror'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { python } from '@codemirror/lang-python'
 
@@ -15,6 +15,6 @@ import '@babsey/code-graph/style.scss'
 
 const app = createApp(App)
 
-app.use(VueCodemirror, { tabSize: 2, extensions: [basicSetup, oneDark, python()] })
+app.use(VueCodemirror, { tabSize: 2, extensions: [basicSetup, EditorView.lineWrapping, oneDark, python()] })
 
 app.mount('#app')
