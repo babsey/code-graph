@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button v-if="copied" class="baklava-button"><check /></button>
+    <button v-if="copied" class="baklava-button"><Check /></button>
     <button v-else @click="copy" class="baklava-button"><Copy /></button>
   </div>
 </template>
