@@ -261,6 +261,9 @@ export class Code {
     this.state.script = mustache.render(this.state.template || '', this)
   }
 
+  /**
+   * Reset scripts of intput interfaces.
+   */
   resetInputInterfaceScript(): void {
     this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.resetInputInterfaceScript())
   }
@@ -336,10 +339,16 @@ export class Code {
     }
   }
 
+  /**
+   * Update code nodes.
+   */
   updateCodeNodes(): void {
     this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.update())
   }
 
+  /**
+   * Update code templates.
+   */
   updateCodeTemplates(): void {
     this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateCodeTemplate())
   }
@@ -388,12 +397,16 @@ export const getPositionAtColumn = (col: number = 0, offset: number = 100): IPos
 export const getPositionBeforeNode = (node: AbstractCodeNode): IPosition => {
   const position = { ...node.position }
 
-  position.x -= 400
+  position.x -= 440
   position.y += 50
 
   return position
 }
 
+/**
+ * Transfer code script from output interface to input interface.
+ * @param graph
+ */
 export const transferCodeScript = (graph: Graph): void => {
   const { calculationOrder, connectionsFromNode } = sortTopologically(graph)
 
