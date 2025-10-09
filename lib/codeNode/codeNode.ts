@@ -60,17 +60,15 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get codeNodeInputs(): Record<string, CodeNodeInputInterface> {
-    return Object.fromEntries(Object.entries(this.inputs).filter(([_, intf]) => intf.type != 'node')) as Record<
-      string,
-      CodeNodeInputInterface
-    >
+    return Object.fromEntries(
+      Object.entries(this.inputs).filter((intf: [string, NodeInterface]) => intf[1].type != 'node'),
+    ) as Record<string, CodeNodeInputInterface>
   }
 
   get codeNodeOutputs(): Record<string, CodeNodeOutputInterface> {
-    return Object.fromEntries(Object.entries(this.outputs).filter(([_, intf]) => intf.type != 'node')) as Record<
-      string,
-      CodeNodeOutputInterface
-    >
+    return Object.fromEntries(
+      Object.entries(this.outputs).filter((intf: [string, NodeInterface]) => intf[1].type != 'node'),
+    ) as Record<string, CodeNodeOutputInterface>
   }
 
   get idx(): number {
@@ -91,11 +89,15 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get optionalInputs(): Record<string, CodeNodeInputInterface> {
-    return Object.fromEntries(Object.entries(this.codeNodeInputs).filter(([_, intf]) => intf.optional))
+    return Object.fromEntries(
+      Object.entries(this.codeNodeInputs).filter((intf: [string, NodeInterface]) => intf[1].optional),
+    )
   }
 
   get requiredInputs(): Record<string, CodeNodeInputInterface> {
-    return Object.fromEntries(Object.entries(this.codeNodeInputs).filter(([_, intf]) => !intf.optional))
+    return Object.fromEntries(
+      Object.entries(this.codeNodeInputs).filter((intf: [string, NodeInterface]) => !intf[1].optional),
+    )
   }
 
   get script(): string {
@@ -228,7 +230,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
       this.state.script = mustache.render(this.state.codeTemplate, { inputs, outputs })
     }
 
-    if (this.outputs.code) this.outputs.code.state.script = this.script
+    if (this.outputs.out) this.outputs.out.state.script = this.script
   }
 
   /**
