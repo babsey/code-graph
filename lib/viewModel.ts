@@ -9,7 +9,7 @@ import {
   type IBaklavaViewModel,
   type IConnection,
   type IViewSettings,
-  useBaklava
+  useBaklava,
 } from 'baklavajs'
 import { type UnwrapRef, reactive } from 'vue'
 
