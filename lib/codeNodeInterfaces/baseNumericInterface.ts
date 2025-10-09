@@ -12,7 +12,7 @@ export interface IValidator {
   validate: (v: number) => boolean
 }
 
-function isValidator(intf: any): intf is IValidator {
+function isValidator(intf): intf is IValidator {
   return 'validate' in intf
 }
 

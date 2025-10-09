@@ -223,7 +223,7 @@ export function defineDynamicCodeNode<I, O>(
     }
 
     private getStaticValues<T>(keys: string[], interfaces: Record<string, NodeInterface>): T {
-      const values = {} as Record<string, any>
+      const values = {} as Record<string, unknown>
       for (const k of keys) {
         values[k] = interfaces[k].value
       }
