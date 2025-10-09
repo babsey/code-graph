@@ -1,6 +1,6 @@
 <template>
     <div style="position: relative;">
-        <label style="font-size: 12px; padding: 0 6px; position: absolute; top: -14px; background-color: var(--baklava-node-color-background);">{{ intf.name }}</label>
+        <label style="font-size: 12px; padding: 0 6px; position: absolute; top: -8px; background-color: var(--baklava-node-color-background);">{{ intf.name }}</label>
         <input v-model="v" type="text" class="baklava-input" :placeholder="intf.name" :title="intf.name">
     </div>
 </template>
