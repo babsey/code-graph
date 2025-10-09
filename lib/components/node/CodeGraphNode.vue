@@ -249,7 +249,7 @@ const onContextMenuClick = async (action: string) => {
 }
 
 const doneRenaming = () => {
-  props.node.title = tempName.value
+  node.value.title = tempName.value
   renaming.value = false
 }
 
@@ -289,7 +289,7 @@ const doResize = (ev: MouseEvent) => {
   const newWidth = resizeStartWidth + deltaX / graph.value.scaling
   const minWidth = viewModel.value.settings.nodes.minWidth
   const maxWidth = viewModel.value.settings.nodes.maxWidth
-  props.node.width = Math.max(minWidth, Math.min(maxWidth, newWidth))
+  node.value.width = Math.max(minWidth, Math.min(maxWidth, newWidth))
 }
 
 const stopResize = () => {
