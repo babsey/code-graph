@@ -28,10 +28,10 @@ export default defineCodeNode({
     slider: () => new SliderInterface('slider', 0.5, 0, 1).use(setOptional, false),
     text_input: () => new TextInputInterface('text input', 'a').use(setOptional, true),
     textarea_input: () => new TextareaInputInterface('textarea input', 'a').use(setOptional, true),
-    code_node_input: () => new CodeNodeInputInterface('code node input').use(setOptional, true),
+    code_node_input: () => new CodeNodeInputInterface('input').use(setOptional, true),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface(),
+    out: () => new CodeNodeOutputInterface(),
     custom: () => new CodeNodeOutputInterface('.custom', '.custom').use(setOptional, true),
   },
   codeTemplate() {

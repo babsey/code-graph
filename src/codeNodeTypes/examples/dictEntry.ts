@@ -18,7 +18,7 @@ export default defineCodeNode({
     value: () => new TextareaInputInterface('value', '').use(setType, stringType),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface(),
+    out: () => new CodeNodeOutputInterface(),
   },
   codeTemplate: () => '{{ inputs.key }}: {{ inputs.value }}',
 })

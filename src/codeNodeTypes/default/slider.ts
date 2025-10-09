@@ -8,7 +8,7 @@ export default defineCodeNode({
     slider: () => new SliderInterface('slider', 0.5, 0, 1).setPort(false),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface(),
+    out: () => new CodeNodeOutputInterface(),
   },
   codeTemplate: () => '{{ inputs.slider }}',
 })

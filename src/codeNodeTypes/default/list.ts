@@ -10,7 +10,7 @@ export default defineCodeNode({
     items: () => new ListInputInterface('list', '').setPort(false),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface().use(setType, listType),
+    out: () => new CodeNodeOutputInterface().use(setType, listType),
   },
   codeTemplate: () => '{{ inputs.items }}',
 })

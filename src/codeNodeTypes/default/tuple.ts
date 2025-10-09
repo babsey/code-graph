@@ -10,7 +10,7 @@ export default defineCodeNode({
     items: () => new TupleInputInterface('tuple', 0).setPort(false),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface().use(setType, tupleType),
+    out: () => new CodeNodeOutputInterface().use(setType, tupleType),
   },
   codeTemplate: () => '{{ inputs.items }}',
 })

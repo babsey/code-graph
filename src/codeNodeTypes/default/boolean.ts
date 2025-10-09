@@ -10,7 +10,7 @@ export default defineCodeNode({
     boolean: () => new CheckboxInterface('boolean', false).setPort(false),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface().use(setType, booleanType),
+    out: () => new CodeNodeOutputInterface().use(setType, booleanType),
   },
   codeTemplate: () => '{{ inputs.boolean }}',
 })

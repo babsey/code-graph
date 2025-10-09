@@ -18,7 +18,7 @@ export default defineCodeNode({
     number2: () => new NumberInterface('Number', 1),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface().use(setType, numberType),
+    out: () => new CodeNodeOutputInterface().use(setType, numberType),
   },
   codeTemplate() {
     switch (this.inputs.operation.value) {

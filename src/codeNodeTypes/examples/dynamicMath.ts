@@ -17,7 +17,7 @@ export default defineDynamicCodeNode({
     operation: () => new SelectInterface('Operation', 'Addition', ['Addition', 'Subtraction', 'Sine']).setPort(false),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface('').use(setType, numberType),
+    out: () => new CodeNodeOutputInterface('').use(setType, numberType),
   },
   onUpdate({ operation }: { operation: string }) {
     if (operation === 'Sine') {

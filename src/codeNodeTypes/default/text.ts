@@ -10,7 +10,7 @@ export default defineCodeNode({
     text: () => new TextInputInterface('text', '').setPort(false),
   },
   outputs: {
-    code: () => new CodeNodeOutputInterface().use(setType, stringType),
+    out: () => new CodeNodeOutputInterface().use(setType, stringType),
   },
   codeTemplate: () => '{{ inputs.text }}',
 })
