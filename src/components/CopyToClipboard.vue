@@ -9,7 +9,7 @@
 import { ref, toRef } from 'vue'
 import useClipboard from 'vue-clipboard3'
 
-import { Check, Copy } from '@/icons'
+import { Check, Copy } from '@babsey/code-graph'
 
 const { toClipboard } = useClipboard()
 

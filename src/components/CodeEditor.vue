@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { LockCode } from '@/icons';
+import { LockCode } from '@babsey/code-graph';
 
 import CopyToClipboard from './CopyToClipboard.vue';
 
