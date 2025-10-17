@@ -22,20 +22,14 @@
 import { CodeGraphEditor, useCodeGraph } from '@babsey/code-graph'
 
 import { MyCode } from './code'
-import {
-  registerDefaultNodeTypes,
-  registerExampleNodeTypes,
-  registerNESTNodeTypes,
-  registerNumpyNodeTypes,
-} from './codeNodeTypes'
+import { registerNodeTypes } from './codeNodeTypes'
 import CodeEditor from './components/CodeEditor.vue'
 
 const codeGraph = useCodeGraph({ code: MyCode })
 
-registerDefaultNodeTypes(codeGraph)
-registerExampleNodeTypes(codeGraph)
-registerNESTNodeTypes(codeGraph)
-registerNumpyNodeTypes(codeGraph)
+registerNodeTypes(codeGraph)
+
+codeGraph.init()
 </script>
 
 <style lang="scss">
