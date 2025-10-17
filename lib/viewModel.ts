@@ -20,6 +20,7 @@ import { addToolbarCommands, DEFAULT_SETTINGS } from './settings'
 export interface ICodeGraphViewModel extends IBaklavaViewModel {
   code: Code
   engine: DependencyEngine
+  init: () => void
   state: UnwrapRef<{
     modules: Record<string, string>
     token: symbol | null
@@ -54,7 +55,13 @@ export function useCodeGraph(props?: {
     modules: {},
     token: null,
   })
-  viewModel.engine = new DependencyEngine(viewModel.editor)
+
+  viewModel.init = () => {
+    viewModel.unsubscribe()
+
+    viewModel.state.modules = {}
+    viewModel.engine = new DependencyEngine(viewModel.editor)
+  }
 
   viewModel.subscribe = () => {
     if (viewModel.state.token) viewModel.unsubscribe()
