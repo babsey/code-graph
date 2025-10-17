@@ -58,8 +58,6 @@ export function useCodeGraph(props?: {
 
   viewModel.init = () => {
     viewModel.unsubscribe()
-
-    viewModel.state.modules = {}
     viewModel.engine = new DependencyEngine(viewModel.editor)
   }
 
