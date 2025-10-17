@@ -1,0 +1,9 @@
+@import './base.css';
+
+#app {
+  background-color: var(--baklava-editor-background-pattern-default);
+}
+
+.nav-tabs .nav-link.active {
+  background-color: var(--baklava-toolbar-background) !important;
+}
