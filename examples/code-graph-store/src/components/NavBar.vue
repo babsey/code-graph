@@ -1,48 +1,64 @@
 <template>
-  <BNav small>
-    <BNavItem :to="{ name: 'home' }"> Home </BNavItem>
+  <nav class="navbar">
+    <NavItem>Home</NavItem>
 
-    <BNavItem
+    <NavItem
       v-for="editor in codeGraphStore.state.editorStates"
       :key="editor.graph.id"
       :to="{ name: 'edit', params: { editorId: editor.graph.id } }"
+      :class="{ active: editor.graph.id === codeGraphStore.state.codeGraph.displayedGraph.id }"
+      :editor
     >
       {{ editor.graph.id.slice(0, 6) }}
 
-      <BButton @click.prevent="codeGraphStore.removeEditorState(editor.graph.id)" class="remove">
-        <X />
-      </BButton>
-    </BNavItem>
-    <BNavItem :to="{ name: 'new' }"><Plus style="height: 21px !important" /></BNavItem>
-  </BNav>
+      <template #appendIcon>
+        <button @click.prevent="codeGraphStore.removeEditorState(editor.graph.id)" class="remove">
+          <X />
+        </button>
+      </template>
+    </NavItem>
+
+    <NavItem :to="{ name: 'new' }" class="navItem">
+      <Plus class="plus" />
+    </NavItem>
+  </nav>
 </template>
 
 <script setup lang="ts">
-import { BNav, BNavItem } from 'bootstrap-vue-next'
 import { Plus, X } from '../icons'
+
+import NavItem from './NavItem.vue'
 
 import { useCodeGraphStore } from '@/stores/codeGraphStore'
 const codeGraphStore = useCodeGraphStore()
 </script>
 
-<style>
-.active {
-  color: #fff;
-  background-color: #0d6efd;
-}
+<style lang="scss">
+.navbar {
+  display: flex;
+  margin: 0;
+  padding: 0;
 
-.remove {
-  margin-left: 12px;
-  padding: 2px;
-}
+  svg.plus {
+    height: 1.4rem;
+  }
 
-.remove svg {
-  display: inline;
-  height: 12px !important;
-  width: 12px !important;
-}
+  .appendIcon {
+    button.remove {
+      background-color: transparent;
+      border: 0;
+      margin-right: -8px;
+      padding: 2px 8px;
+      cursor: pointer;
 
-.remove:hover svg {
-  stroke-width: var(--icon-stroke, 4);
+      svg {
+        color: var(--baklava-toolbar-foreground);
+      }
+
+      &:hover svg {
+        stroke-width: var(--icon-stroke, 4);
+      }
+    }
+  }
 }
 </style>

@@ -20,8 +20,6 @@
     "@codemirror/lang-python": "~6.2",
     "@codemirror/theme-one-dark": "~6.1",
     "baklavajs": "~2.8",
-    "bootstrap": "~5.3",
-    "bootstrap-vue-next": "~0.40",
     "codemirror": "~6.0",
     "pinia": "~3.0",
     "pinia-plugin-persistedstate": "~4.5",

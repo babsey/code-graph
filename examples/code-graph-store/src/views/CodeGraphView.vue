@@ -2,7 +2,7 @@
   <div style="height: 100vh">
     <NavBar data-bs-theme="dark" />
 
-    <div style="display: flex; overflow: hidden; height: calc(100vh - 38.4px)">
+    <div style="display: flex; overflow: hidden; height: calc(100vh - 40px)">
       <div style="width: 70vw; height: 100%">
         <CodeGraphEditor :view-model="codeGraph">
           <template #sidebarCodeEditor="{ node }">

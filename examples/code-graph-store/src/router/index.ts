@@ -17,7 +17,7 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/edit',
+      path: '/new',
       name: 'new',
       component: () => import('../views/CodeGraphView.vue'),
     },
