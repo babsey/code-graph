@@ -12,7 +12,6 @@ export class NumpyCode extends Code {
 
     this.loadTemplate(import('./templates/python.mustache?raw'))
   }
-
 }
 
 export const registerNumpyCodeGraph = () => {

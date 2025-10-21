@@ -3,11 +3,11 @@
 import { setType } from 'baklavajs'
 
 import {
-    CodeNodeOutputInterface,
-    NumberInterface,
-    SelectInterface,
-    defineDynamicCodeNode,
-    numberType,
+  CodeNodeOutputInterface,
+  NumberInterface,
+  SelectInterface,
+  defineDynamicCodeNode,
+  numberType,
 } from '@babsey/code-graph'
 
 export default defineDynamicCodeNode({

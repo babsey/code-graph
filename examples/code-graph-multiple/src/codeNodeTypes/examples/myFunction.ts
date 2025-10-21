@@ -1,16 +1,17 @@
 // text.ts
 
 import {
-    CheckboxInterface,
-    CodeNodeOutputInterface,
-    CodeNodeInputInterface,
-    IntegerInterface,
-    NumberInterface,
-    SelectInterface,
-    SliderInterface,
-    TextInputInterface,
-    TextareaInputInterface,
-    defineCodeNode, setOptional
+  CheckboxInterface,
+  CodeNodeOutputInterface,
+  CodeNodeInputInterface,
+  IntegerInterface,
+  NumberInterface,
+  SelectInterface,
+  SliderInterface,
+  TextInputInterface,
+  TextareaInputInterface,
+  defineCodeNode,
+  setOptional,
 } from '@babsey/code-graph'
 
 export default defineCodeNode({
