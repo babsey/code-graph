@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 import { useCodeGraphStore } from '@/stores/codeGraphStore'
 
@@ -9,7 +8,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/about',
@@ -32,8 +31,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  // console.log(to.name, to.params.editorId)
-
   const codeGraphStore = useCodeGraphStore()
 
   switch (to.name) {

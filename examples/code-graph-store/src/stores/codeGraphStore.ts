@@ -1,22 +1,21 @@
+// codeGraphStore.ts
+
 import { reactive, type UnwrapRef } from 'vue'
+import { type IEditorState } from 'baklavajs'
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
 
 import { useCodeGraph, type ICodeGraphViewModel } from '@babsey/code-graph'
 
 import { MyCode } from '../code'
-
-import {
-  registerNodeTypes
-} from '../codeNodeTypes'
-import { type Editor } from 'baklavajs'
+import { registerNodeTypes } from '../codeNodeTypes'
 
 export const useCodeGraphStore = defineStore(
   'code-graph',
   () => {
     const state: UnwrapRef<{
       codeGraph: ICodeGraphViewModel | null
-      editorStates: Record<string, Editor>
+      editorStates: Record<string, IEditorState>
       token: symbol | null
     }> = reactive({
       codeGraph: null,

@@ -1,7 +1,7 @@
 <template>
-  <BApp>
+  <div>
     <router-view/>
-  </BApp>
+  </div>
 </template>
 
 <style lang="scss">
