@@ -1,6 +1,6 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
@@ -39,6 +39,7 @@
     "codemirror": "~6.0",
     "mustache": "~4.2",
     "toposort": "~2.0",
+    "uuid": "~13.0",
     "vue": "~3.5",
     "vue-clipboard3": "~2.0",
     "vue-codemirror": "~6.1"

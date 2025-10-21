@@ -10,8 +10,11 @@ import {
   type IConnection,
   type IViewSettings,
   useBaklava,
+  Commands,
+  type IEditorState,
 } from 'baklavajs'
 import { type UnwrapRef, reactive } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
 import type { AbstractCodeNode } from './codeNode'
 import { Code } from './code'
@@ -21,6 +24,8 @@ export interface ICodeGraphViewModel extends IBaklavaViewModel {
   code: Code
   engine: DependencyEngine
   init: () => void
+  loadEditor: (editorState: IEditorState) => void
+  newGraph: () => void
   state: UnwrapRef<{
     modules: Record<string, string>
     token: symbol | null
@@ -38,8 +43,6 @@ export function useCodeGraph(props?: {
 
   addToolbarCommands(viewModel)
 
-  // viewModel.commandHandler.unregisterCommand('Delete')
-
   const settings: Partial<IViewSettings> = {}
   Object.keys(DEFAULT_SETTINGS).forEach((K: string) => {
     settings[K] =
@@ -56,11 +59,48 @@ export function useCodeGraph(props?: {
     token: null,
   })
 
+  /**
+   * Initialize view model.
+   */
   viewModel.init = () => {
     viewModel.unsubscribe()
     viewModel.engine = new DependencyEngine(viewModel.editor)
   }
 
+  /**
+   * Load editor from editor state
+   */
+  viewModel.loadEditor = (editorState: IEditorState) => {
+    viewModel.engine?.pause()
+    viewModel.code.clear()
+
+    viewModel.editor.load(editorState)
+
+    // needs to clear clipboard and history after loading editor.
+    viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND)
+    viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND)
+
+    viewModel.engine?.resume()
+    viewModel.engine?.runOnce(null)
+  }
+
+  /**
+   * Create a new graph (new ID).
+   */
+  viewModel.newGraph = () => {
+    viewModel.engine?.pause()
+    viewModel.code.clear()
+
+    // set new graph id
+    viewModel.editor.graph.id = uuidv4()
+
+    viewModel.engine?.resume()
+    viewModel.engine?.runOnce(null)
+  }
+
+  /**
+   * Subscribe view model.
+   */
   viewModel.subscribe = () => {
     if (viewModel.state.token) viewModel.unsubscribe()
 
@@ -140,6 +180,9 @@ export function useCodeGraph(props?: {
     viewModel.state.token = token
   }
 
+  /**
+   * Unsubscribe view model.
+   */
   viewModel.unsubscribe = () => {
     if (!viewModel.state.token) return
 

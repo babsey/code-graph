@@ -237,7 +237,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Reset script of input interfaces.
    */
   resetInputInterfaceScript() {
-    Object.values(this.codeNodeInputs).forEach((intf: CodeNodeInterface) => (intf.resetScript()))
+    Object.values(this.codeNodeInputs).forEach((intf: CodeNodeInterface) => intf.resetScript())
   }
 
   updateCodeTemplate(): void {

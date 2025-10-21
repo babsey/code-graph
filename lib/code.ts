@@ -4,6 +4,7 @@ import mustache from 'mustache'
 import toposort from 'toposort'
 import {
   AbstractNode,
+  Commands,
   Connection,
   Graph,
   NodeInterface,
@@ -187,6 +188,10 @@ export class Code {
     this.nodes = []
     this.connections = []
     this.state.script = ''
+
+    this.viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND)
+    this.viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND)
+    if (this.viewModel.engine) this.viewModel.engine.runOnce(null)
   }
 
   findNodeById(id: string): AbstractCodeNode | undefined {
