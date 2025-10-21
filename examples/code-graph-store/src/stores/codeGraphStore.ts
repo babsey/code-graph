@@ -3,7 +3,6 @@
 import { reactive, type UnwrapRef } from 'vue'
 import { type IEditorState } from 'baklavajs'
 import { defineStore } from 'pinia'
-import { v4 as uuidv4 } from 'uuid'
 
 import { useCodeGraph, type ICodeGraphViewModel } from '@babsey/code-graph'
 
@@ -34,21 +33,23 @@ export const useCodeGraphStore = defineStore(
       unsubscribe()
 
       const editorIds = Object.keys(state.editorStates)
-      if (!editorId || !editorIds.includes(editorId)) return newEditor()
+      if (!editorId || !editorIds.includes(editorId)) return newGraph()
 
-      state.codeGraph.editor.load(state.editorStates[editorId])
-      state.codeGraph.engine.runOnce()
+      const editorState = state.editorStates[editorId]
+
+      // load editor from editor state
+      if (editorState) state.codeGraph.loadEditor(editorState)
+
       subscribe()
 
       return true
     }
 
-    const newEditor = () => {
-      state.codeGraph.engine.pause()
-      state.codeGraph.code.clear()
-      state.codeGraph.editor.graph.id = uuidv4()
+    const newGraph = () => {
+      // create new graph
+      state.codeGraph.newGraph()
+
       const editorId = saveEditor()
-      state.codeGraph.engine.resume()
       return { name: 'edit', params: { editorId } }
     }
 
@@ -78,11 +79,11 @@ export const useCodeGraphStore = defineStore(
 
     init()
 
-    return { loadEditor, newEditor, removeEditorState, state }
+    return { loadEditor, newGraph, removeEditorState, state }
   },
   {
     persist: {
-      storage: sessionStorage,
+      storage: sessionStorage, // localStorage
       pick: ['state.editorStates'],
     },
   },

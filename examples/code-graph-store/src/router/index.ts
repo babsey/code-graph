@@ -35,7 +35,7 @@ router.beforeEach((to) => {
 
   switch (to.name) {
     case 'new':
-      return codeGraphStore.newEditor()
+      return codeGraphStore.newGraph()
     case 'edit':
       return codeGraphStore.loadEditor(to.params?.editorId as string)
   }

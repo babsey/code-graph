@@ -22,7 +22,7 @@
 
   &:hover {
     background-color: var(--baklava-toolbar-background);
-    color: var(--baklava-toolbar-foreground)
+    color: var(--baklava-toolbar-foreground);
   }
 
   &.active {
