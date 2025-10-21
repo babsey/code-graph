@@ -81,7 +81,7 @@ export function useCodeGraph(props?: {
     viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND)
 
     viewModel.engine?.resume()
-    viewModel.engine?.runOnce(null)
+    viewModel.engine?.runOnce(undefined)
   }
 
   /**
@@ -95,7 +95,7 @@ export function useCodeGraph(props?: {
     viewModel.editor.graph.id = uuidv4()
 
     viewModel.engine?.resume()
-    viewModel.engine?.runOnce(null)
+    viewModel.engine?.runOnce(undefined)
   }
 
   /**

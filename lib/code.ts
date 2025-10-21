@@ -191,7 +191,7 @@ export class Code {
 
     this.viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND)
     this.viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND)
-    if (this.viewModel.engine) this.viewModel.engine.runOnce(null)
+    if (this.viewModel.engine) this.viewModel.engine.runOnce(undefined)
   }
 
   findNodeById(id: string): AbstractCodeNode | undefined {
