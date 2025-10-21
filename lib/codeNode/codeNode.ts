@@ -16,7 +16,7 @@ import type { CodeNodeInputInterface, CodeNodeInterface, CodeNodeOutputInterface
 
 mustache.escape = (value: string) => value
 
-interface IAbstractCodeNodeState {
+export interface IAbstractCodeNodeState {
   codeTemplate: string
   hidden: boolean
   integrated: boolean
@@ -237,7 +237,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Reset script of input interfaces.
    */
   resetInputInterfaceScript() {
-    Object.values(this.inputs).forEach((intf) => (intf.state.script = ''))
+    Object.values(this.codeNodeInputs).forEach((intf: CodeNodeInterface) => (intf.resetScript())
   }
 
   updateCodeTemplate(): void {

@@ -1,10 +1,12 @@
-// index.ts
+/**
+ * @module @babsey/code-graph
+ */
 
+export * from './code'
 export * from './codeNode'
 export * from './codeNodeInterfaces'
-export * from './code'
 export * from './components'
 export * from './icons'
 export * from './interfaceTypes'
-export * from './viewModel'
 export * from './settings'
+export * from './viewModel'

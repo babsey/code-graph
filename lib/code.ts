@@ -25,7 +25,7 @@ interface IPosition {
   y: number
 }
 
-interface ICodeState {
+export interface ICodeState {
   autosort: boolean
   lockCode: boolean
   modules: Record<string, string>

@@ -6,7 +6,7 @@ import { markRaw, reactive, type UnwrapRef } from 'vue'
 import CodeNodeInterfaceComponent from './CodeNodeInterface.vue'
 import type { Code } from '@/code'
 
-interface ICodeNodeInterfaceState {
+export interface ICodeNodeInterfaceState {
   optional: boolean
   script: string
 }
@@ -44,6 +44,8 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
   }
 
   getValue = (): string => `${this.value ?? 'None'}`
+
+  resetScript = () => (this.state.script = '')
 }
 
 export { CodeNodeInterfaceComponent }
