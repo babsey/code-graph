@@ -24,11 +24,11 @@ export default defineConfig({
         // Provide global variables to use in the UMD build for externalized deps
         globals: {
           '@vueuse/core': '@vueuse/core',
-          baklavajs: 'baklavajs',
-          mustache: 'mustache',
-          toposort: 'toposort',
-          uuid: 'uuid',
-          vue: 'Vue',
+          'baklavajs': 'baklavajs',
+          'mustache': 'mustache',
+          'toposort': 'toposort',
+          'uuid': 'uuid',
+          'vue': 'Vue',
         },
       },
     },
@@ -37,12 +37,17 @@ export default defineConfig({
   plugins: [
     vue(),
     // vueDevTools(),
-    dts({ exclude: ["./lib/main.ts"], processor: 'vue', tsconfigPath: './tsconfig.app.json', }),
+    dts({ exclude: ['./lib/main.ts'], processor: 'vue', tsconfigPath: './tsconfig.app.json' }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./lib', import.meta.url)),
       '@babsey/code-graph': fileURLToPath(new URL('./lib', import.meta.url)),
+    },
+  },
+  server: {
+    watch: {
+      ignored: ['**/examples/**'],
     },
   },
 })
