@@ -1,4 +1,4 @@
 // codes
 
-export * from './numpyCode'
-export * from './exampleCode'
+export * from './numpyCode';
+export * from './exampleCode';

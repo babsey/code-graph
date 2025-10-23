@@ -26,12 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, X } from '../icons'
+import { Plus, X } from '../icons';
 
-import NavItem from './NavItem.vue'
+import NavItem from './NavItem.vue';
 
-import { useCodeGraphStore } from '@/stores/codeGraphStore'
-const codeGraphStore = useCodeGraphStore()
+import { useCodeGraphStore } from '@/stores/codeGraphStore';
+const codeGraphStore = useCodeGraphStore();
 </script>
 
 <style lang="scss">

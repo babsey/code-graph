@@ -2,7 +2,7 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, formatInputs, setOptional } from '@babsey/code-graph'
+import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, formatInputs } from '@babsey/code-graph'
 
 import { arrayType } from './interfaceTypes'
 
@@ -12,9 +12,9 @@ export default defineCodeNode({
   title: 'linspace',
   variableName: 'a',
   inputs: {
-    start: () => new NumberInterface('start', 0).use(setOptional, true),
+    start: () => new NumberInterface('start', 0).setOptional(true),
     stop: () => new NumberInterface('stop', 1),
-    num: () => new NumberInterface('num', 50).use(setOptional, true),
+    num: () => new NumberInterface('num', 50).setOptional(true),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, arrayType),

@@ -39,13 +39,13 @@
 </template>
 
 <script setup lang="ts">
-import VueSelect from 'vue3-select-component'
+import VueSelect from 'vue3-select-component';
 
-import { Plus } from '../icons'
-import NavItem from '@/components/NavItem.vue'
+import { Plus } from '../icons';
+import NavItem from '@/components/NavItem.vue';
 
-import { useCodeGraphStore } from '@/stores/codeGraphStore'
-const codeGraphStore = useCodeGraphStore()
+import { useCodeGraphStore } from '@/stores/codeGraphStore';
+const codeGraphStore = useCodeGraphStore();
 </script>
 
 <style lang="scss">

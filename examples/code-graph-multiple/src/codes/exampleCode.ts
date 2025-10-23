@@ -1,25 +1,25 @@
 // exampleCode.ts
 
-import { Code, useCodeGraph, type ICodeGraphViewModel } from '@babsey/code-graph'
+import { Code, useCodeGraph, type ICodeGraphViewModel } from '@babsey/code-graph';
 
-import { registerDefaultNodeTypes, registerExampleNodeTypes } from '@/codeNodeTypes'
+import { registerDefaultNodeTypes, registerExampleNodeTypes } from '@/codeNodeTypes';
 
 export class ExampleCode extends Code {
-  public readonly name = 'example'
+  public readonly name = 'example';
 
   constructor(viewModel: ICodeGraphViewModel) {
-    super(viewModel)
+    super(viewModel);
 
-    this.loadTemplate(import('./templates/python.mustache?raw'))
+    this.loadTemplate(import('./templates/python.mustache?raw'));
   }
 }
 
 export const registerExampleCodeGraph = () => {
-  const codeGraph = useCodeGraph({ code: ExampleCode })
-  codeGraph.init()
+  const codeGraph = useCodeGraph({ code: ExampleCode });
+  codeGraph.init();
 
-  registerDefaultNodeTypes(codeGraph)
-  registerExampleNodeTypes(codeGraph)
+  registerDefaultNodeTypes(codeGraph);
+  registerExampleNodeTypes(codeGraph);
 
-  return codeGraph
-}
+  return codeGraph;
+};

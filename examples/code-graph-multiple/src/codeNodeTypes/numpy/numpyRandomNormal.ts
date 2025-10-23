@@ -2,7 +2,7 @@
 
 import { setType } from 'baklavajs'
 
-import { CodeNodeOutputInterface, IntegerInterface, defineCodeNode, setOptional } from '@babsey/code-graph'
+import { CodeNodeOutputInterface, IntegerInterface, defineCodeNode } from '@babsey/code-graph'
 
 import { arrayType } from './interfaceTypes'
 
@@ -12,9 +12,9 @@ export default defineCodeNode({
   title: 'random normal distribution',
   variableName: 'r',
   inputs: {
-    loc: () => new IntegerInterface('loc', 0).use(setOptional, true),
-    scale: () => new IntegerInterface('scale', 1).use(setOptional, true),
-    size: () => new IntegerInterface('size', 1).use(setOptional, true),
+    loc: () => new IntegerInterface('loc', 0).setOptional(true),
+    scale: () => new IntegerInterface('scale', 1).setOptional(true),
+    size: () => new IntegerInterface('size', 1).setOptional(true),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, arrayType),
