@@ -179,6 +179,7 @@ export class Code {
    * Clear code graph.
    */
   clear(): void {
+    this.viewModel.displayedGraph.selectedNodes = [];
     this.viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND);
     this.viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND);
 
