@@ -4,6 +4,7 @@ import { computed } from 'vue';
 
 import { type ICodeGraphViewModel } from './viewModel';
 import { LayoutSidebarLeftCollapse, LayoutSidebarLeftExpand, Schema, SchemaOff, TrashOff } from './icons';
+import { DEFAULT_TOOLBAR_COMMANDS } from 'baklavajs';
 
 /**
  * Add commands to toolbar.
@@ -17,11 +18,11 @@ export const addToolbarCommands = (viewModel: ICodeGraphViewModel) => {
     canExecute: () => true,
   });
 
-  viewModel.settings.toolbar.commands.unshift({
+  const toggle_palette = {
     command: TOGGLE_PALETTE_COMMAND,
     title: 'Toggle palette', // Tooltip text
     icon: computed(() => (viewModel.settings.palette.enabled ? LayoutSidebarLeftCollapse : LayoutSidebarLeftExpand)),
-  });
+  };
 
   // Clear all nodes from the graph
   const CLEAR_ALL_COMMAND = 'CLEAR_ALL';
@@ -30,11 +31,11 @@ export const addToolbarCommands = (viewModel: ICodeGraphViewModel) => {
     canExecute: () => viewModel.displayedGraph.nodes.length > 0,
   });
 
-  viewModel.settings.toolbar.commands.push({
+  const clear_all = {
     command: CLEAR_ALL_COMMAND,
     title: 'Clear all', // Tooltip text
     icon: computed(() => TrashOff),
-  });
+  };
 
   // Toggle minimap
   const TOGGLE_MINIMAP_COMMAND = 'TOGGLE_MINIMAP';
@@ -43,11 +44,13 @@ export const addToolbarCommands = (viewModel: ICodeGraphViewModel) => {
     canExecute: () => viewModel.displayedGraph.nodes.length > 1,
   });
 
-  viewModel.settings.toolbar.commands.push({
+  const toggle_minimap = {
     command: TOGGLE_MINIMAP_COMMAND,
     title: 'Toggle minimap', // Tooltip text
     icon: computed(() => (viewModel.settings.enableMinimap ? SchemaOff : Schema)),
-  });
+  };
+
+  viewModel.settings.toolbar.commands = [toggle_palette, ...DEFAULT_TOOLBAR_COMMANDS, clear_all, toggle_minimap];
 };
 
 /**
