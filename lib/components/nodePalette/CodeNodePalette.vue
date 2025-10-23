@@ -6,28 +6,28 @@
         type="text"
         class="baklava-input"
         title="Filter nodes"
-        @keyup="filterCategoryBySearch"
+        @keyup="filterCategoriesBySearch"
       />
     </div>
 
-    <section v-for="c in filterCategoryBySearch()" :key="c.name">
+    <section v-for="c in filterCategoriesBySearch()" :key="c.name">
       <h3 v-if="c.name !== 'default'" style="display: flex; justify-content: space-between">
         <div @click="searchQuery = c.name" style="cursor: pointer">{{ c.name }}</div>
 
         <div
-          v-if="filterNodesBySearch(c.nodeTypes).length < Object.values(c.nodeTypes).length"
+          v-if="Object.keys(filterNodesBySearch(c.nodeTypes)).length < Object.values(c.nodeTypes).length"
           style="margin: auto 0; font-size: 12px"
         >
-          ( {{ filterNodesBySearch(c.nodeTypes).length }} / {{ Object.values(c.nodeTypes).length }} )
+          ( {{ Object.keys(filterNodesBySearch(c.nodeTypes)).length }} / {{ Object.values(c.nodeTypes).length }} )
         </div>
       </h3>
 
       <PaletteEntry
-        v-for="n in filterNodesBySearch(c.nodeTypes)"
-        :key="n.type"
-        :type="n.type"
-        :title="n.title"
-        @pointerdown="onDragStart(n.type, n)"
+        v-for="(ni, nt) in filterNodesBySearch(c.nodeTypes)"
+        :key="nt"
+        :type="nt"
+        :title="ni.title"
+        @pointerdown="onDragStart(nt, ni)"
       />
     </section>
   </div>
@@ -40,35 +40,36 @@
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, type Ref, computed, inject, reactive, ref } from 'vue'
-import { usePointer } from '@vueuse/core'
-import { AbstractNode, type INodeTypeInformation, useNodeCategories, useTransform, useViewModel } from 'baklavajs'
+import { type CSSProperties, type Ref, computed, inject, reactive, ref } from 'vue';
+import { usePointer } from '@vueuse/core';
+import { AbstractNode, type INodeTypeInformation, useNodeCategories, useTransform, useViewModel } from 'baklavajs';
 
-import PaletteEntry from './PaletteEntry.vue'
+import { filterObject } from '@/utils';
+import PaletteEntry from './PaletteEntry.vue';
 
 interface IDraggedNode {
-  type: string
-  nodeInformation: INodeTypeInformation
+  type: string;
+  nodeInformation: INodeTypeInformation;
 }
 
-type NodeTypeInformations = Record<string, INodeTypeInformation>
+type NodeTypeInformations = Record<string, INodeTypeInformation>;
 interface ICategory {
-  name: string
-  nodeTypes: NodeTypeInformations
+  name: string;
+  nodeTypes: NodeTypeInformations;
 }
 
-const { viewModel } = useViewModel()
-const { x: mouseX, y: mouseY } = usePointer()
-const { transform } = useTransform()
-const categories = useNodeCategories(viewModel)
+const { viewModel } = useViewModel();
+const { x: mouseX, y: mouseY } = usePointer();
+const { transform } = useTransform();
+const categories = useNodeCategories(viewModel);
 
-const editorEl = inject<Ref<HTMLElement | null>>('editorEl')
+const editorEl = inject<Ref<HTMLElement | null>>('editorEl');
 
-const searchQuery = ref<string>('')
-const draggedNode = ref<IDraggedNode | null>(null)
+const searchQuery = ref<string>('');
+const draggedNode = ref<IDraggedNode | null>(null);
 
-const filterCategoryBySearch = () => {
-  if (!searchQuery.value) return categories.value
+const filterCategoriesBySearch = () => {
+  if (!searchQuery.value) return categories.value;
 
   return categories.value.filter(
     (c: ICategory) =>
@@ -76,49 +77,51 @@ const filterCategoryBySearch = () => {
       Object.values(c.nodeTypes).some((nodeType: INodeTypeInformation) =>
         nodeType.title.toLowerCase().includes(searchQuery.value.toLowerCase()),
       ),
-  )
-}
+  );
+};
 
 const filterNodesBySearch = (nodeTypes: NodeTypeInformations) => {
-  if (!searchQuery.value) return Object.values(nodeTypes)
+  if (!searchQuery.value) return nodeTypes;
 
-  return Object.values(nodeTypes).filter(
-    (nt: INodeTypeInformation) =>
-      nt.category.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      nt.title.toLowerCase().includes(searchQuery.value.toLowerCase()),
-  )
-}
+  return filterObject(nodeTypes, (n) => {
+    const nt = n[1];
+    return (
+      nt.category.includes(searchQuery.value.toLowerCase()) ||
+      nt.title?.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+  });
+};
 
 const draggedNodeStyles = computed<CSSProperties>(() => {
-  if (!draggedNode.value || !editorEl?.value) return {}
+  if (!draggedNode.value || !editorEl?.value) return {};
 
-  const { left, top } = editorEl.value.getBoundingClientRect()
+  const { left, top } = editorEl.value.getBoundingClientRect();
   return {
     top: `${mouseY.value - top}px`,
     left: `${mouseX.value - left}px`,
-  }
-})
+  };
+});
 
 const onDragStart = (type: string, nodeInformation: INodeTypeInformation) => {
   draggedNode.value = {
     type,
     nodeInformation,
-  }
+  };
 
   const onDragEnd = () => {
-    const instance = reactive(new nodeInformation.type()) as AbstractNode
-    viewModel.value.displayedGraph.addNode(instance)
+    const instance = reactive(new nodeInformation.type()) as AbstractNode;
+    viewModel.value.displayedGraph.addNode(instance);
 
-    const rect = editorEl!.value!.getBoundingClientRect()
-    const [x, y] = transform(mouseX.value - rect.left, mouseY.value - rect.top)
-    instance.position.x = x
-    instance.position.y = y
+    const rect = editorEl!.value!.getBoundingClientRect();
+    const [x, y] = transform(mouseX.value - rect.left, mouseY.value - rect.top);
+    instance.position.x = x;
+    instance.position.y = y;
 
-    draggedNode.value = null
-    document.removeEventListener('pointerup', onDragEnd)
-  }
-  document.addEventListener('pointerup', onDragEnd)
-}
+    draggedNode.value = null;
+    document.removeEventListener('pointerup', onDragEnd);
+  };
+  document.addEventListener('pointerup', onDragEnd);
+};
 </script>
 
 <style lang="scss">

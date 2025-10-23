@@ -18,13 +18,13 @@
 
 <script setup lang="ts">
 defineProps<{
-  disabled?: boolean
-  inversed?: boolean
-  modelValue: boolean
-  name?: string
-}>()
+  disabled?: boolean;
+  inversed?: boolean;
+  modelValue: boolean;
+  name?: string;
+}>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', v: boolean): void
-}>()
+  (e: 'update:modelValue', v: boolean): void;
+}>();
 </script>

@@ -1,14 +1,14 @@
 // integerInterface.ts
 
-import { markRaw, type ComponentOptions } from 'vue'
-import { IntegerInterfaceComponent } from 'baklavajs'
+import { markRaw, type ComponentOptions } from 'vue';
+import { IntegerInterfaceComponent } from 'baklavajs';
 
-import { BaseNumericInterface } from '../baseNumericInterface'
+import { BaseNumericInterface } from '../baseNumericInterface';
 
 export class IntegerInterface extends BaseNumericInterface {
-  component = markRaw(IntegerInterfaceComponent) as ComponentOptions
+  component = markRaw(IntegerInterfaceComponent) as ComponentOptions;
 
   public validate(v: number) {
-    return Number.isInteger(v) && super.validate(v)
+    return Number.isInteger(v) && super.validate(v);
   }
 }

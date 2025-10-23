@@ -1,48 +1,39 @@
 // code.ts
 
-import mustache from 'mustache'
-import toposort from 'toposort'
-import {
-  AbstractNode,
-  Commands,
-  Connection,
-  Graph,
-  NodeInterface,
-  sortTopologically,
-  type IEditorState,
-  type INodeState,
-} from 'baklavajs'
-import { reactive, type UnwrapRef } from 'vue'
-import { v4 as uuidv4 } from 'uuid'
+import mustache from 'mustache';
+import toposort from 'toposort';
+import { AbstractNode, Commands, Connection, Graph, NodeInterface } from 'baklavajs';
+import { reactive, type UnwrapRef } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 
-import { AbstractCodeNode } from './codeNode'
-import type { CodeNodeInterface } from './codeNodeInterfaces'
-import type { ICodeGraphViewModel } from './viewModel'
+import { AbstractCodeNode } from './codeNode';
+import type { CodeNodeInterface } from './codeNodeInterfaces';
+import type { ICodeGraphViewModel } from './viewModel';
 
-mustache.escape = (value: string) => value
+mustache.escape = (value: string) => value;
 
 interface IPosition {
-  x: number
-  y: number
+  x: number;
+  y: number;
 }
 
 export interface ICodeState {
-  autosort: boolean
-  lockCode: boolean
-  modules: Record<string, string>
-  script: string
-  template: string
-  token: symbol | null
+  autosort: boolean;
+  lockCode: boolean;
+  modules: Record<string, string>;
+  script: string;
+  template: string;
+  token: symbol | null;
 }
 
 export class Code {
-  private _id: string
-  private _viewModel: ICodeGraphViewModel
-  private _state: UnwrapRef<ICodeState>
+  private _id: string;
+  private _viewModel: ICodeGraphViewModel;
+  private _state: UnwrapRef<ICodeState>;
 
   constructor(viewModel: ICodeGraphViewModel) {
-    this._id = uuidv4()
-    this._viewModel = viewModel
+    this._id = uuidv4();
+    this._viewModel = viewModel;
 
     this._state = reactive({
       autosort: false,
@@ -51,94 +42,98 @@ export class Code {
       script: '',
       template: '',
       token: null,
-    })
+    });
   }
 
   get codeNodes(): AbstractCodeNode[] {
-    return getCodeNodes(this.graph) as AbstractCodeNode[]
+    return getCodeNodes(this.graph) as AbstractCodeNode[];
+  }
+
+  get codeNodeIds(): string[] {
+    return this.codeNodes.map((node: AbstractCodeNode) => node.id);
   }
 
   get connections(): Connection[] {
-    return this.graph.connections as Connection[]
+    return this.graph.connections as Connection[];
   }
 
   set connections(values: Connection[]) {
-    this.graph._connections = values as Connection[]
+    this.graph._connections = values as Connection[];
   }
 
   get graph(): Graph {
-    return this.viewModel.displayedGraph as Graph
+    return this.viewModel.displayedGraph as Graph;
   }
 
   get id(): string {
-    return this._id
+    return this._id;
   }
 
   get lockCode(): boolean {
-    return this.state.lockCode
+    return this.state.lockCode;
   }
 
   set lockCode(value: boolean) {
-    this.state.lockCode = value
-    this.viewModel.engine.runOnce(null)
+    this.state.lockCode = value;
+    this.viewModel.engine.runOnce(null);
   }
 
   get modules(): string[] {
-    let categories: string[] = []
+    const categories: string[] = [];
 
     this.codeNodes
       .filter((node: AbstractCodeNode) => node.state.modules?.length > 0)
-      .forEach((node: AbstractCodeNode) => {
-        categories = categories.concat(node.state.modules)
-      })
+      .forEach((node: AbstractCodeNode) => categories.push(...node.state.modules));
 
-    if (!categories) return []
+    if (!categories) return [];
 
-    categories.sort()
-    return Array.from(new Set(categories.map((category: string) => this.viewModel.state.modules[category]))) as string[]
+    categories.sort();
+    return Array.from(
+      new Set(categories.map((category: string) => this.viewModel.state.modules[category])),
+    ) as string[];
   }
 
   get nodeIds(): string[] {
-    return this.codeNodes.map((node: AbstractCodeNode) => node.id)
+    return this.nodes.map((node: AbstractCodeNode) => node.id);
   }
 
   get nodes(): AbstractCodeNode[] {
-    return this.graph.nodes as AbstractCodeNode[]
+    return this.graph.nodes as AbstractCodeNode[];
   }
 
   set nodes(values: AbstractCodeNode[]) {
-    this.graph._nodes = values as AbstractCodeNode[]
+    this.graph._nodes = values as AbstractCodeNode[];
   }
 
   get script(): string {
-    return this.state.script
+    return this.state.script;
   }
 
   set script(value: string) {
-    this.state.script = value
-    this.viewModel.engine.runOnce(null)
+    this.state.script = value;
+    if (this.viewModel.engine) this.viewModel.engine.runOnce(undefined);
   }
 
   get scriptedCodeNodes(): AbstractCodeNode[] {
     return getCodeNodes(this.graph).filter(
       (codeNode: AbstractCodeNode) => !codeNode.state?.integrated,
-    ) as AbstractCodeNode[]
+    ) as AbstractCodeNode[];
   }
 
   get shortId(): string {
-    return this.id.slice(0, 6)
+    return this.id.slice(0, 6);
   }
 
   get state(): UnwrapRef<ICodeState> {
-    return this._state
+    return this._state;
   }
 
   get viewModel(): ICodeGraphViewModel {
-    return this._viewModel
+    return this._viewModel;
   }
 
   get visibleNodes(): AbstractCodeNode[] {
-    return this.codeNodes.filter((node: AbstractCodeNode) => !node.state?.hidden) as AbstractCodeNode[]
+    return this.codeNodes.filter((node: AbstractCodeNode) => !node.state?.hidden) as AbstractCodeNode[];
   }
 
   /**
@@ -147,9 +142,9 @@ export class Code {
    * @param props optional
    */
   addNode(node: AbstractCodeNode, props?: unknown): AbstractCodeNode | undefined {
-    if (!node.code) node.code = this
-    if (props) node.state.props = props
-    return this.graph.addNode(node as AbstractNode) as AbstractCodeNode
+    if (!node.code) node.code = this;
+    if (props) node.state.props = props;
+    return this.graph.addNode(node as AbstractNode) as AbstractCodeNode;
   }
 
   /**
@@ -164,10 +159,10 @@ export class Code {
     position: IPosition = { x: 0, y: 0 },
     props?: unknown,
   ): AbstractCodeNode => {
-    this.addNode(node, props)
-    if (node.position) node.position = position
-    return node
-  }
+    this.addNode(node, props);
+    if (node.position) node.position = position;
+    return node;
+  };
 
   /**
    * Add connection of code nodes
@@ -175,41 +170,60 @@ export class Code {
    * @param to code node interface
    */
   addConnection(from: CodeNodeInterface | NodeInterface, to: CodeNodeInterface | NodeInterface): void {
-    if (from.name !== '_node') from.hidden = false
-    if (to.name !== '_node') to.hidden = false
-    this.graph.addConnection(from, to)
+    if (from.name !== '_code') from.hidden = false;
+    if (to.name !== '_code') to.hidden = false;
+    this.graph.addConnection(from, to);
   }
 
   /**
    * Clear code graph.
    */
   clear(): void {
-    this.state.modules = {}
-    this.nodes = []
-    this.connections = []
-    this.state.script = ''
+    this.viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND);
+    this.viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND);
 
-    this.viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND)
-    this.viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND)
-    if (this.viewModel.engine) this.viewModel.engine.runOnce(undefined)
+    this.state.modules = {};
+    this.nodes = [];
+    this.connections = [];
+    this.script = '';
   }
 
+  /**
+   * Find node by ID.
+   * @param id node ID
+   * @returns node instance
+   */
   findNodeById(id: string): AbstractCodeNode | undefined {
-    return this.graph.findNodeById(id) as AbstractCodeNode | undefined
+    return this.graph.findNodeById(id) as AbstractCodeNode | undefined;
   }
 
+  /**
+   * Find node by type.
+   * @param nodeType node type
+   * @returns node instance
+   */
   findNodeByType(nodeType: string): AbstractCodeNode | undefined {
-    return this.codeNodes.find((codeNode: AbstractCodeNode) => codeNode.type === nodeType)
+    return this.codeNodes.find((codeNode: AbstractCodeNode) => codeNode.type === nodeType);
   }
 
+  /**
+   * Get nodes of the same type.
+   * @param type node type
+   * @returns a list of node instances
+   */
   getNodesBySameType(type: string): AbstractCodeNode[] {
-    return this.codeNodes.filter((codeNode: AbstractCodeNode) => codeNode.type === type) as AbstractCodeNode[]
+    return this.codeNodes.filter((codeNode: AbstractCodeNode) => codeNode.type === type) as AbstractCodeNode[];
   }
 
+  /**
+   * Get nodes of the same variable name.
+   * @param variableName variable name
+   * @returns a list of node instances
+   */
   getNodesBySameVariableNames(variableName: string): AbstractCodeNode[] {
     return this.codeNodes.filter(
       (codeNode: AbstractCodeNode) => codeNode.state.variableName === variableName,
-    ) as AbstractCodeNode[]
+    ) as AbstractCodeNode[];
   }
 
   /**
@@ -221,16 +235,17 @@ export class Code {
   hasConnection(from: NodeInterface, to: NodeInterface): boolean {
     return this.connections.some(
       (connection: Connection) => connection.from.id === from.id && connection.to.id === to.id,
-    )
+    );
   }
 
   /**
    * Load template from the file.
+   * @param resolve: default string in promise resolve (from import)
    */
-  loadTemplate(resolve: Promise<{ default: string }>): void {
+  async loadTemplate(resolve: Promise<{ default: string }>) {
     resolve.then((template: { default: string }) => {
-      this._state.template = template.default ?? ''
-    })
+      this._state.template = template.default ?? '';
+    });
   }
 
   /**
@@ -238,7 +253,7 @@ export class Code {
    * @param connection connection between code nodes
    */
   removeConnection(connection: Connection): void {
-    this.graph.removeConnection(connection)
+    this.graph.removeConnection(connection);
   }
 
   /**
@@ -246,101 +261,69 @@ export class Code {
    * @param codeNode code node
    */
   removeNode(codeNode: AbstractCodeNode): void {
-    this.graph.removeNode(codeNode as AbstractNode)
+    this.graph.removeNode(codeNode as AbstractNode);
   }
 
   /**
-   * Render node codes.
+   * Render code script of code nodes.
    */
   renderNodeCodes(): void {
-    if (this.state.lockCode) return
-    if (this.codeNodes.length === 0) return
-    this.codeNodes.forEach((node: AbstractCodeNode) => node.renderCode())
+    if (this.state.lockCode || this.codeNodes.length === 0) return;
+    this.codeNodes.forEach((node: AbstractCodeNode) => node.renderCode());
   }
 
   /**
-   * Render code.
+   * Render code script.
    */
   renderCode(): void {
-    if (this.state.lockCode) return
-    this.state.script = mustache.render(this.state.template || '', this)
+    if (this.state.lockCode) return;
+    const nodes = this.scriptedCodeNodes;
+    const modules = this.modules;
+    this.state.script = mustache.render(this.state.template || '', { nodes, modules });
   }
 
   /**
    * Reset scripts of intput interfaces.
    */
   resetInputInterfaceScript(): void {
-    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.resetInputInterfaceScript())
-  }
-
-  /**
-   * Save code graph.
-   * @returns graph state
-   */
-  save(): IEditorState {
-    if (this.state.autosort) this.sortNodes()
-
-    const editorState = this.viewModel.editor.save()
-    editorState.graph.id = this.id
-
-    this.saveNodeStates(editorState.graph.nodes)
-
-    return JSON.parse(JSON.stringify(editorState))
-  }
-
-  /**
-   * Save node states.
-   * @param nodeStates a list of node state.
-   */
-  saveNodeStates(nodeStates: INodeState<unknown, unknown>[]): void {
-    nodeStates.forEach((nodeState: INodeState<unknown, unknown>, nodeIdx) => {
-      const node = this.nodes[nodeIdx] as AbstractCodeNode
-      // nodeState.integrated = node.state.integrated;
-      // nodeState.props = node.state.props;
-
-      Object.entries(nodeState.inputs).forEach(([inputKey, inputVal]) => {
-        if (nodeState.inputs && node.inputs[inputKey]) inputVal.hidden = node.inputs[inputKey].hidden
-      })
-
-      Object.entries(nodeState.outputs).forEach(([outputKey, inputVal]) => {
-        if (nodeState.outputs && node.outputs[outputKey]) inputVal.hidden = node.outputs[outputKey].hidden
-      })
-    })
+    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.resetInputInterfaceScript());
   }
 
   /**
    * Sort code nodes.
    */
   sortNodes(): void {
-    if (this.nodes.length === 0 || this.connections.length === 0) return
+    if (this.nodes.length === 0 || this.connections.length === 0) return;
 
     try {
-      // Get a list of edges
-      const edges: [string, string | undefined][] = this.connections.map((connection: Connection) => [
-        connection.to.nodeId,
-        connection.from.nodeId,
-      ])
-
       // Get a list of node
-      let nodeIds = [...this.nodeIds]
+      let nodeIds = this.nodeIds;
 
-      nodeIds.reverse()
+      // Get a list of edges
+      const edges: [string, string | undefined][] = this.connections
+        .filter(
+          (connection: Connection) =>
+            nodeIds.includes(connection.to.nodeId) && nodeIds.includes(connection.from.nodeId),
+        )
+        .map((connection: Connection) => [connection.to.nodeId, connection.from.nodeId]);
+
+      nodeIds.reverse();
 
       // Get sorted node ids
-      nodeIds = toposort.array(nodeIds, edges)
+      nodeIds = toposort.array(nodeIds, edges);
 
-      nodeIds.reverse()
+      nodeIds.reverse();
 
-      const unconnected = this.graph.nodes.map((node) => node.id).filter((nodeId: string) => !nodeIds.includes(nodeId))
+      const unconnected = this.graph.nodes.map((node) => node.id).filter((nodeId: string) => !nodeIds.includes(nodeId));
 
-      nodeIds = nodeIds.concat(unconnected)
+      nodeIds = [...nodeIds, ...unconnected];
 
       // Get sorted nodes
-      const nodes = nodeIds.map((nodeId: string) => this.findNodeById(nodeId))
+      const nodes = nodeIds.map((nodeId: string) => this.findNodeById(nodeId));
 
-      if (nodes) this.nodes = nodes as AbstractCodeNode[]
+      if (nodes) this.nodes = nodes as AbstractCodeNode[];
     } catch {
-      console.warn('Failed to sort nodes.')
+      console.warn('Failed to sort nodes.');
     }
   }
 
@@ -348,14 +331,14 @@ export class Code {
    * Update code nodes.
    */
   updateCodeNodes(): void {
-    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.update())
+    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.update());
   }
 
   /**
    * Update code templates.
    */
   updateCodeTemplates(): void {
-    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateCodeTemplate())
+    this.codeNodes.forEach((codeNode: AbstractCodeNode) => codeNode.updateCodeTemplate());
   }
 }
 
@@ -365,18 +348,21 @@ export class Code {
  * @returns list of code nodes
  */
 export const getCodeNodes = (graph: Graph): AbstractCodeNode[] => {
-  let nodes: AbstractCodeNode[] = []
+  const nodes: AbstractCodeNode[] = [];
+  if (graph.nodes.length === 0) return nodes;
 
-  graph.nodes.forEach((node: AbstractCodeNode) => {
-    if (node.subgraph) {
-      nodes = nodes.concat(getCodeNodes(node.subgraph))
-    } else if (node.isCodeNode) {
-      nodes.push(node as AbstractCodeNode)
+  graph.nodes.forEach((node: AbstractNode | AbstractCodeNode) => {
+    if (!node) return;
+
+    if (node.hasOwnProperty('subgraph')) {
+      nodes.push(...getCodeNodes(node.subgraph));
+    } else if (node.hasOwnProperty('isCodeNode')) {
+      nodes.push(node as AbstractCodeNode);
     }
-  })
+  });
 
-  return nodes
-}
+  return nodes;
+};
 
 /**
  * Get position at specific column.
@@ -385,14 +371,14 @@ export const getCodeNodes = (graph: Graph): AbstractCodeNode[] => {
  * @returns position
  */
 export const getPositionAtColumn = (col: number = 0, offset: number = 100): IPosition => {
-  const width = 350
-  const padding = 70
+  const width = 350;
+  const padding = 70;
 
   return {
     x: col * (width + padding),
     y: offset,
-  }
-}
+  };
+};
 
 /**
  * Get position before target node.
@@ -400,29 +386,10 @@ export const getPositionAtColumn = (col: number = 0, offset: number = 100): IPos
  * @returns position
  */
 export const getPositionBeforeNode = (node: AbstractCodeNode): IPosition => {
-  const position = { ...node.position }
+  const position = { ...node.position };
 
-  position.x -= 440
-  position.y += 50
+  position.x -= 440;
+  position.y += 50;
 
-  return position
-}
-
-/**
- * Transfer code script from output interface to input interface.
- * @param graph
- */
-export const transferCodeScript = (graph: Graph): void => {
-  const { calculationOrder, connectionsFromNode } = sortTopologically(graph)
-
-  calculationOrder.forEach((node: AbstractNode) => {
-    if (!node.isCodeNode) return
-    const codeNode = node as AbstractCodeNode
-
-    if (connectionsFromNode.has(codeNode)) {
-      connectionsFromNode.get(codeNode)!.forEach((c) => {
-        if (c.to.state && c.from.script) c.to.state.script = c.from.script
-      })
-    }
-  })
-}
+  return position;
+};

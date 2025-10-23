@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
-import { GRAPH_NODE_TYPE_PREFIX, useGraph, useViewModel } from 'baklavajs'
+import { computed, defineComponent, ref } from 'vue';
+import { GRAPH_NODE_TYPE_PREFIX, useGraph, useViewModel } from 'baklavajs';
 
 interface IMenuItem {
-  label: string
-  value: string
+  label: string;
+  value: string;
 }
 
 export default defineComponent({
@@ -29,39 +29,39 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { viewModel } = useViewModel()
-    const { switchGraph } = useGraph()
+    const { viewModel } = useViewModel();
+    const { switchGraph } = useGraph();
 
-    const showContextMenu = ref(false)
-    const hasContextMenu = computed(() => props.type.startsWith(GRAPH_NODE_TYPE_PREFIX))
+    const showContextMenu = ref(false);
+    const hasContextMenu = computed(() => props.type.startsWith(GRAPH_NODE_TYPE_PREFIX));
 
     const contextMenuItems: IMenuItem[] = [
       { label: 'Edit Subgraph', value: 'editSubgraph' },
       { label: 'Delete Subgraph', value: 'deleteSubgraph' },
-    ]
+    ];
 
     const openContextMenu = () => {
-      showContextMenu.value = true
-    }
+      showContextMenu.value = true;
+    };
 
     const onContextMenuClick = (action: string) => {
-      const graphTemplateId = props.type.substring(GRAPH_NODE_TYPE_PREFIX.length)
-      const graphTemplate = viewModel.value.editor.graphTemplates.find((gt) => gt.id === graphTemplateId)
+      const graphTemplateId = props.type.substring(GRAPH_NODE_TYPE_PREFIX.length);
+      const graphTemplate = viewModel.value.editor.graphTemplates.find((gt) => gt.id === graphTemplateId);
       if (!graphTemplate) {
-        return
+        return;
       }
 
       switch (action) {
         case 'editSubgraph':
-          switchGraph(graphTemplate)
-          break
+          switchGraph(graphTemplate);
+          break;
         case 'deleteSubgraph':
-          viewModel.value.editor.removeGraphTemplate(graphTemplate)
-          break
+          viewModel.value.editor.removeGraphTemplate(graphTemplate);
+          break;
       }
-    }
+    };
 
-    return { showContextMenu, hasContextMenu, contextMenuItems, openContextMenu, onContextMenuClick }
+    return { showContextMenu, hasContextMenu, contextMenuItems, openContextMenu, onContextMenuClick };
   },
-})
+});
 </script>

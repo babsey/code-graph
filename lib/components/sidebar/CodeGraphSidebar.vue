@@ -62,77 +62,77 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef } from 'vue'
-import { useGraph, useViewModel } from 'baklavajs'
+import { computed, ref, toRef } from 'vue';
+import { useGraph, useViewModel } from 'baklavajs';
 
-import Checkbox from './Checkbox.vue'
-import type { AbstractCodeNode } from '@/codeNode/codeNode'
+import Checkbox from './Checkbox.vue';
+import type { AbstractCodeNode } from '@/codeNode/codeNode';
 
-const { viewModel } = useViewModel()
-const { graph } = useGraph()
+const { viewModel } = useViewModel();
+const { graph } = useGraph();
 
-const el = ref<HTMLElement | null>(null)
+const el = ref<HTMLElement | null>(null);
 
-const width = toRef(viewModel.value.settings.sidebar, 'width')
-const resizable = computed(() => viewModel.value.settings.sidebar.resizable)
-let resizeStartWidth = 0
-let resizeStartMouseX = 0
+const width = toRef(viewModel.value.settings.sidebar, 'width');
+const resizable = computed(() => viewModel.value.settings.sidebar.resizable);
+let resizeStartWidth = 0;
+let resizeStartMouseX = 0;
 
 const node = computed(() => {
-  const id = graph.value.sidebar.nodeId
-  return graph.value.nodes.find((x) => x.id === id)
-})
+  const id = graph.value.sidebar.nodeId;
+  return graph.value.nodes.find((x) => x.id === id);
+});
 
-const codeNode = computed(() => node.value as AbstractCodeNode)
+const codeNode = computed(() => node.value as AbstractCodeNode);
 
 const styles = computed(() => ({
   width: `${width.value}px`,
-}))
+}));
 
 const displayedInputInterfaces = computed(() => {
-  if (!codeNode.value) return []
+  if (!codeNode.value) return [];
 
-  return Object.values(codeNode.value.inputs).filter((intf) => intf.displayInSidebar && intf.component)
-})
+  return Object.values(codeNode.value.inputs).filter((intf) => intf.displayInSidebar && intf.component);
+});
 
 const displayedOutputInterfaces = computed(() => {
-  if (!codeNode.value) return []
+  if (!codeNode.value) return [];
 
-  return Object.values(codeNode.value.outputs).filter((intf) => intf.displayInSidebar && intf.component)
-})
+  return Object.values(codeNode.value.outputs).filter((intf) => intf.displayInSidebar && intf.component);
+});
 
 const close = () => {
-  graph.value.sidebar.visible = false
-}
+  graph.value.sidebar.visible = false;
+};
 
 const doneRenaming = () => {
-  node.value?.events.update.emit(null)
-}
+  node.value?.events.update.emit(null);
+};
 
 const startResize = (event: MouseEvent) => {
-  resizeStartWidth = width.value
-  resizeStartMouseX = event.clientX
-  window.addEventListener('mousemove', onMouseMove)
+  resizeStartWidth = width.value;
+  resizeStartMouseX = event.clientX;
+  window.addEventListener('mousemove', onMouseMove);
   window.addEventListener(
     'mouseup',
     () => {
-      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mousemove', onMouseMove);
     },
     { once: true },
-  )
-}
+  );
+};
 
 const onMouseMove = (event: MouseEvent) => {
-  const maxwidth = el.value?.parentElement?.getBoundingClientRect().width ?? 500
-  const deltaX = event.clientX - resizeStartMouseX
-  let newWidth = resizeStartWidth - deltaX
+  const maxwidth = el.value?.parentElement?.getBoundingClientRect().width ?? 500;
+  const deltaX = event.clientX - resizeStartMouseX;
+  let newWidth = resizeStartWidth - deltaX;
   if (newWidth < 300) {
-    newWidth = 300
+    newWidth = 300;
   } else if (newWidth > 0.9 * maxwidth) {
-    newWidth = 0.9 * maxwidth
+    newWidth = 0.9 * maxwidth;
   }
-  width.value = newWidth
-}
+  width.value = newWidth;
+};
 </script>
 
 <style lang="scss">

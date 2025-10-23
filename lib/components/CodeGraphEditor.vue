@@ -19,28 +19,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, toRef } from 'vue'
-import { BaklavaEditor } from 'baklavajs'
+import { onMounted, onUnmounted, toRef } from 'vue';
+import { BaklavaEditor } from 'baklavajs';
 
-import type { AbstractCodeNode } from '@/codeNode'
-import type { ICodeGraphViewModel } from '@/viewModel'
+import type { AbstractCodeNode } from '@/codeNode';
+import type { ICodeGraphViewModel } from '@/viewModel';
 
-import CodeGraphNode from './node/CodeGraphNode.vue'
-import CodeGraphSidebar from './sidebar/CodeGraphSidebar.vue'
-import CodeNodePalette from './nodePalette/CodeNodePalette.vue'
+import CodeGraphNode from './node/CodeGraphNode.vue';
+import CodeGraphSidebar from './sidebar/CodeGraphSidebar.vue';
+import CodeNodePalette from './nodePalette/CodeNodePalette.vue';
 
-const props = defineProps<{ viewModel: ICodeGraphViewModel }>()
-const viewModel = toRef(props, 'viewModel')
+const props = defineProps<{ viewModel: ICodeGraphViewModel }>();
+const viewModel = toRef(props, 'viewModel');
 
-const onUpdate = (node: AbstractCodeNode) => node.events.update.emit(null)
+const onUpdate = (node: AbstractCodeNode) => node.events.update.emit(null);
 
 onMounted(() => {
-  viewModel.value.subscribe()
-  viewModel.value.engine.start()
-})
+  viewModel.value.subscribe();
+  viewModel.value.engine.start();
+});
 
 onUnmounted(() => {
-  viewModel.value.unsubscribe()
-  viewModel.value.engine.stop()
-})
+  viewModel.value.unsubscribe();
+  viewModel.value.engine.stop();
+});
 </script>
