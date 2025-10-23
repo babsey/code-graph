@@ -1,4 +1,4 @@
-// text.ts
+// myFunction.ts
 
 import {
   CheckboxInterface,
@@ -12,30 +12,28 @@ import {
   TextInputInterface,
   TextareaInputInterface,
   defineCodeNode,
-  setOptional,
-  formatInputs,
-} from '@babsey/code-graph'
+} from '@babsey/code-graph';
 
 export default defineCodeNode({
   type: 'myFunction',
   title: 'my function',
+  variableName: 'a',
   inputs: {
-    checkbox: () => new CheckboxInterface('checkbox', true).use(setOptional, true),
-    integer: () => new IntegerInterface('integer', 1).use(setOptional, true),
-    list: () => new ListInputInterface('list', ''),
-    number: () => new NumberInterface('number', 1).use(setOptional, true),
-    select: () => new SelectInterface('select', 'a', ['a', 'b', 'c']).use(setOptional, true),
-    slider: () => new SliderInterface('slider', 0.5, 0, 1).use(setOptional, false),
-    text_input: () => new TextInputInterface('text input', 'a').use(setOptional, true),
-    textarea_input: () => new TextareaInputInterface('textarea input', 'a').use(setOptional, true),
-    code_node_input: () => new CodeNodeInputInterface('input').use(setOptional, true),
+    checkbox: () => new CheckboxInterface('checkbox', true).setOptional(true),
+    integer: () => new IntegerInterface('integer', 1).setOptional(true),
+    list: () => new ListInputInterface('list', '').setOptional(true),
+    number: () => new NumberInterface('number', 1).setOptional(true),
+    select: () => new SelectInterface('select', 'a', ['a', 'b', 'c']).setOptional(true),
+    slider: () => new SliderInterface('slider', 0.5, 0, 1).setOptional(true),
+    text_input: () => new TextInputInterface('text input', 'a').setOptional(true),
+    textarea_input: () => new TextareaInputInterface('textarea input', 'a').setOptional(true),
+    code_node_input: () => new CodeNodeInputInterface('input').setOptional(true),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface(),
-    custom: () => new CodeNodeOutputInterface('.custom', '.custom').use(setOptional, true),
+    custom: () => new CodeNodeOutputInterface('.custom', '.custom').setOptional(true),
   },
-  codeTemplate() {
-    return `${this.name}(\n\t${formatInputs(this.codeNodeInputs).join(',\n\t')}\n)`
-  },
-  variableName: 'a',
-})
+  // codeTemplate() {
+  //   return `myFunction(${formatInputs(this.codeNodeInputs).join(', ')})`
+  // },
+});

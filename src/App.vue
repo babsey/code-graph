@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; overflow: hidden">
+  <div style="display: flex; overflow: hidden; width: 100vw; height: 100vh">
     <div style="width: 70vw; height: 100vh">
       <CodeGraphEditor :view-model="codeGraph">
         <template #sidebarCodeEditor="{ node }">
@@ -19,17 +19,17 @@
 </template>
 
 <script setup lang="ts">
-import { CodeGraphEditor, useCodeGraph } from '@babsey/code-graph'
+import { CodeGraphEditor, useCodeGraph } from '@babsey/code-graph';
 
-import { MyCode } from './code'
-import { registerNodeTypes } from './codeNodeTypes'
-import CodeEditor from './components/CodeEditor.vue'
+import { MyCode } from './code';
+import { registerNodeTypes } from './codeNodeTypes';
+import CodeEditor from './components/CodeEditor.vue';
 
-const codeGraph = useCodeGraph({ code: MyCode })
+const codeGraph = useCodeGraph({ code: MyCode });
 
-registerNodeTypes(codeGraph)
+registerNodeTypes(codeGraph);
 
-codeGraph.init()
+codeGraph.init();
 </script>
 
 <style lang="scss">

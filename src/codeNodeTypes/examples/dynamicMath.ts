@@ -1,6 +1,6 @@
 // dynamicMath.ts
 
-import { setType } from 'baklavajs'
+import { setType } from 'baklavajs';
 
 import {
   CodeNodeOutputInterface,
@@ -8,7 +8,7 @@ import {
   SelectInterface,
   defineDynamicCodeNode,
   numberType,
-} from '@babsey/code-graph'
+} from '@babsey/code-graph';
 
 export default defineDynamicCodeNode({
   type: 'dynamicMath',
@@ -25,24 +25,24 @@ export default defineDynamicCodeNode({
         inputs: {
           number1: () => new NumberInterface('number', 0),
         },
-      }
+      };
     } else {
       return {
         inputs: {
           number1: () => new NumberInterface('number', 0),
           number2: () => new NumberInterface('number', 0),
         },
-      }
+      };
     }
   },
   codeTemplate() {
     switch (this.inputs.operation.value) {
       case 'Addition':
-        return '{{ inputs.number1 }} + {{ inputs.number2 }}'
+        return '{{ inputs.number1 }} + {{ inputs.number2 }}';
       case 'Subtraction':
-        return '{{ inputs.number1 }} - {{ inputs.number2 }}'
+        return '{{ inputs.number1 }} - {{ inputs.number2 }}';
       case 'Sine':
-        return 'sin({{ inputs.number1 }})'
+        return 'sin({{ inputs.number1 }})';
     }
   },
-})
+});
