@@ -111,7 +111,7 @@ export class Code {
 
   set script(value: string) {
     this.state.script = value;
-    if (this.viewModel.engine) this.viewModel.engine.runOnce(undefined);
+    // if (this.viewModel.engine) this.viewModel.engine.runOnce(null);
   }
 
   get scriptedCodeNodes(): AbstractCodeNode[] {
@@ -185,7 +185,7 @@ export class Code {
     this.state.modules = {};
     this.nodes = [];
     this.connections = [];
-    this.script = '';
+    this.state.script = '';
   }
 
   /**
