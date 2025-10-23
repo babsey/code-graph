@@ -11,20 +11,20 @@
 </template>
 
 <script setup lang="ts">
-import { LockCode } from '@babsey/code-graph'
+import { LockCode } from '@babsey/code-graph';
 
-import CopyToClipboard from './CopyToClipboard.vue'
+import CopyToClipboard from './CopyToClipboard.vue';
 
-const model = defineModel({ required: true })
-defineProps({ locked: Boolean })
+const model = defineModel({ required: true });
+defineProps({ locked: Boolean });
 
 const emit = defineEmits<{
-  (e: 'update:locked', v: boolean): void
-}>()
+  (e: 'update:locked', v: boolean): void;
+}>();
 
 const lockCode = (v: boolean) => {
-  emit('update:locked', v)
-}
+  emit('update:locked', v);
+};
 </script>
 
 <style lang="scss">

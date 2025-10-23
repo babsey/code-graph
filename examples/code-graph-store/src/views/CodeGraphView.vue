@@ -28,17 +28,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { CodeGraphEditor } from '@babsey/code-graph'
-import { Splitpanes, Pane } from 'splitpanes'
+import { computed, ref } from 'vue';
+import { CodeGraphEditor } from '@babsey/code-graph';
+import { Splitpanes, Pane } from 'splitpanes';
 
-import CodeEditor from '../components/CodeEditor.vue'
-import NavBar from '@/components/NavBar.vue'
+import CodeEditor from '../components/CodeEditor.vue';
+import NavBar from '@/components/NavBar.vue';
 
-import { useCodeGraphStore } from '../stores/codeGraphStore'
-const codeGraphStore = useCodeGraphStore()
-const codeGraph = computed(() => codeGraphStore.state.codeGraph)
+import { useCodeGraphStore } from '../stores/codeGraphStore';
+const codeGraphStore = useCodeGraphStore();
+const codeGraph = computed(() => codeGraphStore.state.codeGraph);
 
-const size = ref(70)
-const resize = () => (size.value = size.value == 100 ? 70 : 100)
+const size = ref(70);
+const resize = () => (size.value = size.value == 100 ? 70 : 100);
 </script>
