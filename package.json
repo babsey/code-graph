@@ -1,6 +1,6 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
@@ -34,7 +34,7 @@
   "dependencies": {
     "@codemirror/lang-python": "~6.2",
     "@codemirror/theme-one-dark": "~6.1",
-    "@vueuse/core": "~13.9",
+    "@vueuse/core": "~14.0",
     "baklavajs": "~2.8",
     "codemirror": "~6.0",
     "mustache": "~4.2",
