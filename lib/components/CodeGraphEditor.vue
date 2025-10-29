@@ -1,6 +1,6 @@
 <template>
-  <BaklavaEditor :viewModel="viewModelRef" :key="viewModelRef.displayedGraph.id">
-    <!-- <template #palette>
+  <BaklavaEditor :viewModel="viewModelRef">
+    <template #palette>
       <CodeNodePalette />
     </template>
 
@@ -14,14 +14,13 @@
           <slot name="sidebarCodeEditor" :node />
         </template>
       </CodeGraphSidebar>
-    </template> -->
+    </template>
   </BaklavaEditor>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, toRef } from "vue";
-// import { BaklavaEditor } from "baklavajs";
-import { BaklavaEditor } from "@baklavajs/renderer-vue";
+import { BaklavaEditor } from "baklavajs";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import type { ICodeGraphViewModel } from "@/viewModel";

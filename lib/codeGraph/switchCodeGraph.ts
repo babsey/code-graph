@@ -12,7 +12,6 @@ const isTemplate = (g: CodeGraph | CodeGraphTemplate): g is CodeGraphTemplate =>
 
 export function useSwitchCodeGraph(editor: Ref<CodeEditor>, displayedGraph: Ref<CodeGraph>) {
   const switchGraph: SwitchCodeGraph = (newGraph: CodeGraph | CodeGraphTemplate) => {
-    console.log("switch graph");
     let newGraphInstance: CodeGraph;
     if (!isTemplate(newGraph)) {
       if (newGraph !== editor.value.graph) {

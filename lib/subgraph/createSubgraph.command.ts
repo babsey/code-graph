@@ -9,10 +9,11 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { reactive, type Ref } from "vue";
 
+import { useViewModel } from "baklavajs";
+
 import {
   type ICommand,
   type ICommandHandler,
-  useViewModel,
   type IViewNodeState,
   type SaveSubgraphCommand,
   Commands,
