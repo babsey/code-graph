@@ -254,9 +254,9 @@
     "@babel/helper-validator-identifier" "^7.27.1"
 
 "@babsey/code-graph@~0.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@babsey/code-graph/-/code-graph-0.2.2.tgz#489bb30749f23116760383fb71d56c6e44dea2bc"
-  integrity sha512-5aRT9ZcL+O9BODNnN2sEqODo1w5y+iaN1ym0kiAkcrDWM+dJrPnSj22snugatVbnHdr1GaH08FXlLwa5YzVNeg==
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@babsey/code-graph/-/code-graph-0.2.3.tgz#999991dda07f466e4290314c0275951f045b88f7"
+  integrity sha512-ua+RurvploHK1Wze1JfjK59SA/s0Dwg6Ifv5Qk/Dwi3U2rbRZt2Whn9z9nDfAsT8ajAkB24r/8FhOmLPKz9bmQ==
   dependencies:
     "@codemirror/lang-python" "~6.2"
     "@codemirror/theme-one-dark" "~6.1"
