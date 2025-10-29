@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 // import vueDevTools from 'vite-plugin-vue-devtools'
-import dts from 'unplugin-dts/vite'
+// import dts from 'unplugin-dts/vite'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -37,7 +37,7 @@ export default defineConfig({
   plugins: [
     vue(),
     // vueDevTools(),
-    dts({ exclude: ['./lib/main.ts'], processor: 'vue', tsconfigPath: './tsconfig.app.json' }),
+    // dts({ exclude: ['./lib/main.ts'], processor: 'vue', tsconfigPath: './tsconfig.app.json' }),
   ],
   resolve: {
     alias: {
