@@ -62,18 +62,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef } from 'vue';
-import { useGraph, useViewModel } from 'baklavajs';
+import { computed, ref, toRef } from "vue";
+import { useGraph, useViewModel } from "baklavajs";
 
-import Checkbox from './Checkbox.vue';
-import type { AbstractCodeNode } from '@/codeNode/codeNode';
+import Checkbox from "./Checkbox.vue";
+import type { AbstractCodeNode } from "@/codeNode/codeNode";
 
 const { viewModel } = useViewModel();
 const { graph } = useGraph();
 
 const el = ref<HTMLElement | null>(null);
 
-const width = toRef(viewModel.value.settings.sidebar, 'width');
+const width = toRef(viewModel.value.settings.sidebar, "width");
 const resizable = computed(() => viewModel.value.settings.sidebar.resizable);
 let resizeStartWidth = 0;
 let resizeStartMouseX = 0;
@@ -112,11 +112,11 @@ const doneRenaming = () => {
 const startResize = (event: MouseEvent) => {
   resizeStartWidth = width.value;
   resizeStartMouseX = event.clientX;
-  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener("mousemove", onMouseMove);
   window.addEventListener(
-    'mouseup',
+    "mouseup",
     () => {
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener("mousemove", onMouseMove);
     },
     { once: true },
   );

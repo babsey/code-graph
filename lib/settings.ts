@@ -1,62 +1,125 @@
 // settings.ts
 
-import { computed } from 'vue';
+import { computed } from "vue";
+import { DEFAULT_TOOLBAR_COMMANDS, type ICommandHandler, type IViewSettings } from "baklavajs";
 
-import { type ICodeGraphViewModel } from './viewModel';
-import { LayoutSidebarLeftCollapse, LayoutSidebarLeftExpand, Schema, SchemaOff, TrashOff } from './icons';
-import { DEFAULT_TOOLBAR_COMMANDS } from 'baklavajs';
+import { LayoutSidebarLeftCollapse, LayoutSidebarLeftExpand, Schema, SchemaOff, TrashOff } from "./icons";
+import type { CodeGraph } from "./codeGraph/codeGraph";
+
+export const DEFAULT_SETTINGS: () => IViewSettings = () => ({
+  useStraightConnections: false,
+  enableMinimap: false,
+  toolbar: {
+    enabled: true,
+    commands: [],
+    subgraphCommands: [],
+  },
+  palette: {
+    enabled: true,
+  },
+  background: {
+    gridSize: 100,
+    gridDivision: 5,
+    subGridVisibleThreshold: 0.6,
+  },
+  sidebar: {
+    enabled: true,
+    width: 300,
+    resizable: true,
+  },
+  displayValueOnHover: false,
+  nodes: {
+    defaultWidth: 400,
+    maxWidth: 320,
+    minWidth: 150,
+    resizable: false,
+    reverseY: false,
+  },
+  contextMenu: {
+    enabled: true,
+    additionalItems: [],
+  },
+  panZoom: {
+    minScale: 0.1,
+    maxScale: 2,
+  },
+  zoomToFit: {
+    paddingLeft: 300,
+    paddingRight: 50,
+    paddingTop: 110,
+    paddingBottom: 50,
+  },
+});
+
+const CLEAR_ALL_COMMAND = "CLEAR_ALL";
+const RUN_ENGINE_COMMAND = "RUN_ENGINE";
+const TOGGLE_MINIMAP_COMMAND = "TOGGLE_MINIMAP";
+const TOGGLE_PALETTE_COMMAND = "TOGGLE_PALETTE";
 
 /**
- * Add commands to toolbar.
+ * Reister custom commands.
  * @param viewModel view model instance
  */
-export const addToolbarCommands = (viewModel: ICodeGraphViewModel) => {
+export const registerCustomCommands = (
+  displayedGraph: CodeGraph,
+  handler: ICommandHandler,
+  settings: IViewSettings,
+) => {
   // Toggle palette in the graph
-  const TOGGLE_PALETTE_COMMAND = 'TOGGLE_PALETTE';
-  viewModel.commandHandler.registerCommand(TOGGLE_PALETTE_COMMAND, {
-    execute: () => (viewModel.settings.palette.enabled = !viewModel.settings.palette.enabled),
+  handler.registerCommand(TOGGLE_PALETTE_COMMAND, {
+    execute: () => (settings.palette.enabled = !settings.palette.enabled),
     canExecute: () => true,
   });
 
-  const toggle_palette = {
-    command: TOGGLE_PALETTE_COMMAND,
-    title: 'Toggle palette', // Tooltip text
-    icon: computed(() => (viewModel.settings.palette.enabled ? LayoutSidebarLeftCollapse : LayoutSidebarLeftExpand)),
-  };
-
   // Clear all nodes from the graph
-  const CLEAR_ALL_COMMAND = 'CLEAR_ALL';
-  viewModel.commandHandler.registerCommand(CLEAR_ALL_COMMAND, {
-    execute: () => viewModel.code.clear(),
-    canExecute: () => viewModel.displayedGraph.nodes.length > 0,
+  handler.registerCommand(CLEAR_ALL_COMMAND, {
+    execute: () => displayedGraph.clear(),
+    canExecute: () => displayedGraph.nodes.length > 0,
   });
-
-  const clear_all = {
-    command: CLEAR_ALL_COMMAND,
-    title: 'Clear all', // Tooltip text
-    icon: computed(() => TrashOff),
-  };
 
   // Toggle minimap
-  const TOGGLE_MINIMAP_COMMAND = 'TOGGLE_MINIMAP';
-  viewModel.commandHandler.registerCommand(TOGGLE_MINIMAP_COMMAND, {
-    execute: () => (viewModel.settings.enableMinimap = !viewModel.settings.enableMinimap),
-    canExecute: () => viewModel.displayedGraph.nodes.length > 1,
+  handler.registerCommand(TOGGLE_MINIMAP_COMMAND, {
+    execute: () => (settings.enableMinimap = !settings.enableMinimap),
+    canExecute: () => displayedGraph.nodes.length > 1,
   });
-
-  const toggle_minimap = {
-    command: TOGGLE_MINIMAP_COMMAND,
-    title: 'Toggle minimap', // Tooltip text
-    icon: computed(() => (viewModel.settings.enableMinimap ? SchemaOff : Schema)),
-  };
-
-  viewModel.settings.toolbar.commands = [toggle_palette, ...DEFAULT_TOOLBAR_COMMANDS, clear_all, toggle_minimap];
 };
 
 /**
- * Update settings of view model.
+ * Reister custom commands.
  * @param viewModel view model instance
  */
-export const updateSettings = (viewModel: ICodeGraphViewModel) => {
-  viewModel.settings.nodes.defaultWidth = 400;
+export const registerEngineCommands = (displayedGraph: CodeGraph, handler: ICommandHandler) => {
+  // Toggle minimap
+  handler.registerCommand(RUN_ENGINE_COMMAND, {
+    execute: () => displayedGraph.code.engine?.runOnce(null),
+    canExecute: () => true,
+  });
+};
+
+export const addToolbarItems = (settings: IViewSettings) => {
+  const run_engine = {
+    command: RUN_ENGINE_COMMAND,
+    title: "Run", // Tooltip text
+    icon: computed(() => Schema),
+  };
+
+  const toggle_palette = {
+    command: TOGGLE_PALETTE_COMMAND,
+    title: "Toggle palette", // Tooltip text
+    icon: computed(() => (settings.palette.enabled ? LayoutSidebarLeftCollapse : LayoutSidebarLeftExpand)),
+  };
+
+  const clear_all = {
+    command: CLEAR_ALL_COMMAND,
+    title: "Clear all", // Tooltip text
+    icon: computed(() => TrashOff),
+  };
+
+  const toggle_minimap = {
+    command: TOGGLE_MINIMAP_COMMAND,
+    title: "Toggle minimap", // Tooltip text
+    icon: computed(() => (settings.enableMinimap ? SchemaOff : Schema)),
+  };
+
+  settings.toolbar.commands = [toggle_palette, run_engine, ...DEFAULT_TOOLBAR_COMMANDS, clear_all, toggle_minimap];
 };

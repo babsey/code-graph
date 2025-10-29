@@ -14,10 +14,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, type Ref, ref } from 'vue';
-import { NodeInterface, useTemporaryConnection, useViewModel } from 'baklavajs';
+import { computed, onMounted, onUpdated, type Ref, ref } from "vue";
+import { NodeInterface, useTemporaryConnection, useViewModel } from "baklavajs";
 
-import { AbstractCodeNode } from '@/codeNode';
+import { AbstractCodeNode } from "@/codeNode";
 
 const props = defineProps<{
   node: AbstractCodeNode;
@@ -31,7 +31,7 @@ const el = ref<HTMLElement | null>(null) as Ref<HTMLElement>;
 
 const isConnected = computed(() => props.intf.connectionCount > 0);
 const classes = computed(() => ({
-  '--connected': isConnected.value,
+  "--connected": isConnected.value,
 }));
 
 const startHover = () => {

@@ -40,12 +40,12 @@
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, type Ref, computed, inject, reactive, ref } from 'vue';
-import { usePointer } from '@vueuse/core';
-import { AbstractNode, type INodeTypeInformation, useNodeCategories, useTransform, useViewModel } from 'baklavajs';
+import { type CSSProperties, type Ref, computed, inject, reactive, ref } from "vue";
+import { usePointer } from "@vueuse/core";
+import { AbstractNode, type INodeTypeInformation, useNodeCategories, useTransform, useViewModel } from "baklavajs";
 
-import { filterObject } from '@/utils';
-import PaletteEntry from './PaletteEntry.vue';
+import { filterObject } from "@/utils";
+import PaletteEntry from "./PaletteEntry.vue";
 
 interface IDraggedNode {
   type: string;
@@ -63,9 +63,9 @@ const { x: mouseX, y: mouseY } = usePointer();
 const { transform } = useTransform();
 const categories = useNodeCategories(viewModel);
 
-const editorEl = inject<Ref<HTMLElement | null>>('editorEl');
+const editorEl = inject<Ref<HTMLElement | null>>("editorEl");
 
-const searchQuery = ref<string>('');
+const searchQuery = ref<string>("");
 const draggedNode = ref<IDraggedNode | null>(null);
 
 const filterCategoriesBySearch = () => {
@@ -118,9 +118,9 @@ const onDragStart = (type: string, nodeInformation: INodeTypeInformation) => {
     instance.position.y = y;
 
     draggedNode.value = null;
-    document.removeEventListener('pointerup', onDragEnd);
+    document.removeEventListener("pointerup", onDragEnd);
   };
-  document.addEventListener('pointerup', onDragEnd);
+  document.addEventListener("pointerup", onDragEnd);
 };
 </script>
 

@@ -1,9 +1,9 @@
 // integerInterface.ts
 
-import { markRaw, type ComponentOptions } from 'vue';
-import { IntegerInterfaceComponent } from 'baklavajs';
+import { markRaw, type ComponentOptions } from "vue";
+import { IntegerInterfaceComponent } from "baklavajs";
 
-import { BaseNumericInterface } from '../baseNumericInterface';
+import { BaseNumericInterface } from "../baseNumericInterface";
 
 export class IntegerInterface extends BaseNumericInterface {
   component = markRaw(IntegerInterfaceComponent) as ComponentOptions;

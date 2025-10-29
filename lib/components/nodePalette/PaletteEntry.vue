@@ -9,8 +9,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
-import { GRAPH_NODE_TYPE_PREFIX, useGraph, useViewModel } from 'baklavajs';
+import { computed, defineComponent, ref } from "vue";
+import { GRAPH_NODE_TYPE_PREFIX, useGraph, useViewModel } from "baklavajs";
 
 interface IMenuItem {
   label: string;
@@ -36,8 +36,8 @@ export default defineComponent({
     const hasContextMenu = computed(() => props.type.startsWith(GRAPH_NODE_TYPE_PREFIX));
 
     const contextMenuItems: IMenuItem[] = [
-      { label: 'Edit Subgraph', value: 'editSubgraph' },
-      { label: 'Delete Subgraph', value: 'deleteSubgraph' },
+      { label: "Edit Subgraph", value: "editSubgraph" },
+      { label: "Delete Subgraph", value: "deleteSubgraph" },
     ];
 
     const openContextMenu = () => {
@@ -52,10 +52,10 @@ export default defineComponent({
       }
 
       switch (action) {
-        case 'editSubgraph':
+        case "editSubgraph":
           switchGraph(graphTemplate);
           break;
-        case 'deleteSubgraph':
+        case "deleteSubgraph":
           viewModel.value.editor.removeGraphTemplate(graphTemplate);
           break;
       }

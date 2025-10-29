@@ -1,3 +1,3 @@
 // components
 
-export { default as CodeGraphEditor } from './CodeGraphEditor.vue';
+export { default as CodeGraphEditor } from "./CodeGraphEditor.vue";

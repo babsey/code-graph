@@ -1,6 +1,6 @@
 <template>
-  <BaklavaEditor :view-model>
-    <template #palette>
+  <BaklavaEditor :viewModel="viewModelRef" :key="viewModelRef.displayedGraph.id">
+    <!-- <template #palette>
       <CodeNodePalette />
     </template>
 
@@ -14,33 +14,34 @@
           <slot name="sidebarCodeEditor" :node />
         </template>
       </CodeGraphSidebar>
-    </template>
+    </template> -->
   </BaklavaEditor>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, toRef } from 'vue';
-import { BaklavaEditor } from 'baklavajs';
+import { onMounted, onUnmounted, toRef } from "vue";
+// import { BaklavaEditor } from "baklavajs";
+import { BaklavaEditor } from "@baklavajs/renderer-vue";
 
-import type { AbstractCodeNode } from '@/codeNode';
-import type { ICodeGraphViewModel } from '@/viewModel';
+import type { AbstractCodeNode } from "@/codeNode";
+import type { ICodeGraphViewModel } from "@/viewModel";
 
-import CodeGraphNode from './node/CodeGraphNode.vue';
-import CodeGraphSidebar from './sidebar/CodeGraphSidebar.vue';
-import CodeNodePalette from './nodePalette/CodeNodePalette.vue';
+import CodeGraphNode from "./node/CodeGraphNode.vue";
+import CodeGraphSidebar from "./sidebar/CodeGraphSidebar.vue";
+import CodeNodePalette from "./nodePalette/CodeNodePalette.vue";
 
 const props = defineProps<{ viewModel: ICodeGraphViewModel }>();
-const viewModel = toRef(props, 'viewModel');
+const viewModelRef = toRef(props, "viewModel");
 
 const onUpdate = (node: AbstractCodeNode) => node.events.update.emit(null);
 
 onMounted(() => {
-  viewModel.value.subscribe();
-  viewModel.value.engine.start();
+  if (viewModelRef.value.subscribe) viewModelRef.value.subscribe();
+  viewModelRef.value.engine?.start();
 });
 
 onUnmounted(() => {
-  viewModel.value.unsubscribe();
-  viewModel.value.engine.stop();
+  if (viewModelRef.value.unsubscribe) viewModelRef.value.unsubscribe();
+  viewModelRef.value.engine?.stop();
 });
 </script>

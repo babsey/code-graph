@@ -1,12 +1,12 @@
 // listInputInterface.ts
 
-import { markRaw } from 'vue';
-import { setType, TextInputInterfaceComponent } from 'baklavajs';
+import { markRaw } from "vue";
+import { setType, TextInputInterfaceComponent } from "baklavajs";
 
-import { CodeNodeInputInterface, listType } from '@/main';
+import { CodeNodeInputInterface, listType } from "@/main";
 
 export class ListInputInterface extends CodeNodeInputInterface {
-  constructor(name: string = '', value: string = '') {
+  constructor(name: string = "", value: string = "") {
     super(name, value);
     this.setComponent(markRaw(TextInputInterfaceComponent));
 

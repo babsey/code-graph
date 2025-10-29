@@ -1,209 +1,178 @@
-// viewModel.ts
+// viewCodeModel.ts
 
+import { type Ref, computed, reactive, ref, shallowReadonly, watch } from "vue";
 import {
-  AbstractNode,
-  Commands,
   DependencyEngine,
-  Editor,
-  GraphTemplate,
-  type BeforeNodeCalculationEventData,
-  type IBaklavaViewModel,
-  type IConnection,
+  type ICommandHandler,
   type IEditorState,
-  useBaklava,
-} from 'baklavajs';
-import { type UnwrapRef, reactive } from 'vue';
-import { v4 as uuidv4 } from 'uuid';
+  type INodeState,
+  type IViewSettings,
+  useCommandHandler,
+} from "baklavajs";
+import { SequentialHook } from "@baklavajs/events";
+import {
+  registerDeleteNodesCommand,
+  registerSaveSubgraphCommand,
+  registerSwitchToMainGraphCommand,
+  // registerGraphCommands,
+  registerSidebarCommands,
+  registerZoomToFitCommands,
+  setViewNodeProperties,
+  type IClipboard,
+  type IHistory,
+  useClipboard,
+  useHistory,
+} from "@baklavajs/renderer-vue";
 
-import { Code } from './code';
-import { addToolbarCommands, updateSettings } from './settings';
-import type { AbstractCodeNode } from '.';
-import { createCodeGraphNodeType } from './codeNode';
+import { Code } from "./code";
+import { DEFAULT_SETTINGS } from "./settings";
+import { type AbstractCodeNode, type CodeNodeInterface } from ".";
+import { CodeEditor } from "./codeEditor";
 
-export interface ICodeGraphViewModel extends IBaklavaViewModel {
-  code: Code;
-  engine: DependencyEngine;
-  init(): void;
-  loadEditor(editorState: IEditorState): void;
-  newGraph(): void;
-  state: UnwrapRef<{
-    modules: Record<string, string>;
-    token: symbol | null;
-  }>;
-  subscribe(): void;
-  unsubscribe(): void;
+import { useSwitchCodeGraph } from "./codeGraph/switchCodeGraph";
+import type { CodeGraph } from "./codeGraph/codeGraph";
+import type { CodeGraphTemplate } from "./codeGraph/codeGraphTemplate";
+
+import { registerCreateSubgraphCommand } from "./subgraph/createSubgraph.command";
+import { SubgraphInputNode, SubgraphOutputNode } from "./subgraph/subgraphInterfaceNodes";
+
+interface IViewNodeState extends INodeState<unknown, unknown> {
+  position: { x: number; y: number };
+  width: number;
+  twoColumn: boolean;
 }
 
-export function useCodeGraph(props?: {
-  existingEditor?: Editor;
-  code?: new (viewModel: ICodeGraphViewModel) => Code;
-}): ICodeGraphViewModel {
-  // const editor = new CodeEditor();
-  const viewModel = useBaklava(props?.existingEditor) as ICodeGraphViewModel;
-  viewModel.code = props?.code ? new props.code(viewModel) : new Code(viewModel);
+export interface ICodeGraphViewModel {
+  code: Code;
+  editor: CodeEditor;
+  /** Currently displayed graph */
+  displayedGraph: CodeGraph;
+  /** True if the currently displayed graph is a subgraph, false if it is the root graph */
+  isSubgraph: Readonly<boolean>;
+  settings: IViewSettings;
+  commandHandler: ICommandHandler;
+  history: IHistory;
+  clipboard: IClipboard;
+  hooks: {
+    /** Called whenever a node is rendered */
+    renderNode: SequentialHook<{ node: AbstractCodeNode; el: HTMLElement }, null>;
+    /** Called whenever an interface is rendered */
+    renderInterface: SequentialHook<{ intf: CodeNodeInterface<unknown>; el: HTMLElement }, null>;
+  };
+  switchGraph: (newGraph: CodeGraph | CodeGraphTemplate) => void;
 
-  // TODO: Use custom editor with own code graph and nodes.
-  viewModel.editor.addGraphTemplate = function (template: GraphTemplate): void {
-    if (this.events.beforeAddGraphTemplate.emit(template).prevented) {
-      return;
-    }
-    this._graphTemplates.push(template);
-    this.graphTemplateEvents.addTarget(template.events);
-    this.graphTemplateHooks.addTarget(template.hooks);
+  engine?: DependencyEngine;
+  init?: () => void;
+  loadEditor?: (editorState: IEditorState) => void;
+  newGraph?: () => void;
+  subscribe?: () => void;
+  unsubscribe?: () => void;
+}
 
-    const nt = createCodeGraphNodeType(template);
-    this.registerNodeType(nt, { category: 'Subgraphs', title: template.name });
+export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code }): ICodeGraphViewModel {
+  const code: Ref<Code> = ref(props?.code ?? new Code()) as Ref<Code>;
 
-    this.events.addGraphTemplate.emit(template);
+  const editor: Ref<CodeEditor> = ref(props?.existingEditor ?? new CodeEditor(code.value)) as Ref<CodeEditor>;
+  const token = Symbol("ViewModelToken");
+
+  const _displayedGraph = ref(null as any) as Ref<CodeGraph>;
+  const displayedGraph = shallowReadonly(_displayedGraph);
+  const { switchGraph } = useSwitchCodeGraph(editor, _displayedGraph);
+
+  const isSubgraph = computed(() => displayedGraph.value && displayedGraph.value !== editor.value.graph);
+
+  const settings: IViewSettings = reactive(DEFAULT_SETTINGS());
+
+  const commandHandler = useCommandHandler();
+  const history = useHistory(displayedGraph, commandHandler);
+  const clipboard = useClipboard(displayedGraph, editor, commandHandler);
+
+  const hooks = {
+    /** Called whenever a node is rendered */
+    renderNode: new SequentialHook<{ node: AbstractCodeNode; el: HTMLElement }, null>(null),
+    /** Called whenever an interface is rendered */
+    renderInterface: new SequentialHook<{ intf: CodeNodeInterface<any>; el: HTMLElement }, null>(null),
   };
 
-  addToolbarCommands(viewModel);
-  updateSettings(viewModel);
+  // registerGraphCommands(displayedGraph, commandHandler, switchGraph);
+  registerDeleteNodesCommand(displayedGraph, commandHandler);
+  registerCreateSubgraphCommand(displayedGraph, commandHandler, switchGraph);
+  registerSaveSubgraphCommand(displayedGraph, commandHandler);
+  registerSwitchToMainGraphCommand(displayedGraph, commandHandler, switchGraph);
 
-  viewModel.state = reactive({
-    modules: {},
-    token: null,
-  });
+  registerSidebarCommands(displayedGraph, commandHandler);
+  registerZoomToFitCommands(displayedGraph, commandHandler, settings);
 
-  /**
-   * Initialize view model.
-   */
-  viewModel.init = () => {
-    // unsubscribe old engine / graph events if existed.
-    viewModel.unsubscribe();
-
-    viewModel.engine = new DependencyEngine(viewModel.editor);
-  };
-
-  /**
-   * Load editor from editor state
-   */
-  viewModel.loadEditor = (editorState: IEditorState) => {
-    viewModel.engine?.pause();
-    viewModel.code.clear();
-
-    viewModel.editor.load(editorState);
-
-    // needs to clear clipboard and history after loading editor.
-    viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND);
-    viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND);
-
-    viewModel.engine?.resume();
-    viewModel.engine?.runOnce(undefined);
-  };
-
-  /**
-   * Create a new graph (new ID).
-   */
-  viewModel.newGraph = () => {
-    viewModel.engine?.pause();
-    viewModel.code.clear();
-
-    // set new graph id
-    viewModel.editor.graph.id = uuidv4();
-
-    viewModel.engine?.resume();
-    viewModel.engine?.runOnce(undefined);
-  };
-
-  /**
-   * Subscribe view model.
-   */
-  viewModel.subscribe = () => {
-    if (viewModel.state.token) viewModel.unsubscribe();
-
-    const token = Symbol();
-    const graph = viewModel.displayedGraph;
-
-    graph.events.addNode.subscribe(token, (node: AbstractNode) => {
-      if (!node.subgraph && node.isCodeNode) node.code = viewModel.code;
-    });
-
-    graph.events.addConnection.subscribe(token, (data: IConnection) => {
-      const tgtNode = viewModel.code.findNodeById(data.to.nodeId);
-      if (tgtNode && tgtNode.isCodeNode) tgtNode.onConnected();
-      const srcNode = viewModel.code.findNodeById(data.from.nodeId);
-      if (srcNode && srcNode.isCodeNode) srcNode.onConnected();
-    });
-
-    graph.events.removeConnection.subscribe(token, (data: IConnection) => {
-      const tgtNode = viewModel.code.findNodeById(data.to.nodeId);
-      if (tgtNode && tgtNode.isCodeNode) tgtNode.onUnconnected();
-      const srcNode = viewModel.code.findNodeById(data.from.nodeId);
-      if (srcNode && srcNode.isCodeNode) srcNode.onUnconnected();
-    });
-
-    viewModel.engine.events.beforeRun.subscribe(token, () => {
-      viewModel.engine.pause();
-
-      if (viewModel.code) {
-        // update code nodes
-        viewModel.code.updateCodeNodes();
-
-        // sort code nodes using toposort
-        viewModel.code.sortNodes();
-
-        // update code templates
-        viewModel.code.updateCodeTemplates();
-
-        // reset scripts of input interfaces
-        viewModel.code.resetInputInterfaceScript();
+  watch(
+    editor,
+    (newValue, oldValue) => {
+      if (oldValue) {
+        oldValue.events.registerGraph.unsubscribe(token);
+        oldValue.graphEvents.beforeAddNode.unsubscribe(token);
+        newValue.nodeHooks.beforeLoad.unsubscribe(token);
+        newValue.nodeHooks.afterSave.unsubscribe(token);
+        newValue.graphTemplateHooks.beforeLoad.unsubscribe(token);
+        newValue.graphTemplateHooks.afterSave.unsubscribe(token);
+        newValue.graph.hooks.load.unsubscribe(token);
+        newValue.graph.hooks.save.unsubscribe(token);
       }
+      if (newValue) {
+        newValue.nodeHooks.beforeLoad.subscribe(token, (state, node) => {
+          node.position = (state as IViewNodeState).position ?? { x: 0, y: 0 };
+          node.width = (state as IViewNodeState).width ?? settings.nodes.defaultWidth;
+          node.twoColumn = (state as IViewNodeState).twoColumn ?? false;
+          return state;
+        });
+        newValue.nodeHooks.afterSave.subscribe(token, (state, node) => {
+          (state as IViewNodeState).position = node.position;
+          (state as IViewNodeState).width = node.width;
+          (state as IViewNodeState).twoColumn = node.twoColumn;
+          return state;
+        });
+        newValue.graphTemplateHooks.beforeLoad.subscribe(token, (state, template) => {
+          template.panning = state.panning;
+          template.scaling = state.scaling;
+          return state;
+        });
+        newValue.graphTemplateHooks.afterSave.subscribe(token, (state, template) => {
+          state.panning = template.panning;
+          state.scaling = template.scaling;
+          return state;
+        });
+        newValue.graph.hooks.load.subscribe(token, (state, graph) => {
+          graph.panning = state.panning;
+          graph.scaling = state.scaling;
+          return state;
+        });
+        newValue.graph.hooks.save.subscribe(token, (state, graph) => {
+          state.panning = graph.panning;
+          state.scaling = graph.scaling;
+          return state;
+        });
 
-      viewModel.engine.resume();
-    });
+        newValue.graphEvents.beforeAddNode.subscribe(token, (node) =>
+          setViewNodeProperties(node, { defaultWidth: settings.nodes.defaultWidth }),
+        );
 
-    viewModel.engine.events.beforeNodeCalculation.subscribe(token, (data: BeforeNodeCalculationEventData) => {
-      viewModel.engine.pause();
+        editor.value.registerNodeType(SubgraphInputNode, { category: "Subgraphs" });
+        editor.value.registerNodeType(SubgraphOutputNode, { category: "Subgraphs" });
 
-      const codeNode = data.node as AbstractCodeNode;
-      if (codeNode.isCodeNode) {
-        // update variable name of output (outputs.code)
-        codeNode.updateOutputNames();
-
-        // update connected input interfaces (with code rendering of source nodes)
-        codeNode.updateConnectedInputInterfaces();
+        switchGraph(newValue.graph);
       }
+    },
+    { immediate: true },
+  );
 
-      viewModel.engine.resume();
-    });
-
-    viewModel.engine.events.afterRun.subscribe(token, () => {
-      viewModel.engine.pause();
-
-      // apply results from calculation on editor
-      // applyResult(result, viewModel.editor)
-
-      if (viewModel.code) {
-        // render code nodes using its code templates
-        viewModel.code.renderNodeCodes();
-
-        // render code from scripted code nodes
-        viewModel.code.renderCode();
-      }
-
-      viewModel.engine.resume();
-    });
-
-    viewModel.state.token = token;
-  };
-
-  /**
-   * Unsubscribe view model.
-   */
-  viewModel.unsubscribe = () => {
-    if (!viewModel.state.token) return;
-
-    const token = viewModel.state.token;
-
-    viewModel.displayedGraph.events.addNode.unsubscribe(token);
-    viewModel.displayedGraph.events.addConnection.unsubscribe(token);
-    viewModel.engine.events.beforeRun.unsubscribe(token);
-    viewModel.engine.events.beforeNodeCalculation.unsubscribe(token);
-    viewModel.engine.events.afterRun.unsubscribe(token);
-
-    viewModel.state.token = null;
-  };
-
-  return viewModel as ICodeGraphViewModel;
+  return reactive({
+    clipboard,
+    code,
+    commandHandler,
+    displayedGraph,
+    editor,
+    history,
+    hooks,
+    isSubgraph,
+    settings,
+    switchGraph,
+  }) as ICodeGraphViewModel;
 }

@@ -15,8 +15,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import type { TextInputInterface } from './textInputInterface';
+import { computed, defineComponent } from "vue";
+import type { TextInputInterface } from "./textInputInterface";
 
 export default defineComponent({
   props: {
@@ -29,12 +29,12 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['update:modelValue'],
+  emits: ["update:modelValue"],
   setup(props, { emit }) {
     const v = computed({
       get: () => props.modelValue,
       set: (v) => {
-        emit('update:modelValue', v);
+        emit("update:modelValue", v);
       },
     });
     return { v };

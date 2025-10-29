@@ -1,14 +1,14 @@
 // codeNodeOutputInterface.ts
 
-import { markRaw } from 'vue';
+import { markRaw } from "vue";
 
-import CodeNodeInterfaceComponent from '../codeNode/CodeNodeInterface.vue';
-import { CodeNodeInterface } from '../codeNode/codeNodeInterface';
+import CodeNodeInterfaceComponent from "../codeNode/CodeNodeInterface.vue";
+import { CodeNodeInterface } from "../codeNode/codeNodeInterface";
 
 export class CodeNodeOutputInterface extends CodeNodeInterface<string> {
   public isCodeNodeOutput: boolean = true;
 
-  constructor(name: string = '', value: string = '') {
+  constructor(name: string = "", value: string = "") {
     super(name, value);
     this.setComponent(markRaw(CodeNodeInterfaceComponent));
   }

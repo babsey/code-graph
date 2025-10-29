@@ -1,12 +1,12 @@
 // tupleInputInterface.ts
 
-import { markRaw } from 'vue';
-import { setType, TextInputInterfaceComponent } from 'baklavajs';
+import { markRaw } from "vue";
+import { setType, TextInputInterfaceComponent } from "baklavajs";
 
-import { CodeNodeInputInterface, tupleType } from '@/main';
+import { CodeNodeInputInterface, tupleType } from "@/main";
 
 export class TupleInputInterface extends CodeNodeInputInterface {
-  constructor(name: string = '', value: string = '') {
+  constructor(name: string = "", value: string = "") {
     super(name, value);
     this.setComponent(markRaw(TextInputInterfaceComponent));
 
