@@ -1,7 +1,9 @@
 <template>
   <div style="display: flex; overflow: hidden; width: 100vw; height: 100vh">
+    <!-- <BaklavaEditor :viewModel /> -->
+
     <div style="width: 70vw; height: 100vh">
-      <CodeGraphEditor :view-model="codeGraph">
+      <CodeGraphEditor :viewModel>
         <template #sidebarCodeEditor="{ node }">
           <CodeEditor v-model="node.script" :locked="node.lockCode" @update:locked="(v) => (node.lockCode = v)" />
         </template>
@@ -10,26 +12,40 @@
 
     <div style="width: 30vw; height: 100vh">
       <CodeEditor
-        v-model="codeGraph.code.script"
-        :locked="codeGraph.code.lockCode"
-        @update:locked="(v) => (codeGraph.code.lockCode = v)"
+        v-if="viewModel.code"
+        v-model="viewModel.code.script"
+        :locked="viewModel.code.lockCode"
+        @update:locked="(v) => (viewModel.code.lockCode = v)"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { CodeGraphEditor, useCodeGraph } from '@babsey/code-graph';
+import { useBaklava, BaklavaEditor } from "baklavajs";
 
-import { MyCode } from './code';
-import { registerNodeTypes } from './codeNodeTypes';
-import CodeEditor from './components/CodeEditor.vue';
+import {
+  CodeGraphEditor,
+  addToolbarItems,
+  registerCodeEngine,
+  registerCustomCommands,
+  useCodeGraph,
+} from "@babsey/code-graph";
 
-const codeGraph = useCodeGraph({ code: MyCode });
+import { MyCode } from "./code";
+import { registerNodeTypes } from "./codeNodeTypes";
+import CodeEditor from "./components/CodeEditor.vue";
 
-registerNodeTypes(codeGraph);
+// const viewModel = useBaklava();
 
-codeGraph.init();
+const viewModel = useCodeGraph({ code: new MyCode() });
+registerCodeEngine(viewModel);
+
+// add custom commands to the toolbar
+registerCustomCommands(viewModel.displayedGraph, viewModel.commandHandler, viewModel.settings);
+addToolbarItems(viewModel.settings);
+
+registerNodeTypes(viewModel);
 </script>
 
 <style lang="scss">

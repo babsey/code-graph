@@ -1,19 +1,19 @@
 // examples/register.ts
 
-import type { IBaklavaViewModel } from 'baklavajs';
+import type { IBaklavaViewModel } from "baklavajs";
 
-import { addDefaultInterfaceTypes } from '@babsey/code-graph';
+import { addDefaultInterfaceTypes } from "@babsey/code-graph";
 
-import add from './add';
-import dictEntry from './dictEntry';
-import dynamicMath from './dynamicMath';
-import math from './math';
-import myFunction from './myFunction';
+import add from "./add";
+import dictEntry from "./dictEntry";
+import dynamicMath from "./dynamicMath";
+import math from "./math";
+import myFunction from "./myFunction";
 
 export const registerExampleNodeTypes = (viewModel: IBaklavaViewModel) => {
   addDefaultInterfaceTypes(viewModel);
 
-  const category = 'examples';
+  const category = "examples";
   viewModel.editor.registerNodeType(add, { category });
   viewModel.editor.registerNodeType(dictEntry, { category });
   viewModel.editor.registerNodeType(dynamicMath, { category });
