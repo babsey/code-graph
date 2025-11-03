@@ -29,6 +29,4 @@ export class SubgraphOutputNode extends CodeGraphOutputNode {
     _code: new CodeNodeInterface("", "").use(setType, nodeType).setHidden(true),
     output: new NodeInterface("Output", undefined).setHidden(true),
   };
-
-
 }

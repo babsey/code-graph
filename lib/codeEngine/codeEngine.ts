@@ -30,7 +30,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     inputs: Map<string, unknown>,
     calculationData: CalculationData,
   ): Promise<CalculationResult> {
-    console.log('run graph', graph.shortId, graph.nodes)
+    console.log("run graph", graph.shortId, graph.nodes);
 
     if (!this.order.has(graph.id)) {
       this.order.set(graph.id, sortTopologically(graph));
@@ -141,8 +141,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
   private getInterfaceValue(values: Map<string, unknown>, id: string): unknown {
     if (!values.has(id)) {
       throw new Error(
-        `Could not find value for interface ${id}\n` +
-          "This is likely an internal issue. Please report it on GitHub.",
+        `Could not find value for interface ${id}\n` + "This is likely an internal issue. Please report it on GitHub.",
       );
     }
     return values.get(id);

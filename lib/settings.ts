@@ -1,11 +1,7 @@
 // settings.ts
 
 import { computed, type Ref } from "vue";
-import {
-  DEFAULT_TOOLBAR_COMMANDS,
-  type ICommandHandler,
-  type IViewSettings,
-} from "baklavajs";
+import { DEFAULT_TOOLBAR_COMMANDS, type ICommandHandler, type IViewSettings } from "baklavajs";
 
 import { LayoutSidebarLeftCollapse, LayoutSidebarLeftExpand, PlayerPlay, Schema, SchemaOff, TrashOff } from "./icons";
 import type { CodeGraph } from "./codeGraph";

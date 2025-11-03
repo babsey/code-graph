@@ -36,7 +36,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     this.template = template;
 
     if (editor.code) this.code = editor.code;
-    console.log('construct code graph', this.shortId)
+    console.log("construct code graph", this.shortId);
   }
 
   get codeNodes(): AbstractCodeNode[] {

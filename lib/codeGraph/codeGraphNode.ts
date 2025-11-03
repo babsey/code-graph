@@ -95,7 +95,7 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
         outputs[output.id] = result.get(output.nodeId)?.get("output");
       }
 
-      console.log(result)
+      console.log(result);
       outputs._calculationResults = result;
 
       return outputs;
