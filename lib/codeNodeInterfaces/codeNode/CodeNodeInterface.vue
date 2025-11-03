@@ -1,5 +1,5 @@
 <template>
-  <div :title="intf.state?.script">{{ intf.name }}</div>
+  <div :title="intf.value">{{ intf.name }}</div>
 </template>
 
 <script setup lang="ts">

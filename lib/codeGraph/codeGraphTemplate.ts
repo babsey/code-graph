@@ -1,6 +1,5 @@
 // codeGraphTemplate.ts
 
-import { reactive } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import {
   Editor,
@@ -10,40 +9,33 @@ import {
   type INodeInterfaceState,
   type INodeState,
 } from "baklavajs";
-import mustache from "mustache";
+
+import type { CodeEditor } from "@/codeEditor";
+import type { CodeNodeInterface } from "@/codeNodeInterfaces";
+import type { ICodeGraphInterface } from "@/subgraph/graphInterface";
+import { mapValues } from "@/utils";
 
 import { CodeGraph, type ICodeGraphState } from "./codeGraph";
-import type { CodeEditor } from "@/codeEditor";
-import type { AbstractCodeNode, CodeNodeInterface } from "..";
-import { mapValues } from "@/utils";
-import type { ICodeGraphInterface } from "../subgraph/graphInterface";
 
 type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
 export interface ICodeGraphTemplateState extends IGraphTemplateState {}
 
 export class CodeGraphTemplate extends GraphTemplate implements ICodeGraphState {
-  public state = reactive({
-    script: "",
-    lockCode: false,
-  });
-
   /** Create a new GraphTemplate from the nodes and connections inside the graph instance */
-  public static fromGraph(graph: CodeGraph, editor: CodeEditor): CodeGraphTemplate {
+  public static override fromGraph(graph: CodeGraph, editor: CodeEditor): CodeGraphTemplate {
     return new CodeGraphTemplate(graph.save(), editor);
   }
 
   constructor(state: Optional<ICodeGraphTemplateState, "id" | "name">, editor: CodeEditor) {
-    super(state, editor as Editor);
-    // this.editor = editor as Editor;
-    this.update(state);
+    super(state, editor);
   }
 
   /**
    * Create a new graph instance from this template
    * or load the state into the provided graph instance.
    */
-  public createGraph(graph?: CodeGraph): CodeGraph {
+  public override createGraph(graph?: CodeGraph): CodeGraph {
     const idMap = new Map<string, string>();
 
     const createNewId = (oldId: string): string => {
@@ -112,17 +104,5 @@ export class CodeGraphTemplate extends GraphTemplate implements ICodeGraphState 
 
     graph.template = this;
     return graph;
-  }
-
-  /**
-   * Render code script.
-   */
-  renderCode(): void {
-    console.log("render code", this.nodes);
-    if (this.state.lockCode) return;
-    const nodes = this.nodes;
-
-    nodes.forEach((node: AbstractCodeNode) => node.renderCode());
-    this.state.script = mustache.render(this.editor.code.state.template || "", { nodes });
   }
 }

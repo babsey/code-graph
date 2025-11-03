@@ -1,7 +1,7 @@
 // numberInterface.ts
 
-import { markRaw, type ComponentOptions } from "vue";
 import { NumberInterfaceComponent } from "baklavajs";
+import { markRaw, type ComponentOptions } from "vue";
 
 import { BaseNumericInterface } from "../baseNumericInterface";
 

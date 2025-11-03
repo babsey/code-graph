@@ -1,17 +1,19 @@
 // codeEngine.ts
 
 import {
+  applyResult,
   Commands,
-  DependencyEngine,
-  type BeforeNodeCalculationEventData,
+  type CalculationResult,
   type IConnection,
   type IEditorState,
   type INodeState,
-  AbstractNode,
 } from "baklavajs";
 import { v4 as uuidv4 } from "uuid";
 
-import { registerEngineCommands, type AbstractCodeNode, type ICodeGraphViewModel } from ".";
+import type { ICodeGraphViewModel } from "@/viewModel";
+
+import { registerRunEngineCommands } from "./runEngine.command";
+import { CodeEngine } from "./codeEngine";
 
 export interface IViewNodeState extends INodeState<unknown, unknown> {
   position: { x: number; y: number };
@@ -22,10 +24,8 @@ export interface IViewNodeState extends INodeState<unknown, unknown> {
 export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
   const token = Symbol("CodeEngineToken");
 
-  viewModel.engine = new DependencyEngine(viewModel.editor);
-  viewModel.code.registerEngine(viewModel.engine);
-
-  registerEngineCommands(viewModel.displayedGraph, viewModel.commandHandler);
+  viewModel.engine = new CodeEngine(viewModel.editor);
+  registerRunEngineCommands(viewModel.engine, viewModel.commandHandler);
 
   /**
    * Initialize view model.
@@ -74,10 +74,6 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
    * Subscribe view model.
    */
   viewModel.subscribe = () => {
-    viewModel.displayedGraph.events.addNode.subscribe(token, (node: AbstractCodeNode | AbstractNode) => {
-      if (node.isCodeNode) node.code = viewModel.code;
-    });
-
     viewModel.displayedGraph.events.addConnection.subscribe(token, (data: IConnection) => {
       const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId);
       if (tgtNode && tgtNode.isCodeNode) tgtNode.onConnected();
@@ -95,44 +91,20 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     viewModel.engine?.events.beforeRun.subscribe(token, () => {
       viewModel.engine?.pause();
 
-      // update code nodes
-      viewModel.displayedGraph.updateCodeNodes();
-
       // sort code nodes using toposort
       viewModel.displayedGraph.sortNodes();
 
       // update code templates
       viewModel.displayedGraph.updateCodeTemplates();
 
-      // reset scripts of input interfaces
-      viewModel.displayedGraph.resetInputInterfaceScript();
-
       viewModel.engine?.resume();
     });
 
-    viewModel.engine?.events.beforeNodeCalculation.subscribe(token, (data: BeforeNodeCalculationEventData) => {
-      viewModel.engine?.pause();
-
-      const codeNode = data.node as AbstractCodeNode;
-      if (codeNode.isCodeNode) {
-        // update variable name of output (outputs.code)
-        codeNode.updateOutputNames();
-
-        // update connected input interfaces (with code rendering of source nodes)
-        codeNode.updateConnectedInputInterfaces();
-      }
-
-      viewModel.engine?.resume();
-    });
-
-    viewModel.engine?.events.afterRun.subscribe(token, () => {
+    viewModel.engine?.events.afterRun.subscribe(token, (result: CalculationResult) => {
       viewModel.engine?.pause();
 
       // apply results from calculation on editor
-      // applyResult(result, viewModel.editor)
-
-      // render code of the displayed graph
-      viewModel.displayedGraph.renderCode();
+      applyResult(result, viewModel.editor);
 
       // render code from scripted code nodes
       viewModel.code.renderCode();
@@ -145,10 +117,8 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
    * Unsubscribe view model.
    */
   viewModel.unsubscribe = () => {
-    viewModel.displayedGraph.events.addNode.unsubscribe(token);
     viewModel.displayedGraph.events.addConnection.unsubscribe(token);
     viewModel.engine?.events.beforeRun.unsubscribe(token);
-    viewModel.engine?.events.beforeNodeCalculation.unsubscribe(token);
     viewModel.engine?.events.afterRun.unsubscribe(token);
   };
 }

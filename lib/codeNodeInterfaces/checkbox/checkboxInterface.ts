@@ -1,7 +1,7 @@
 // checkboxInterface.ts
 
-import { markRaw } from "vue";
 import { CheckboxInterfaceComponent, setType } from "baklavajs";
+import { markRaw } from "vue";
 
 import { CodeNodeInputInterface } from "../codeNodeInput/codeNodeInputInterface";
 import { booleanType } from "@/interfaceTypes";

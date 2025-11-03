@@ -24,10 +24,7 @@ import { BaklavaEditor } from "baklavajs";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import type { ICodeGraphViewModel } from "@/viewModel";
-
-import CodeGraphNode from "./node/CodeGraphNode.vue";
-import CodeGraphSidebar from "./sidebar/CodeGraphSidebar.vue";
-import CodeNodePalette from "./nodePalette/CodeNodePalette.vue";
+import { CodeGraphNode, CodeGraphSidebar, CodeNodePalette } from "@/components";
 
 const props = defineProps<{ viewModel: ICodeGraphViewModel }>();
 const viewModelRef = toRef(props, "viewModel");

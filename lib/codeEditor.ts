@@ -2,24 +2,24 @@
 
 import { type IBaklavaEventEmitter, type IBaklavaTapable, type IEditorState, Editor } from "baklavajs";
 
-import { createCodeGraphNodeType } from "./codeGraph/codeGraphNode";
-import { CodeGraph } from "./codeGraph/codeGraph";
-import { CodeGraphTemplate } from "./codeGraph/codeGraphTemplate";
+import { createCodeGraphNodeType, CodeGraph, CodeGraphTemplate } from "@/codeGraph";
 import type { Code } from ".";
 
 /** The main model class for BaklavaJS */
 export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklavaTapable {
   public code: Code;
-  public _graph = new CodeGraph(this);
+  public graph: CodeGraph;
 
   public constructor(code: Code) {
     super();
-    this.registerCode(code);
+    this.code = code;
+    this.graph = new CodeGraph(this);
+    this.code.registerGraph(this.graph);
   }
 
-  get graph(): CodeGraph {
-    return this._graph as CodeGraph;
-  }
+  // get graph(): CodeGraph {
+  //   return this._graph as CodeGraph;
+  // }
 
   override addGraphTemplate(template: CodeGraphTemplate): void {
     if (this.events.beforeAddGraphTemplate.emit(template).prevented) {
@@ -65,8 +65,11 @@ export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklava
     }
   }
 
-  registerCode(code: Code): void {
-    this.code = code;
-    this._graph.registerCode(code);
-  }
+  // /**
+  //  * Register code.
+  //  * @param code code instance
+  //  */
+  // registerCode(code: Code): void {
+  //   this.code = code;
+  // }
 }

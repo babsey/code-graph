@@ -5,13 +5,16 @@ import {
   NodeInterface,
   allowMultipleConnections,
   setType,
+  type CalculateFunctionReturnType,
+  type CalculationContext,
   type INodeDefinition,
   type NodeInterfaceDefinition,
 } from "baklavajs";
 
-import { CodeNode, type AbstractCodeNode } from "./codeNode";
 import { CodeNodeInterface } from "@/codeNodeInterfaces";
-import { nodeType } from "../interfaceTypes";
+import { nodeType } from "@/interfaceTypes";
+
+import { CodeNode, type AbstractCodeNode } from "./codeNode";
 
 export type NodeConstructor<I, O> = new () => Node<I, O>;
 export type NodeInstanceOf<T> = T extends new () => Node<infer A, infer B> ? Node<A, B> : never;
@@ -43,12 +46,10 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       this.executeFactory("input", definition.inputs);
       this.executeFactory("output", definition.outputs);
 
-      // if (definition.calculate) {
-      //   this.calculate = (inputs: I, globalValues: CalculationContext) => ({
-      //     ...definition.calculate!.call(this, inputs, globalValues),
-      //     _code: inputs._code,
-      //   })
-      // }
+      if (definition.calculate) {
+        this.calculate = (inputs: I, globalValues: CalculationContext) =>
+          definition.calculate!.call(this, { inputs, ...globalValues });
+      }
 
       definition.onCreate?.call(this);
 

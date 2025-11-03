@@ -24,6 +24,7 @@
       <template v-if="!renaming">
         <div class="__title-label" style="flex-grow: 1">
           <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>{{ node.title }}
+          {{ node.shortId }}
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="node.isCodeNode">
@@ -119,7 +120,7 @@ import { ref, computed, nextTick, onUpdated, onMounted, onBeforeUnmount } from "
 import { AbstractNode, Components, GRAPH_NODE_TYPE_PREFIX, type IGraphNode, useGraph, useViewModel } from "baklavajs";
 
 import type { AbstractCodeNode } from "@/codeNode";
-import CodeGraphNodeInterface from "../nodeInterface/CodeGraphNodeInterface.vue";
+import { CodeGraphNodeInterface } from "@/components";
 import {
   CodeVariable,
   DotsVertical,
@@ -245,7 +246,7 @@ const onContextMenuClick = async (action: string) => {
       renameInputEl.value?.focus();
       break;
     case "editSubgraph":
-      switchGraph((props.node as AbstractNode & IGraphNode).template);
+      switchGraph((props.node as AbstractCodeNode & IGraphNode).template);
       break;
   }
 };

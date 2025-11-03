@@ -1,7 +1,7 @@
 // textareaInputInteface.ts
 
-import { markRaw, type ComponentOptions } from "vue";
 import { TextareaInputInterfaceComponent } from "baklavajs";
+import { markRaw, type ComponentOptions } from "vue";
 
 import { BaseStringInterface } from "../baseStringInterface";
 

@@ -1,40 +1,33 @@
 // viewCodeModel.ts
 
 import { type Ref, computed, reactive, ref, shallowReadonly, watch } from "vue";
-import {
-  DependencyEngine,
-  type ICommandHandler,
-  type IEditorState,
-  type INodeState,
-  type IViewSettings,
-  useCommandHandler,
-} from "baklavajs";
+import { type IEditorState, type INodeState } from "@baklavajs/core";
 import { SequentialHook } from "@baklavajs/events";
 import {
+  DEFAULT_SETTINGS,
   registerDeleteNodesCommand,
   registerSaveSubgraphCommand,
-  registerSwitchToMainGraphCommand,
-  // registerGraphCommands,
   registerSidebarCommands,
+  registerSwitchToMainGraphCommand,
   registerZoomToFitCommands,
   setViewNodeProperties,
   type IClipboard,
+  type ICommandHandler,
   type IHistory,
+  type IViewSettings,
   useClipboard,
+  useCommandHandler,
   useHistory,
 } from "@baklavajs/renderer-vue";
 
 import { Code } from "./code";
-import { DEFAULT_SETTINGS } from "./settings";
-import { type AbstractCodeNode, type CodeNodeInterface } from ".";
+import { registerCustomCommands, updateToolbarItems } from "./settings";
+import type { AbstractCodeNode } from "./codeNode";
+import type { CodeNodeInterface } from "./codeNodeInterfaces";
 import { CodeEditor } from "./codeEditor";
-
-import { useSwitchCodeGraph } from "./codeGraph/switchCodeGraph";
-import type { CodeGraph } from "./codeGraph/codeGraph";
-import type { CodeGraphTemplate } from "./codeGraph/codeGraphTemplate";
-
-import { registerCreateSubgraphCommand } from "./subgraph/createSubgraph.command";
-import { SubgraphInputNode, SubgraphOutputNode } from "./subgraph/subgraphInterfaceNodes";
+import { useSwitchCodeGraph, type CodeGraph, type CodeGraphTemplate } from "./codeGraph";
+import { registerCreateSubgraphCommand, SubgraphInputNode, SubgraphOutputNode } from "./subgraph";
+import type { CodeEngine } from "./codeEngine";
 
 interface IViewNodeState extends INodeState<unknown, unknown> {
   position: { x: number; y: number };
@@ -61,7 +54,7 @@ export interface ICodeGraphViewModel {
   };
   switchGraph: (newGraph: CodeGraph | CodeGraphTemplate) => void;
 
-  engine?: DependencyEngine;
+  engine?: CodeEngine;
   init?: () => void;
   loadEditor?: (editorState: IEditorState) => void;
   newGraph?: () => void;
@@ -82,6 +75,7 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
   const isSubgraph = computed(() => displayedGraph.value && displayedGraph.value !== editor.value.graph);
 
   const settings: IViewSettings = reactive(DEFAULT_SETTINGS());
+  settings.nodes.defaultWidth = 400;
 
   const commandHandler = useCommandHandler();
   const history = useHistory(displayedGraph, commandHandler);
@@ -91,7 +85,7 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     /** Called whenever a node is rendered */
     renderNode: new SequentialHook<{ node: AbstractCodeNode; el: HTMLElement }, null>(null),
     /** Called whenever an interface is rendered */
-    renderInterface: new SequentialHook<{ intf: CodeNodeInterface<any>; el: HTMLElement }, null>(null),
+    renderInterface: new SequentialHook<{ intf: CodeNodeInterface<unknown>; el: HTMLElement }, null>(null),
   };
 
   // registerGraphCommands(displayedGraph, commandHandler, switchGraph);
@@ -102,6 +96,10 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
 
   registerSidebarCommands(displayedGraph, commandHandler);
   registerZoomToFitCommands(displayedGraph, commandHandler, settings);
+
+  // add custom commands to the toolbar
+  registerCustomCommands(displayedGraph, commandHandler, settings);
+  updateToolbarItems(settings);
 
   watch(
     editor,

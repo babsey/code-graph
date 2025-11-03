@@ -3,10 +3,9 @@
 import {
   AbstractNode,
   Connection,
-  Graph,
-  NodeInterface,
-  sortTopologically,
   type CalculateFunction,
+  type CalculateFunctionReturnType,
+  type CalculationContext,
   type INodeState,
   type NodeInterfaceDefinition,
 } from "baklavajs";
@@ -15,7 +14,7 @@ import { reactive, type UnwrapRef } from "vue";
 
 import type { Code } from "@/code";
 import type { CodeNodeInputInterface, CodeNodeInterface, CodeNodeOutputInterface } from "@/codeNodeInterfaces";
-import type { CodeGraph } from "@/codeGraph/codeGraph";
+import type { CodeGraph } from "@/codeGraph";
 
 mustache.escape = (value: string) => value;
 
@@ -32,13 +31,12 @@ export interface IAbstractCodeNodeState {
 
 export abstract class AbstractCodeNode extends AbstractNode {
   public state: UnwrapRef<IAbstractCodeNodeState>;
-  public code: Code | undefined;
   public isCodeNode = true;
   public name: string = "";
   public codeTemplate: () => string;
 
-  public inputs: Record<string, NodeInterface<unknown>> = {};
-  public outputs: Record<string, NodeInterface<unknown>> = {};
+  public inputs: Record<string, CodeNodeInterface<unknown>> = {};
+  public outputs: Record<string, CodeNodeInterface<unknown>> = {};
 
   public constructor() {
     super();
@@ -54,7 +52,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
       modules: [],
       props: null,
       script: "",
-      variableName: "x",
+      variableName: "a",
     });
 
     this.codeTemplate = function () {
@@ -62,14 +60,14 @@ export abstract class AbstractCodeNode extends AbstractNode {
     };
   }
 
-  get codeGraph(): CodeGraph {
-    return this.code?.graph;
+  get code(): Code {
+    return this.graph.code;
   }
 
   get codeNodeInputs(): Record<string, CodeNodeInputInterface> {
     return Object.fromEntries(
       Object.entries(this.inputs).filter(
-        (intf: [string, NodeInterface]) => intf[1].isCodeNode && intf[1].type != "node",
+        (intf: [string, CodeNodeInterface]) => intf[1].isCodeNode && intf[1].type != "node",
       ),
     ) as Record<string, CodeNodeInputInterface>;
   }
@@ -77,21 +75,21 @@ export abstract class AbstractCodeNode extends AbstractNode {
   get codeNodeOutputs(): Record<string, CodeNodeOutputInterface> {
     return Object.fromEntries(
       Object.entries(this.outputs).filter(
-        (intf: [string, NodeInterface]) => intf[1].isCodeNode && intf[1].type != "node",
+        (intf: [string, CodeNodeInterface]) => intf[1].isCodeNode && intf[1].type != "node",
       ),
     ) as Record<string, CodeNodeOutputInterface>;
   }
 
-  get graph(): CodeGraph | Graph {
-    return this.codeGraph ?? super.graph;
+  get graph(): CodeGraph {
+    return super.graph as CodeGraph;
   }
 
   get idx(): number {
-    return this.codeGraph?.codeNodes.filter((node: AbstractCodeNode) => !node.state.integrated).indexOf(this) ?? -1;
+    return this.graph.nodes.filter((node: AbstractCodeNode) => !node.state.integrated).indexOf(this) ?? -1;
   }
 
   get idxByVariableNames(): number {
-    return this.codeGraph?.getNodesBySameVariableNames(this.state.variableName).indexOf(this) ?? -1;
+    return this.graph.getNodesBySameVariableNames(this.state.variableName).indexOf(this) ?? -1;
   }
 
   get lockCode(): boolean {
@@ -116,11 +114,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get script(): string {
-    return this.state.script;
+    return this.outputs._code?.value ?? "";
   }
 
   set script(value: string) {
-    this.state.script = value;
+    this.outputs._code.value = value;
     this.events.update.emit(null);
   }
 
@@ -128,7 +126,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return this.id.slice(0, 6);
   }
 
-  get subgraph(): Graph | undefined {
+  get subgraph(): CodeGraph | undefined {
     return undefined;
   }
 
@@ -159,7 +157,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     let nodeIds: string[] = [];
 
     if (type !== "inputs") {
-      const targets = this.graph?.connections
+      const targets = this.graph.connections
         .filter((c: Connection) => c.from.name !== "_code")
         .filter((c: Connection) => c.from.nodeId === this.id)
         .map((c: Connection) => c.to.nodeId);
@@ -167,7 +165,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     }
 
     if (type !== "outputs") {
-      const sources = this.graph?.connections
+      const sources = this.graph.connections
         .filter((c: Connection) => c.from.name !== "_code")
         .filter((c: Connection) => c.to.nodeId === this.id)
         .map((c: Connection) => c.from.nodeId);
@@ -176,7 +174,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     }
 
     if (!nodeIds || nodeIds.length == 0) return [];
-    return nodeIds.map((nodeId: string) => this.graph?.findNodeById(nodeId)) as AbstractCodeNode[];
+    return nodeIds.map((nodeId: string) => this.graph.findNodeById(nodeId)) as AbstractCodeNode[];
   }
 
   /**
@@ -188,7 +186,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     let nodeIds: string[] = [];
 
     if (type !== "outputs" && this.inputs[nodeInterface]) {
-      const sources = this.graph?.connections
+      const sources = this.graph.connections
         .filter(
           (c: Connection) => c.to.id === this.inputs[nodeInterface]?.id || c.from.id === this.inputs[nodeInterface]?.id,
         )
@@ -197,7 +195,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     }
 
     if (type !== "inputs" && this.outputs[nodeInterface]) {
-      const targets = this.graph?.connections
+      const targets = this.graph.connections
         .filter(
           (c: Connection) =>
             c.from.id === this.outputs[nodeInterface]?.id || c.from.id === this.outputs[nodeInterface]?.id,
@@ -207,7 +205,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     }
 
     if (!nodeIds || nodeIds.length == 0) return [];
-    return nodeIds.map((nodeId) => this.graph?.findNodeById(nodeId)) as AbstractCodeNode[];
+    return nodeIds.map((nodeId) => this.graph.findNodeById(nodeId)) as AbstractCodeNode[];
   }
 
   /**
@@ -221,32 +219,9 @@ export abstract class AbstractCodeNode extends AbstractNode {
   /**
    * Render code of this node.
    */
-  renderCode(): void {
-    // this.state.codeTemplate = this.codeTemplate.call(this)
-
-    if (!this.lockCode) {
-      const inputs: Record<string, unknown> = {};
-      Object.keys(this.inputs).forEach((intfKey: string) => {
-        if (intfKey === "_code") return;
-        const intf = this.inputs[intfKey] as CodeNodeInterface;
-
-        if (intf && intf.state) inputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : intf.getValue();
-      });
-
-      const outputs: Record<string, unknown> = {};
-      Object.keys(this.outputs).forEach((intfKey: string) => {
-        if (intfKey === "_code") return;
-        const intf = this.outputs[intfKey] as CodeNodeInterface;
-
-        if (intf && intf.state) outputs[intfKey] = intf.getValue();
-        // if (intf && intf.state) outputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : value;
-      });
-
-      this.state.script = mustache.render(this.state.codeTemplate, { inputs, outputs });
-    }
-
-    // if (this.outputs._code) this.outputs._code.value = this.state.script
-    if (this.outputs.out) this.outputs.out.state.script = this.script;
+  renderCode(data: { inputs: Record<string, unknown> }): string {
+    if (this.isSubgraph) return this.subgraph?.renderCode();
+    return mustache.render(this.state.codeTemplate, data);
   }
 
   /**
@@ -256,36 +231,26 @@ export abstract class AbstractCodeNode extends AbstractNode {
     Object.values(this.codeNodeInputs).forEach((intf: CodeNodeInterface) => intf.resetScript());
   }
 
+  /**
+   * Update code templates.
+   */
   updateCodeTemplate(): void {
     this.state.codeTemplate = this.codeTemplate.call(this);
   }
 
-  updateConnectedInputInterfaces() {
-    if (!this.codeGraph) return;
-
-    const { connectionsFromNode } = sortTopologically(this.codeGraph);
-    if (!connectionsFromNode.has(this)) return;
-
-    const connections = connectionsFromNode.get(this);
-    if (!connections) return;
-
-    connections.forEach((c) => {
-      if (!c.from.isCodeNode || !c.to.isCodeNode) return;
-
-      const srcNode = this.graph?.findNodeById(c.from.nodeId) as AbstractCodeNode;
-      if (!srcNode) return;
-      srcNode.renderCode();
-
-      c.to.script = c.from.script;
-    });
-  }
-
+  /**
+   * Update output names.
+   */
   updateOutputNames(): void {
     Object.values(this.codeNodeOutputs).forEach((output: CodeNodeOutputInterface) => {
-      output.name = this.state.integrated ? "" : this.variableName + output.value;
+      output.name = this.state.integrated ? "" : this.variableName + output.suffix;
     });
   }
 
+  /**
+   * Update state props
+   * @param props
+   */
   updateProps(props: unknown): void {
     this.state.props = props;
   }
@@ -304,16 +269,21 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
    * @param globalValues Set of values passed to every node by the engine plugin
    * @return Values for output interfaces
    */
-  public calculate?: CalculateFunction<I, O>;
+  public calculate?: CalculateFunction<I, O> = (inputs: I, globalValues: CalculationContext) => {
+    const outputs: CalculateFunctionReturnType<any> = {};
+    if (!this.lockCode) outputs._code = this.renderCode({ inputs, ...globalValues });
+    this.updateOutputValues(outputs);
+    return outputs;
+  };
 
   public load(state: ICodeNodeState<I, O>): void {
     super.load(state);
-    if (this.codeGraph) loadNodeState(this.codeGraph, state);
+    loadNodeState(this.graph, state);
   }
 
   public save(): ICodeNodeState<I, O> {
     const state = super.save() as ICodeNodeState<I, O>;
-    if (this.codeGraph) saveNodeState(this.codeGraph, state);
+    saveNodeState(this.graph, state);
     return state;
   }
 
@@ -324,6 +294,13 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
       const modules = this.type.split(".");
       this.state.modules.push(modules.slice(0, modules.length - 1).join("."));
     }
+  }
+
+  updateOutputValues(outputs: CalculateFunctionReturnType<any>): void {
+    Object.keys(this.outputs).forEach((k: string) => {
+      if (k === "_code") return;
+      outputs[k] = this.state.integrated ? outputs._code : this.outputs[k].name;
+    });
   }
 }
 

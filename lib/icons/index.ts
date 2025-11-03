@@ -8,6 +8,7 @@ export { default as LayoutSidebarRight } from "./LayoutSidebarRight.vue";
 export { default as LayoutSidebarRightCollapse } from "./LayoutSidebarRightCollapse.vue";
 export { default as LayoutSidebarRightExpand } from "./LayoutSidebarRightExpand.vue";
 export { default as LockCode } from "./LockCode.vue";
+export { default as PlayerPlay } from "./PlayerPlay.vue";
 export { default as Schema } from "./Schema.vue";
 export { default as SchemaOff } from "./SchemaOff.vue";
 export { default as TransitionBottom } from "./TransitionBottom.vue";

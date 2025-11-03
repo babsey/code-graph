@@ -1,7 +1,7 @@
 // selectInterface.ts
 
-import { markRaw, type ComponentOptions } from "vue";
 import { SelectInterfaceComponent } from "baklavajs";
+import { markRaw, type ComponentOptions } from "vue";
 
 import { BaseStringInterface } from "../baseStringInterface";
 

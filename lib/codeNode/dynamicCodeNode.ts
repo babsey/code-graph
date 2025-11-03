@@ -8,15 +8,18 @@ import {
   displayInSidebar,
   setType,
   type CalculateFunction,
+  type CalculateFunctionReturnType,
+  type CalculationContext,
   type IDynamicNodeDefinition,
   type INodeState,
   type InterfaceFactory,
   type NodeInterfaceDefinition,
 } from "baklavajs";
 
-import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
 import { CodeNodeInterface, CodeNodeOutputInterface } from "@/codeNodeInterfaces";
 import { nodeType, numberType, stringType } from "@/interfaceTypes";
+
+import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
 
 type Dynamic<T> = T & Record<string, unknown>;
 
@@ -29,15 +32,6 @@ export abstract class DynamicCodeNode<I, O> extends CodeNode<Dynamic<I>, Dynamic
   public abstract outputs: NodeInterfaceDefinition<Dynamic<O>>;
 
   public abstract load(state: INodeState<Dynamic<I>, Dynamic<O>>): void;
-
-  /**
-   * The default implementation does nothing.
-   * Overwrite this method to do calculation.
-   * @param inputs Values of all input interfaces
-   * @param globalValues Set of values passed to every node by the engine plugin
-   * @return Values for output interfaces
-   */
-  public calculate?: CalculateFunction<Dynamic<I>, Dynamic<O>>;
 }
 
 export type DynamicNodeDefinition = Record<string, (() => NodeInterface<unknown>) | undefined>;
@@ -76,12 +70,10 @@ export function defineDynamicCodeNode<I, O>(
       this.executeFactory("input", definition.inputs);
       this.executeFactory("output", definition.outputs);
 
-      // if (definition.calculate) {
-      //   this.calculate = (inputs: Dynamic<I>, globalValues: CalculationContext) => ({
-      //     ...definition.calculate?.call(this, inputs, globalValues),
-      //     _code: inputs._code,
-      //   })
-      // }
+      if (definition.calculate) {
+        this.calculate = (inputs: Dynamic<I>, globalValues: CalculationContext) =>
+          definition.calculate?.call(this, inputs, globalValues);
+      }
 
       definition.onCreate?.call(this);
 

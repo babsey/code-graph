@@ -3,6 +3,7 @@
 import { type Ref } from "vue";
 
 import type { CodeEditor } from "@/codeEditor";
+
 import { CodeGraph } from "./codeGraph";
 import type { CodeGraphTemplate } from "./codeGraphTemplate";
 
@@ -36,8 +37,6 @@ export function useSwitchCodeGraph(editor: Ref<CodeEditor>, displayedGraph: Ref<
     newGraphInstance.sidebar = newGraphInstance.sidebar ?? { visible: false, nodeId: "", optionName: "" };
 
     displayedGraph.value = newGraphInstance;
-
-    newGraphInstance.code.registerGraph(newGraphInstance);
     newGraphInstance.code.engine?.runOnce(null);
   };
 

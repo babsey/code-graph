@@ -42,10 +42,18 @@
 <script setup lang="ts">
 import { type CSSProperties, type Ref, computed, inject, reactive, ref } from "vue";
 import { usePointer } from "@vueuse/core";
-import { AbstractNode, type INodeTypeInformation, useNodeCategories, useTransform, useViewModel } from "baklavajs";
+import {
+  AbstractNode,
+  Components,
+  type INodeTypeInformation,
+  useNodeCategories,
+  useTransform,
+  useViewModel,
+} from "baklavajs";
 
 import { filterObject } from "@/utils";
-import PaletteEntry from "./PaletteEntry.vue";
+
+const PaletteEntry = Components.PaletteEntry;
 
 interface IDraggedNode {
   type: string;

@@ -1,7 +1,7 @@
 // tupleInputInterface.ts
 
+import { TextInputInterfaceComponent, setType } from "baklavajs";
 import { markRaw } from "vue";
-import { setType, TextInputInterfaceComponent } from "baklavajs";
 
 import { CodeNodeInputInterface, tupleType } from "@/main";
 

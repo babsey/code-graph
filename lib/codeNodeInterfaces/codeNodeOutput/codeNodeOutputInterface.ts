@@ -1,20 +1,27 @@
 // codeNodeOutputInterface.ts
 
 import { markRaw } from "vue";
+import { useGraph } from "baklavajs";
 
-import CodeNodeInterfaceComponent from "../codeNode/CodeNodeInterface.vue";
-import { CodeNodeInterface } from "../codeNode/codeNodeInterface";
+import { type AbstractCodeNode } from "@/codeNode";
+import { CodeNodeInterface, CodeNodeInterfaceComponent } from "../codeNode";
 
 export class CodeNodeOutputInterface extends CodeNodeInterface<string> {
   public isCodeNodeOutput: boolean = true;
+  public suffix: string = "";
 
   constructor(name: string = "", value: string = "") {
-    super(name, value);
+    super(name, "");
+    this.suffix = value;
     this.setComponent(markRaw(CodeNodeInterfaceComponent));
   }
 
-  override get script(): string {
-    if (this.name) return this.name;
-    return this.state.script;
+  get codeValue(): string {
+    return this.node?.outputs._code.value ?? "";
+  }
+
+  get node(): AbstractCodeNode | undefined {
+    const { graph } = useGraph();
+    return graph.value.findNodeById(this.nodeId);
   }
 }

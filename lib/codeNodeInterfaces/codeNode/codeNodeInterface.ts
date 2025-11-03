@@ -8,7 +8,6 @@ import type { Code } from "@/code";
 
 export interface ICodeNodeInterfaceState {
   optional: boolean;
-  script: string;
 }
 
 export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
@@ -23,7 +22,6 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
 
     this.state = reactive({
       optional: false,
-      script: "",
     });
   }
 
@@ -31,21 +29,11 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
     return this.state.optional;
   }
 
-  get script(): string {
-    return this.state.script;
-  }
-
-  set script(value: string) {
-    this.state.script = value;
-  }
-
   get shortId(): string {
     return this.id.slice(0, 6);
   }
 
   getValue = (): string => `${this.value ?? "None"}`;
-
-  resetScript = () => (this.state.script = "");
 
   setOptional(value: boolean) {
     this.state.optional = value;

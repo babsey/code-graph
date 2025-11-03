@@ -14,7 +14,7 @@
         <div class="__inputs">
           <div v-for="intf in displayedInputInterfaces" :key="intf.id" class="__interface">
             <div style="display: flex">
-              <Checkbox
+              <SidebarCheckbox
                 v-model="intf.hidden"
                 :disabled="!intf.optional"
                 inversed
@@ -43,7 +43,7 @@
 
           <div v-for="intf in displayedOutputInterfaces" :key="intf.id" class="__interface">
             <div style="display: flex">
-              <Checkbox
+              <SidebarCheckbox
                 v-model="intf.hidden"
                 :disabled="!intf.optional"
                 inversed
@@ -65,8 +65,8 @@
 import { computed, ref, toRef } from "vue";
 import { useGraph, useViewModel } from "baklavajs";
 
-import Checkbox from "./Checkbox.vue";
-import type { AbstractCodeNode } from "@/codeNode/codeNode";
+import SidebarCheckbox from "./SidebarCheckbox.vue";
+import type { AbstractCodeNode } from "@/codeNode";
 
 const { viewModel } = useViewModel();
 const { graph } = useGraph();

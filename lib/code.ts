@@ -1,12 +1,12 @@
 // code.ts
 
 import mustache from "mustache";
-import { DependencyEngine, useViewModel } from "baklavajs";
+import { DependencyEngine } from "@baklavajs/engine";
 import { reactive, type UnwrapRef } from "vue";
 import { v4 as uuidv4 } from "uuid";
 
-import { AbstractCodeNode } from "./codeNode";
-import type { CodeGraph } from "./codeGraph/codeGraph";
+import { AbstractCodeNode } from "@/codeNode";
+import type { CodeGraph } from "@/codeGraph";
 
 mustache.escape = (value: string) => value;
 
@@ -127,7 +127,6 @@ export class Code {
 
     const nodes = this.graph.scriptedCodeNodes;
     const modules = this.modules;
-    // this.graph?.renderCode();
 
     this.state.script = mustache.render(this.state.template || "", { nodes, modules });
   }

@@ -8,22 +8,17 @@ import {
 } from "@baklavajs/core";
 import { v4 as uuidv4 } from "uuid";
 import { reactive, type Ref } from "vue";
-
-import { useViewModel } from "baklavajs";
-
 import {
+  Commands,
   type ICommand,
   type ICommandHandler,
   type IViewNodeState,
   type SaveSubgraphCommand,
-  Commands,
-  // SubgraphInputNode,
-  // SubgraphOutputNode,
+  useViewModel,
 } from "@baklavajs/renderer-vue";
 
-import { CodeGraphTemplate } from "@/codeGraph/codeGraphTemplate";
-import type { SwitchCodeGraph } from "@/codeGraph/switchCodeGraph";
-import type { CodeGraph } from "@/codeGraph/codeGraph";
+import { CodeGraphTemplate, type SwitchCodeGraph, type CodeGraph } from "@/codeGraph";
+
 import { SubgraphInputNode, SubgraphOutputNode } from "./subgraphInterfaceNodes";
 
 export const CREATE_SUBGRAPH_COMMAND = "CREATE_SUBGRAPH";

@@ -1,18 +1,23 @@
 // codeGraphNode.ts
 
 import {
-  allowMultipleConnections,
-  getGraphNodeTypeString,
   Graph,
   GraphTemplate,
+  NodeInterface,
+  allowMultipleConnections,
+  getGraphNodeTypeString,
+  setType,
+  type CalculateFunction,
   type IGraphInterface,
   type IGraphNode,
   type IGraphState,
   type INodeState,
-  setType,
 } from "baklavajs";
 
-import { CodeNodeOutputInterface, CodeNodeInterface, AbstractCodeNode, nodeType } from "@/main";
+import { CodeNodeInterface } from "@/codeNodeInterfaces";
+import { AbstractCodeNode } from "@/codeNode";
+import { nodeType } from "@/interfaceTypes";
+
 import type { CodeGraph } from "./codeGraph";
 import { CodeGraphInputNode, CodeGraphOutputNode } from "../subgraph/graphInterface";
 
@@ -47,7 +52,6 @@ const PROXY_INTERFACE_SKIP_PROPERTIES: Array<string | symbol> = [
 export function createCodeGraphNodeType(template: GraphTemplate): new () => AbstractCodeNode & IGraphNode {
   return class CodeGraphNode extends AbstractCodeNode implements IGraphNode {
     public type = getGraphNodeTypeString(template);
-    public code: Code;
 
     public override get title() {
       return this._title;
@@ -62,49 +66,45 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
     public template = template;
     public subgraph: CodeGraph | undefined;
 
-    get script(): string {
-      return this.subgraph.state.script;
-    }
+    public override calculate: CalculateFunction<Record<string, unknown>, Record<string, unknown>> = async (
+      inputs,
+      context,
+    ) => {
+      if (!this.subgraph) {
+        throw new Error(`GraphNode ${this.id}: calculate called without subgraph being initialized`);
+      }
+      if (!context.engine || typeof context.engine !== "object") {
+        throw new Error(`GraphNode ${this.id}: calculate called but no engine provided in context`);
+      }
 
-    // public override calculate: CalculateFunction<Record<string, unknown>, Record<string, unknown>> = async (
-    //   inputs,
-    //   context,
-    // ) => {
-    //   if (!this.subgraph) {
-    //     throw new Error(`GraphNode ${this.id}: calculate called without subgraph being initialized`)
-    //   }
-    //   if (!context.engine || typeof context.engine !== 'object') {
-    //     throw new Error(`GraphNode ${this.id}: calculate called but no engine provided in context`)
-    //   }
+      const graphInputs = context.engine.getInputValues(this.subgraph);
 
-    //   const graphInputs = context.engine.getInputValues(this.subgraph)
+      // fill subgraph input placeholders
+      for (const input of this.subgraph.inputs) {
+        graphInputs.set(input.nodeInterfaceId, inputs[input.id]);
+      }
 
-    //   // fill subgraph input placeholders
-    //   for (const input of this.subgraph.inputs) {
-    //     graphInputs.set(input.nodeInterfaceId, inputs[input.id])
-    //   }
+      const result: Map<string, Map<string, unknown>> = await context.engine.runGraph(
+        this.subgraph,
+        graphInputs,
+        context.globalValues,
+      );
 
-    //   const result: Map<string, Map<string, unknown>> = await context.engine.runGraph(
-    //     this.subgraph,
-    //     graphInputs,
-    //     context.globalValues,
-    //   )
+      const outputs: Record<string, unknown> = {};
+      for (const output of this.subgraph.outputs) {
+        outputs[output.id] = result.get(output.nodeId)?.get("output");
+      }
 
-    //   const outputs: Record<string, unknown> = {}
-    //   for (const output of this.subgraph.outputs) {
-    //     outputs[output.id] = result.get(output.nodeId)?.get('output')
-    //   }
+      console.log(result)
+      outputs._calculationResults = result;
 
-    //   outputs._calculationResults = result
-    //   outputs['_code'] = inputs['_code']
-
-    //   return outputs
-    // }
+      return outputs;
+    };
 
     /**
      * Render code script of the subgraph.
      */
-    renderCode(): void {
+    public override renderCode(): void {
       if (!this.subgraph) return;
 
       this.subgraph.renderCode();
@@ -201,10 +201,7 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
       );
 
       // Add an internal output to allow accessing the calculation results of nodes inside the graph
-      this.addOutput(
-        "_calculationResults",
-        new CodeNodeOutputInterface("_calculationResults", undefined).setHidden(true),
-      );
+      this.addOutput("_calculationResults", new NodeInterface("_calculationResults", undefined).setHidden(true));
     }
 
     /**
@@ -246,5 +243,7 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
         },
       });
     }
+
+    public update(): void {}
   };
 }
