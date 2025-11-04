@@ -29,7 +29,7 @@
     "type-check": "vue-tsc --build",
     "clean": "rimraf dist",
     "lint": "eslint . --fix",
-    "format": "prettier --write lib/ src/"
+    "format": "prettier --write examples/**/src/ lib/ src/"
   },
   "dependencies": {
     "@codemirror/lang-python": "~6.2",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@tsconfig/node-lts": "~22.0",
     "@types/mustache": "~4.2",
-    "@types/node": "~24.9",
+    "@types/node": "~24.10",
     "@types/toposort": "~2.0",
     "@vitejs/plugin-vue": "~6.0",
     "@vue/eslint-config-prettier": "~10.2",
