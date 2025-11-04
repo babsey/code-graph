@@ -9,8 +9,10 @@ import { basicSetup, EditorView } from "codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
 
-// import '@baklavajs/themes/dist/classic.css'
+import "splitpanes/dist/splitpanes.css";
+// import "@baklavajs/themes/dist/classic.css"
 import "@baklavajs/themes/dist/syrup-dark.css";
+
 import "@babsey/code-graph/style.scss";
 
 const app = createApp(App);
