@@ -1,8 +1,8 @@
 // add.ts
 
-import { setType } from 'baklavajs'
+import { setType } from 'baklavajs';
 
-import { CodeNodeInputInterface, CodeNodeOutputInterface, defineCodeNode, numberType } from '@babsey/code-graph'
+import { CodeNodeInputInterface, CodeNodeOutputInterface, defineCodeNode, numberType } from '@babsey/code-graph';
 
 export default defineCodeNode({
   type: 'add',
@@ -15,4 +15,4 @@ export default defineCodeNode({
   },
   calculate: ({ arg1, arg2 }) => ({ out: `${arg1} + ${arg2}` }),
   codeTemplate: () => '{{  inputs.arg1 }} + {{  inputs.arg2 }}',
-})
+});

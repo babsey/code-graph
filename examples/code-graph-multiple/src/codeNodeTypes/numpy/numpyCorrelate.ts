@@ -1,15 +1,10 @@
 // numpyCorrelate.ts
 
-import { setType } from 'baklavajs'
+import { setType } from 'baklavajs';
 
-import {
-    CodeNodeInputInterface,
-    CodeNodeOutputInterface,
-    SelectInterface,
-    defineCodeNode
-} from '@babsey/code-graph'
+import { CodeNodeInputInterface, CodeNodeOutputInterface, SelectInterface, defineCodeNode } from '@babsey/code-graph';
 
-import { arrayType } from './interfaceTypes'
+import { arrayType } from './interfaceTypes';
 
 export default defineCodeNode({
   name: 'np.correlate',
@@ -24,4 +19,4 @@ export default defineCodeNode({
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, arrayType),
   },
-})
+});

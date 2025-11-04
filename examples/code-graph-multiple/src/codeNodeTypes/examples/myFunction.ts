@@ -10,8 +10,9 @@ import {
   SliderInterface,
   TextInputInterface,
   TextareaInputInterface,
-  defineCodeNode
-} from '@babsey/code-graph'
+  defineCodeNode,
+  formatInputs,
+} from '@babsey/code-graph';
 
 export default defineCodeNode({
   type: 'myFunction',
@@ -30,8 +31,8 @@ export default defineCodeNode({
   outputs: {
     out: () => new CodeNodeOutputInterface(),
     custom: () => new CodeNodeOutputInterface('.custom', '.custom').setOptional(true),
-  }
-  // codeTemplate() {
-  //   return `myFunction(${formatInputs(this.codeNodeInputs).join(', ')})`
-  // },
-})
+  },
+  codeTemplate() {
+    return `bls nls(${formatInputs(this.codeNodeInputs).join(', ')})`;
+  },
+});

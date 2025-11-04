@@ -1,14 +1,16 @@
 // slider.ts
 
-import { CodeNodeOutputInterface, SliderInterface, defineCodeNode } from '@babsey/code-graph'
+import { setType } from 'baklavajs';
+
+import { CodeNodeOutputInterface, SliderInterface, defineCodeNode, numberType } from '@babsey/code-graph';
 
 export default defineCodeNode({
   type: 'slider',
   inputs: {
-    slider: () => new SliderInterface('slider', 0.5, 0, 1).setPort(false),
+    slider: () => new SliderInterface('slider', 0.5, 0, 1).use(setType, numberType),
   },
   outputs: {
-    out: () => new CodeNodeOutputInterface(),
+    out: () => new CodeNodeOutputInterface().use(setType, numberType),
   },
   codeTemplate: () => '{{ inputs.slider }}',
-})
+});

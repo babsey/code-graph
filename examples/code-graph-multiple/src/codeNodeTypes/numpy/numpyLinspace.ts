@@ -1,10 +1,10 @@
 // numpyLinspace.ts
 
-import { setType } from 'baklavajs'
+import { setType } from 'baklavajs';
 
-import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, formatInputs } from '@babsey/code-graph'
+import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, formatInputs } from '@babsey/code-graph';
 
-import { arrayType } from './interfaceTypes'
+import { arrayType } from './interfaceTypes';
 
 export default defineCodeNode({
   name: 'np.linspace',
@@ -20,15 +20,15 @@ export default defineCodeNode({
     out: () => new CodeNodeOutputInterface().use(setType, arrayType),
   },
   codeTemplate() {
-    let args = []
+    let args = [];
     if (!this.inputs.start.hidden) {
-      args = formatInputs(this.codeNodeInputs)
+      args = formatInputs(this.codeNodeInputs);
     } else {
-      const codeNodeInputs = { ...this.codeNodeInputs }
-      args.push(formatInputs({ stop: codeNodeInputs.stop }, false)[0])
-      delete codeNodeInputs.stop
-      args = args.concat(formatInputs(codeNodeInputs))
+      const codeNodeInputs = { ...this.codeNodeInputs };
+      args.push(formatInputs({ stop: codeNodeInputs.stop }, false)[0]);
+      delete codeNodeInputs.stop;
+      args = args.concat(formatInputs(codeNodeInputs));
     }
-    return `np.linspace(${args.join(', ')})`
+    return `np.linspace(${args.join(', ')})`;
   },
-})
+});

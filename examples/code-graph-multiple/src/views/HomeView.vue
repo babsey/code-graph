@@ -10,6 +10,7 @@
           :options="[
             { label: 'example', value: 'example' },
             { label: 'numpy', value: 'numpy' },
+            { label: 'norse', value: 'norse' },
           ]"
           placeholder="Select a workspace"
         />

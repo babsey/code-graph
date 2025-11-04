@@ -1,6 +1,6 @@
 // numpyRandomSeed.ts
 
-import { IntegerInterface, defineCodeNode } from '@babsey/code-graph'
+import { IntegerInterface, defineCodeNode } from '@babsey/code-graph';
 
 export default defineCodeNode({
   name: 'np.random.seed',
@@ -9,4 +9,4 @@ export default defineCodeNode({
   inputs: {
     seed: () => new IntegerInterface('seed', 0).setOptional(true),
   },
-})
+});

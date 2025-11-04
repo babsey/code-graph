@@ -1,14 +1,14 @@
 // dialog.ts
 
-import { setType } from 'baklavajs'
+import { setType } from 'baklavajs';
 
 import {
-    CodeNodeOutputInterface,
-    TextareaInputInterface,
-    TextInputInterface,
-    defineCodeNode,
-    stringType,
-} from '@babsey/code-graph'
+  CodeNodeOutputInterface,
+  TextareaInputInterface,
+  TextInputInterface,
+  defineCodeNode,
+  stringType,
+} from '@babsey/code-graph';
 
 export default defineCodeNode({
   type: 'dictEntry',
@@ -21,4 +21,4 @@ export default defineCodeNode({
     out: () => new CodeNodeOutputInterface(),
   },
   codeTemplate: () => '{{  inputs.key }}: {{  inputs.value }}',
-})
+});

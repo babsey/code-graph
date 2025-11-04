@@ -1,14 +1,14 @@
 // math.ts
 
-import { setType } from 'baklavajs'
+import { setType } from 'baklavajs';
 
 import {
-    CodeNodeOutputInterface,
-    NumberInterface,
-    SelectInterface,
-    defineCodeNode,
-    numberType,
-} from '@babsey/code-graph'
+  CodeNodeOutputInterface,
+  NumberInterface,
+  SelectInterface,
+  defineCodeNode,
+  numberType,
+} from '@babsey/code-graph';
 
 export default defineCodeNode({
   type: 'math',
@@ -23,9 +23,9 @@ export default defineCodeNode({
   codeTemplate() {
     switch (this.inputs.operation.value) {
       case 'Add':
-        return '{{  inputs.number1 }} + {{  inputs.number2 }}'
+        return '{{  inputs.number1 }} + {{  inputs.number2 }}';
       case 'Subtract':
-        return '{{  inputs.number1 }} - {{  inputs.number2 }}'
+        return '{{  inputs.number1 }} - {{  inputs.number2 }}';
     }
   },
-})
+});
