@@ -1,14 +1,14 @@
 // default/register.ts
 
-import { addDefaultInterfaceTypes, type ICodeGraphViewModel } from '@babsey/code-graph';
+import { addDefaultInterfaceTypes, type ICodeGraphViewModel } from "@babsey/code-graph";
 
-import boolean from './boolean';
-import integer from './integer';
-import list from './list';
-import number from './number';
-import slider from './slider';
-import text from './text';
-import tuple from './tuple';
+import boolean from "./boolean";
+import integer from "./integer";
+import list from "./list";
+import number from "./number";
+import slider from "./slider";
+import text from "./text";
+import tuple from "./tuple";
 
 export const registerDefaultNodeTypes = (viewModel: ICodeGraphViewModel) => {
   addDefaultInterfaceTypes(viewModel);

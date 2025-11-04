@@ -1,14 +1,14 @@
 // examples/register.ts
 
-import { addDefaultInterfaceTypes, type ICodeGraphViewModel } from '@babsey/code-graph';
+import { addDefaultInterfaceTypes, type ICodeGraphViewModel } from "@babsey/code-graph";
 
-import add from './add';
-import dictEntry from './dictEntry';
-import dynamicMath from './dynamicMath';
-import math from './math';
-import myFunction from './myFunction';
+import add from "./add";
+import dictEntry from "./dictEntry";
+import dynamicMath from "./dynamicMath";
+import math from "./math";
+import myFunction from "./myFunction";
 
-const category = 'examples';
+const category = "examples";
 
 export const registerExampleNodeTypes = (viewModel: ICodeGraphViewModel) => {
   addDefaultInterfaceTypes(viewModel);

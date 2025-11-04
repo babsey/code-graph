@@ -1,15 +1,15 @@
 // codeGraphStore.ts
 
-import { defineStore } from 'pinia';
-import { reactive, type UnwrapRef } from 'vue';
-import { type IEditorState } from 'baklavajs';
+import { defineStore } from "pinia";
+import { reactive, type UnwrapRef } from "vue";
+import { type IEditorState } from "baklavajs";
 
-import { type ICodeGraphViewModel } from '@babsey/code-graph';
+import { type ICodeGraphViewModel } from "@babsey/code-graph";
 
-import { registerExampleCodeGraph, registerNumpyCodeGraph } from '@/codes';
+import { registerExampleCodeGraph, registerNumpyCodeGraph } from "@/codes";
 
 export const useCodeGraphStore = defineStore(
-  'code-graph',
+  "code-graph",
   () => {
     const state: UnwrapRef<{
       codeGraph: ICodeGraphViewModel | null;
@@ -20,15 +20,15 @@ export const useCodeGraphStore = defineStore(
     }> = reactive({
       codeGraph: null,
       codeGraphs: {},
-      codeName: 'example',
+      codeName: "example",
       editorStates: {},
       token: null,
     });
 
     const init = () => {
       // console.log('init')
-      state.codeGraphs['example'] = registerExampleCodeGraph();
-      state.codeGraphs['numpy'] = registerNumpyCodeGraph();
+      state.codeGraphs["example"] = registerExampleCodeGraph();
+      state.codeGraphs["numpy"] = registerNumpyCodeGraph();
     };
 
     const loadCodeGraph = (codeName: string) => {
@@ -78,7 +78,7 @@ export const useCodeGraphStore = defineStore(
       state.codeGraph.newGraph();
 
       const editorId = saveEditor();
-      return { name: 'edit', params: { editorId } };
+      return { name: "edit", params: { editorId } };
     };
 
     const removeEditorState = (editorId: string) => {
@@ -120,7 +120,7 @@ export const useCodeGraphStore = defineStore(
   {
     persist: {
       storage: sessionStorage, // localStorage
-      pick: ['state.codeName', 'state.editorStates'],
+      pick: ["state.codeName", "state.editorStates"],
     },
   },
 );

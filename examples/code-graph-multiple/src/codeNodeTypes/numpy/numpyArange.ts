@@ -1,20 +1,20 @@
 // numpyArange.ts
 
-import { setType } from 'baklavajs';
+import { setType } from "baklavajs";
 
-import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, formatInputs } from '@babsey/code-graph';
+import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, formatInputs } from "@babsey/code-graph";
 
-import { arrayType } from './interfaceTypes';
+import { arrayType } from "./interfaceTypes";
 
 export default defineCodeNode({
-  name: 'np.arange',
-  type: 'numpy.arange',
-  title: 'arange',
-  variableName: 'a',
+  name: "np.arange",
+  type: "numpy.arange",
+  title: "arange",
+  variableName: "a",
   inputs: {
-    start: () => new NumberInterface('start', 0).setOptional(true),
-    stop: () => new NumberInterface('stop', 1),
-    step: () => new NumberInterface('step', 1).setOptional(true),
+    start: () => new NumberInterface("start", 0).setOptional(true),
+    stop: () => new NumberInterface("stop", 1),
+    step: () => new NumberInterface("step", 1).setOptional(true),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, arrayType),
@@ -29,6 +29,6 @@ export default defineCodeNode({
       delete codeNodeInputs.stop;
       args = args.concat(formatInputs(codeNodeInputs));
     }
-    return `np.arange(${args.join(', ')})`;
+    return `np.arange(${args.join(", ")})`;
   },
 });

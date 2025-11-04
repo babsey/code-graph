@@ -25,11 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { useCodeGraphStore } from '@/stores/codeGraphStore';
+import { useCodeGraphStore } from "@/stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();
 
-import { Plus } from '../icons';
-import NavItem from '@/components/NavItem.vue';
+import { Plus } from "../icons";
+import NavItem from "@/components/NavItem.vue";
 </script>
 
 <style lang="scss">
