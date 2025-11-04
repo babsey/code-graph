@@ -1,6 +1,9 @@
 <template>
   <div style="display: flex; overflow: hidden; width: 100vw; height: 100vh">
-    <!-- <BaklavaEditor :viewModel /> -->
+    <div style="position: absolute; z-index: 1; color: white">
+      {{ viewModel.editor.graph.shortId }}
+      {{ viewModel.displayedGraph.shortId }}
+    </div>
 
     <div style="width: 70vw; height: 100vh">
       <CodeGraphEditor :viewModel>
@@ -22,13 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { useBaklava, BaklavaEditor } from "baklavajs";
-
 import {
   CodeGraphEditor,
-  addToolbarItems,
   registerCodeEngine,
   registerCustomCommands,
+  updateToolbarItems,
   useCodeGraph,
 } from "@babsey/code-graph";
 
@@ -36,15 +37,8 @@ import { MyCode } from "./code";
 import { registerNodeTypes } from "./codeNodeTypes";
 import CodeEditor from "./components/CodeEditor.vue";
 
-// const viewModel = useBaklava();
-
 const viewModel = useCodeGraph({ code: new MyCode() });
 registerCodeEngine(viewModel);
-
-// add custom commands to the toolbar
-registerCustomCommands(viewModel.displayedGraph, viewModel.commandHandler, viewModel.settings);
-addToolbarItems(viewModel.settings);
-
 registerNodeTypes(viewModel);
 </script>
 

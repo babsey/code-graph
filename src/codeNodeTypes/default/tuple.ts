@@ -7,7 +7,7 @@ import { CodeNodeOutputInterface, TupleInputInterface, defineCodeNode, tupleType
 export default defineCodeNode({
   type: "tuple",
   inputs: {
-    items: () => new TupleInputInterface("tuple", 0),
+    items: () => new TupleInputInterface("tuple", "").use(setType, tupleType),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, tupleType),

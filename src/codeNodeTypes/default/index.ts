@@ -1,4 +1,4 @@
-// default
+// codeNodeTypes/default
 
 export * from "./register";
 

@@ -7,7 +7,7 @@ import { CodeNodeOutputInterface, ListInputInterface, defineCodeNode, listType }
 export default defineCodeNode({
   type: "list",
   inputs: {
-    items: () => new ListInputInterface("list", ""),
+    items: () => new ListInputInterface("list", "").use(setType, listType),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, listType),
