@@ -13,7 +13,6 @@ import {
 import type { CodeEditor } from "@/codeEditor";
 import type { CodeNodeInterface } from "@/codeNodeInterfaces";
 import type { ICodeGraphInterface } from "@/subgraph/graphInterface";
-import { mapValues } from "@/utils";
 
 import { CodeGraph, type ICodeGraphState } from "./codeGraph";
 

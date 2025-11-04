@@ -1,4 +1,6 @@
-import { GRAPH_INPUT_NODE_TYPE, GRAPH_OUTPUT_NODE_TYPE, NodeInterface } from "@baklavajs/core";
+// subgraphInterfaceNodes.ts
+
+import { NodeInterface } from "@baklavajs/core";
 import { TextInputInterface } from "@baklavajs/renderer-vue";
 import { setType } from "baklavajs";
 

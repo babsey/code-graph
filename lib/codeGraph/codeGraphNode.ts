@@ -5,6 +5,7 @@ import {
   GraphTemplate,
   NodeInterface,
   allowMultipleConnections,
+  applyResult,
   getGraphNodeTypeString,
   setType,
   type CalculateFunction,
@@ -29,8 +30,6 @@ export interface IGraphCodeNode extends IGraphNode {
   template: GraphTemplate;
   subgraph: Graph | undefined;
 }
-
-export const GRAPH_NODE_TYPE_PREFIX = "__baklava_GraphNode-";
 
 /** Properties that should not be proxied to the original interface */
 const PROXY_INTERFACE_SKIP_PROPERTIES: Array<string | symbol> = [
@@ -95,7 +94,6 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
         outputs[output.id] = result.get(output.nodeId)?.get("output");
       }
 
-      console.log(result);
       outputs._calculationResults = result;
 
       return outputs;
@@ -104,10 +102,9 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
     /**
      * Render code script of the subgraph.
      */
-    public override renderCode(): void {
-      if (!this.subgraph) return;
-
-      this.subgraph.renderCode();
+    public override renderCode(): string {
+      if (!this.subgraph) return "";
+      return this.subgraph.renderCode();
     }
 
     public override load(state: IGraphCodeNodeState) {
@@ -218,9 +215,9 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
             PROXY_INTERFACE_SKIP_PROPERTIES.includes(prop) ||
             prop in target ||
             (typeof prop === "string" && prop.startsWith("__v_"))
-          ) {
+          )
             return Reflect.get(target, prop);
-          }
+
           // try to find the interface connected to our graph input
           let placeholderIntfId: string | undefined;
           if (isInput) {
@@ -236,9 +233,9 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
           }
           const conn = this.subgraph?.connections.find((c) => placeholderIntfId === (isInput ? c.from : c.to)?.id);
           const intf = isInput ? conn?.to : conn?.from;
-          if (intf) {
-            return Reflect.get(intf, prop);
-          }
+
+          if (intf) return Reflect.get(intf, prop);
+
           return undefined;
         },
       });

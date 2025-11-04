@@ -20,14 +20,14 @@ import {
   useHistory,
 } from "@baklavajs/renderer-vue";
 
-import { Code } from "./code";
-import { registerCustomCommands, updateToolbarItems } from "./settings";
 import type { AbstractCodeNode } from "./codeNode";
-import type { CodeNodeInterface } from "./codeNodeInterfaces";
-import { CodeEditor } from "./codeEditor";
-import { useSwitchCodeGraph, type CodeGraph, type CodeGraphTemplate } from "./codeGraph";
-import { registerCreateSubgraphCommand, SubgraphInputNode, SubgraphOutputNode } from "./subgraph";
 import type { CodeEngine } from "./codeEngine";
+import type { CodeNodeInterface } from "./codeNodeInterfaces";
+import { Code } from "./code";
+import { CodeEditor } from "./codeEditor";
+import { registerCreateSubgraphCommand, SubgraphInputNode, SubgraphOutputNode } from "./subgraph";
+import { registerCustomCommands, updateToolbarItems } from "./settings";
+import { useSwitchCodeGraph, type CodeGraph, type CodeGraphTemplate } from "./codeGraph";
 
 interface IViewNodeState extends INodeState<unknown, unknown> {
   position: { x: number; y: number };

@@ -1,9 +1,10 @@
 // codeEditor.ts
 
-import { type IBaklavaEventEmitter, type IBaklavaTapable, type IEditorState, Editor } from "baklavajs";
+import { type IBaklavaEventEmitter, type IBaklavaTapable } from "@baklavajs/events";
+import { type IEditorState, Editor } from "@baklavajs/core";
 
-import { createCodeGraphNodeType, CodeGraph, CodeGraphTemplate } from "@/codeGraph";
-import type { Code } from ".";
+import { createCodeGraphNodeType, CodeGraph, CodeGraphTemplate } from "./codeGraph";
+import type { Code } from "./code";
 
 /** The main model class for BaklavaJS */
 export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklavaTapable {

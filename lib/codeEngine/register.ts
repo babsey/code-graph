@@ -95,7 +95,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
       viewModel.displayedGraph.sortNodes();
 
       // update code templates
-      viewModel.displayedGraph.updateCodeTemplates();
+      // viewModel.displayedGraph.updateCodeTemplates();
 
       viewModel.engine?.resume();
     });

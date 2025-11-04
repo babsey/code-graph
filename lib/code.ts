@@ -1,12 +1,12 @@
 // code.ts
 
 import mustache from "mustache";
-import { DependencyEngine } from "@baklavajs/engine";
 import { reactive, type UnwrapRef } from "vue";
 import { v4 as uuidv4 } from "uuid";
 
-import { AbstractCodeNode } from "@/codeNode";
-import type { CodeGraph } from "@/codeGraph";
+import { AbstractCodeNode } from "./codeNode";
+import type { CodeGraph } from "./codeGraph";
+import type { CodeEngine } from "./codeEngine";
 
 mustache.escape = (value: string) => value;
 
@@ -21,7 +21,7 @@ export class Code {
   private _id: string;
   private _graph: CodeGraph | null = null;
   private _state: UnwrapRef<ICodeState>;
-  private _engine: DependencyEngine | null = null;
+  private _engine: CodeEngine | null = null;
 
   constructor() {
     this._id = uuidv4();
@@ -34,7 +34,7 @@ export class Code {
     });
   }
 
-  get engine(): DependencyEngine | null {
+  get engine(): CodeEngine | null {
     return this._engine;
   }
 
@@ -107,7 +107,7 @@ export class Code {
    * Register engine instance.
    * @param engine engine
    */
-  registerEngine(engine: DependencyEngine): void {
+  registerEngine(engine: CodeEngine): void {
     this._engine = engine;
   }
 

@@ -1,9 +1,9 @@
+// graphInterface.ts
+
 import { v4 as uuidv4 } from "uuid";
-import { NodeInterface, setType, type CalculateFunction, type IGraphInterface } from "baklavajs";
+import { NodeInterface, type CalculateFunction, type IGraphInterface } from "baklavajs";
 
 import { AbstractCodeNode, CodeNode, type ICodeNodeState } from "@/codeNode";
-import { CodeNodeInterface } from "@/codeNodeInterfaces";
-import { nodeType } from "@/interfaceTypes";
 
 export interface ICodeGraphInterface extends IGraphInterface {
   id: string;

@@ -1,3 +1,5 @@
+// createSubgraph.command.ts
+
 import {
   type AbstractNode,
   getGraphNodeTypeString,
@@ -6,8 +8,6 @@ import {
   type INodeState,
   type IConnectionState,
 } from "@baklavajs/core";
-import { v4 as uuidv4 } from "uuid";
-import { reactive, type Ref } from "vue";
 import {
   Commands,
   type ICommand,
@@ -16,6 +16,8 @@ import {
   type SaveSubgraphCommand,
   useViewModel,
 } from "@baklavajs/renderer-vue";
+import { v4 as uuidv4 } from "uuid";
+import { reactive, type Ref } from "vue";
 
 import { CodeGraphTemplate, type SwitchCodeGraph, type CodeGraph } from "@/codeGraph";
 
@@ -106,7 +108,7 @@ export function registerCreateSubgraphCommand(
 
     graph.activeTransactions++;
 
-    const node = reactive<AbstractNode>(new nt.type()) as AbstractNode;
+    const node = reactive<AbstractCodeNode>(new nt.type()) as AbstractCodeNode;
     graph.addNode(node);
 
     // calculate the position for the graph node

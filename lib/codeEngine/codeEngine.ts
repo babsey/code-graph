@@ -30,8 +30,6 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     inputs: Map<string, unknown>,
     calculationData: CalculationData,
   ): Promise<CalculationResult> {
-    console.log("run graph", graph.shortId, graph.nodes);
-
     if (!this.order.has(graph.id)) {
       this.order.set(graph.id, sortTopologically(graph));
     }
@@ -46,7 +44,10 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
       });
 
       // Update output names of code nodes.
-      if (n.isCodeNode) n.updateOutputNames();
+      if (n.isCodeNode) {
+        n.updateCodeTemplate();
+        n.updateOutputNames();
+      }
 
       this.events.beforeNodeCalculation.emit({ inputValues: inputsForNode, node: n });
 

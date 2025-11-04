@@ -114,11 +114,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get script(): string {
-    return this.outputs._code?.value ?? "";
+    return this.outputs._code?.value as string ?? "";
   }
 
   set script(value: string) {
-    this.outputs._code.value = value;
+    if (this.outputs._code) this.outputs._code.value = value;
     this.events.update.emit(null);
   }
 
@@ -220,7 +220,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Render code of this node.
    */
   renderCode(data: { inputs: Record<string, unknown> }): string {
-    if (this.isSubgraph) return this.subgraph?.renderCode();
+    // if (this.isSubgraph) return this.subgraph?.renderCode();
     return mustache.render(this.state.codeTemplate, data);
   }
 
@@ -242,9 +242,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Update output names.
    */
   updateOutputNames(): void {
+    console.log('Update output names')
     Object.values(this.codeNodeOutputs).forEach((output: CodeNodeOutputInterface) => {
       output.name = this.state.integrated ? "" : this.variableName + output.suffix;
     });
+    console.log(this.shortId, Object.values(this.codeNodeOutputs).map(o => o.name).join(', '))
   }
 
   /**
