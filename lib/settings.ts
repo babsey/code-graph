@@ -3,7 +3,7 @@
 import { computed, type Ref } from "vue";
 import { DEFAULT_TOOLBAR_COMMANDS, type ICommandHandler, type IViewSettings } from "@baklavajs/renderer-vue";
 
-import { LayoutSidebarLeftCollapse, LayoutSidebarLeftExpand, PlayerPlay, Schema, SchemaOff, TrashOff } from "./icons";
+import * as Icons from "./icons";
 import type { CodeGraph } from "./codeGraph";
 
 export const CLEAR_ALL_COMMAND = "CLEAR_ALL";
@@ -20,9 +20,14 @@ export const registerCustomCommands = (
   handler: ICommandHandler,
   settings: IViewSettings,
 ) => {
+  const defaultPaddingLeft = settings.zoomToFit.paddingLeft;
+
   // Toggle palette in the graph
   handler.registerCommand(TOGGLE_PALETTE_COMMAND, {
-    execute: () => (settings.palette.enabled = !settings.palette.enabled),
+    execute: () => {
+      settings.palette.enabled = !settings.palette.enabled;
+      settings.zoomToFit.paddingLeft = settings.palette.enabled ? defaultPaddingLeft : 50;
+    },
     canExecute: () => true,
   });
 
@@ -43,25 +48,25 @@ export const updateToolbarItems = (settings: IViewSettings) => {
   const run_engine = {
     command: RUN_ENGINE_COMMAND,
     title: "Run", // Tooltip text
-    icon: computed(() => PlayerPlay),
+    icon: computed(() => Icons.PlayerPlay),
   };
 
   const toggle_palette = {
     command: TOGGLE_PALETTE_COMMAND,
     title: "Toggle palette", // Tooltip text
-    icon: computed(() => (settings.palette.enabled ? LayoutSidebarLeftCollapse : LayoutSidebarLeftExpand)),
+    icon: computed(() => (settings.palette.enabled ? Icons.LayoutSidebarLeftCollapse : Icons.LayoutSidebarLeftExpand)),
   };
 
   const clear_all = {
     command: CLEAR_ALL_COMMAND,
     title: "Clear all", // Tooltip text
-    icon: computed(() => TrashOff),
+    icon: computed(() => Icons.TrashOff),
   };
 
   const toggle_minimap = {
     command: TOGGLE_MINIMAP_COMMAND,
     title: "Toggle minimap", // Tooltip text
-    icon: computed(() => (settings.enableMinimap ? SchemaOff : Schema)),
+    icon: computed(() => (settings.enableMinimap ? Icons.SchemaOff : Icons.Schema)),
   };
 
   settings.toolbar.commands = [toggle_palette, run_engine, ...DEFAULT_TOOLBAR_COMMANDS, clear_all, toggle_minimap];

@@ -6,6 +6,7 @@ import { BaseEngine, type ITopologicalSortingResult, sortTopologically } from "@
 import type { CodeGraph } from "@/codeGraph";
 import type { CodeEditor } from "@/codeEditor";
 import type { CodeNodeInterface } from "@/codeNodeInterfaces";
+import type { AbstractCodeNode } from "..";
 
 export const allowMultipleConnections = <T extends Array<unknown>>(intf: CodeNodeInterface<T>) => {
   intf.allowMultipleConnections = true;
@@ -30,10 +31,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     inputs: Map<string, unknown>,
     calculationData: CalculationData,
   ): Promise<CalculationResult> {
-    if (!this.order.has(graph.id)) {
-      this.order.set(graph.id, sortTopologically(graph));
-    }
-
+    if (!this.order.has(graph.id)) this.order.set(graph.id, sortTopologically(graph));
     const { calculationOrder, connectionsFromNode } = this.order.get(graph.id)!;
 
     const result: CalculationResult = new Map();
@@ -43,7 +41,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
         inputsForNode[k] = this.getInterfaceValue(inputs, v.id);
       });
 
-      // Update output names of code nodes.
+      // Update code nodes.
       if (n.isCodeNode) {
         n.updateCodeTemplate();
         n.updateOutputNames();
@@ -121,15 +119,13 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     const inputValues = new Map<string, unknown>();
     for (const n of graph.nodes) {
       Object.values(n.inputs).forEach((ni) => {
-        if (ni.connectionCount === 0) {
-          inputValues.set(ni.id, ni.getValue ? ni.getValue() : ni.value);
-        }
+        if (ni.connectionCount === 0) inputValues.set(ni.id, ni.getValue ? ni.getValue() : ni.value);
       });
-      if (!n.calculate) {
+
+      if (!n.calculate)
         Object.values(n.outputs).forEach((ni) => {
           inputValues.set(ni.id, ni.getValue ? ni.getValue() : ni.value);
         });
-      }
     }
     return inputValues;
   }
@@ -140,11 +136,11 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
   }
 
   private getInterfaceValue(values: Map<string, unknown>, id: string): unknown {
-    if (!values.has(id)) {
+    if (!values.has(id))
       throw new Error(
         `Could not find value for interface ${id}\n` + "This is likely an internal issue. Please report it on GitHub.",
       );
-    }
+
     return values.get(id);
   }
 }

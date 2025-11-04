@@ -23,7 +23,7 @@
 
       <template v-if="!renaming">
         <div class="__title-label" style="flex-grow: 1">
-          <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>{{ node.title }}
+          <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>{{ node.title }} {{ node.graph.shortId }}
           {{ node.shortId }}
         </div>
         <div class="__menu" style="display: flex">
@@ -117,7 +117,7 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, onUpdated, onMounted, onBeforeUnmount } from "vue";
-import { AbstractNode, Components, GRAPH_NODE_TYPE_PREFIX, type IGraphNode, useGraph, useViewModel } from "baklavajs";
+import { Components, GRAPH_NODE_TYPE_PREFIX, type IGraphNode, useGraph, useViewModel } from "baklavajs";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import { CodeGraphNodeInterface } from "@/components";

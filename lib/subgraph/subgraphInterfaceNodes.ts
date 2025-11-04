@@ -2,7 +2,7 @@
 
 import { NodeInterface } from "@baklavajs/core";
 import { TextInputInterface } from "@baklavajs/renderer-vue";
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeGraphInputNode, CodeGraphOutputNode } from "./graphInterface";
 import { CodeNodeInterface } from "@/codeNodeInterfaces";

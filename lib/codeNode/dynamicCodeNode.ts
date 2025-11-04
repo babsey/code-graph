@@ -103,9 +103,8 @@ export function defineDynamicCodeNode<I, O>(
         if (
           (data.type === "input" && this.staticInputKeys.includes(data.name)) ||
           (data.type === "output" && this.staticOutputKeys.includes(data.name))
-        ) {
+        )
           this.onUpdate();
-        }
       });
       this.onUpdate();
 
@@ -200,7 +199,6 @@ export function defineDynamicCodeNode<I, O>(
 
     private onUpdate() {
       if (this.preventUpdate) return;
-
       if (this.graph) this.graph.activeTransactions++;
 
       const inputValues = this.getStaticValues<I>(this.staticInputKeys, this.inputs);

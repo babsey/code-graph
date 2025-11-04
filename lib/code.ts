@@ -122,12 +122,7 @@ export class Code {
   /**
    * Render code script.
    */
-  renderCode(): void {
-    if (!this.graph || this.state.lockCode) return;
-
-    const nodes = this.graph.scriptedCodeNodes;
-    const modules = this.modules;
-
-    this.state.script = mustache.render(this.state.template || "", { nodes, modules });
+  renderCode(data: { nodes: AbstractCodeNode[]; modules: string[] }): void {
+    this.state.script = mustache.render(this.state.template || "", data);
   }
 }

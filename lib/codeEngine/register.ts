@@ -63,7 +63,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     viewModel.commandHandler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND);
     viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND);
 
-    // set new graph id
+    // set new graph id.
     viewModel.displayedGraph.id = uuidv4();
 
     viewModel.engine?.resume();
@@ -91,11 +91,8 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     viewModel.engine?.events.beforeRun.subscribe(token, () => {
       viewModel.engine?.pause();
 
-      // sort code nodes using toposort
+      // sort code nodes using toposort.
       viewModel.displayedGraph.sortNodes();
-
-      // update code templates
-      // viewModel.displayedGraph.updateCodeTemplates();
 
       viewModel.engine?.resume();
     });
@@ -103,11 +100,18 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     viewModel.engine?.events.afterRun.subscribe(token, (result: CalculationResult) => {
       viewModel.engine?.pause();
 
-      // apply results from calculation on editor
+      // apply results from calculation on editor.
       applyResult(result, viewModel.editor);
 
-      // render code from scripted code nodes
-      viewModel.code.renderCode();
+      // save editor state.
+      viewModel.editor.saveState();
+
+      // render code from scripted code nodes.
+      if (!viewModel.code.state.lockCode)
+        viewModel.code.renderCode({
+          nodes: viewModel.displayedGraph.scriptedCodeNodes,
+          modules: viewModel.displayedGraph.modules,
+        });
 
       viewModel.engine?.resume();
     });

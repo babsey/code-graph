@@ -15,21 +15,19 @@ export function useSwitchCodeGraph(editor: Ref<CodeEditor>, displayedGraph: Ref<
   const switchGraph: SwitchCodeGraph = (newGraph: CodeGraph | CodeGraphTemplate) => {
     let newGraphInstance: CodeGraph;
     if (!isTemplate(newGraph)) {
-      if (newGraph !== editor.value.graph) {
+      if (newGraph !== editor.value.graph)
         throw new Error(
           "Can only switch using 'Graph' instance when it is the root graph. " +
             "Otherwise a 'GraphTemplate' must be used.",
         );
-      }
+
       newGraphInstance = newGraph;
     } else {
       newGraphInstance = new CodeGraph(editor.value);
       newGraph.createGraph(newGraphInstance);
     }
 
-    if (displayedGraph.value && displayedGraph.value !== editor.value.graph) {
-      displayedGraph.value.destroy();
-    }
+    if (displayedGraph.value && displayedGraph.value !== editor.value.graph) displayedGraph.value.destroy();
 
     newGraphInstance.panning = newGraphInstance.panning ?? newGraph.panning ?? { x: 0, y: 0 };
     newGraphInstance.scaling = newGraphInstance.scaling ?? newGraph.scaling ?? 1;

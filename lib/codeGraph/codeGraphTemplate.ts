@@ -2,7 +2,6 @@
 
 import { v4 as uuidv4 } from "uuid";
 import {
-  Editor,
   GraphTemplate,
   type IConnectionState,
   type IGraphTemplateState,
@@ -13,6 +12,7 @@ import {
 import type { CodeEditor } from "@/codeEditor";
 import type { CodeNodeInterface } from "@/codeNodeInterfaces";
 import type { ICodeGraphInterface } from "@/subgraph/graphInterface";
+import { mapValues } from "@/utils";
 
 import { CodeGraph, type ICodeGraphState } from "./codeGraph";
 
@@ -30,6 +30,10 @@ export class CodeGraphTemplate extends GraphTemplate implements ICodeGraphState 
     super(state, editor);
   }
 
+  get shortId(): string {
+    return this.id.slice(0, 6);
+  }
+
   /**
    * Create a new graph instance from this template
    * or load the state into the provided graph instance.
@@ -45,9 +49,7 @@ export class CodeGraphTemplate extends GraphTemplate implements ICodeGraphState 
 
     const getNewId = (oldId: string): string => {
       const newId = idMap.get(oldId);
-      if (!newId) {
-        throw new Error(`Unable to create graph from template: Could not map old id ${oldId} to new id`);
-      }
+      if (!newId) throw new Error(`Unable to create graph from template: Could not map old id ${oldId} to new id`);
       return newId;
     };
 

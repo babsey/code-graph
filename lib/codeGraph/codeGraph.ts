@@ -17,14 +17,16 @@ interface IPosition {
 }
 
 export interface ICodeGraphState {
+  codeTemplate: string;
   lockCode: boolean;
 }
 
 export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTapable {
-  public code: Code;
+  public code: Code | null = null;
   public editor: CodeEditor;
 
   private _state: UnwrapRef<ICodeGraphState> = reactive({
+    codeTemplate: "{{ #nodes }}{{ script }}{{ /nodes }}",
     lockCode: false,
   });
 
@@ -168,11 +170,8 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   /**
    * Render code script.
    */
-  public renderCode(): string {
-    if (this.state.lockCode) return;
-
-    const nodes = this.scriptedCodeNodes;
-    return mustache.render(this.code.state.template || "", { nodes });
+  public renderCode(data: { nodes: AbstractCodeNode[] }): string {
+    return mustache.render(this.state.codeTemplate || "", data);
   }
 
   /**

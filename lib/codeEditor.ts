@@ -6,10 +6,10 @@ import { type IEditorState, Editor } from "@baklavajs/core";
 import { createCodeGraphNodeType, CodeGraph, CodeGraphTemplate } from "./codeGraph";
 import type { Code } from "./code";
 
-/** The main model class for BaklavaJS */
 export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklavaTapable {
   public code: Code;
   public graph: CodeGraph;
+  public state: string = "";
 
   public constructor(code: Code) {
     super();
@@ -18,9 +18,17 @@ export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklava
     this.code.registerGraph(this.graph);
   }
 
-  // get graph(): CodeGraph {
-  //   return this._graph as CodeGraph;
-  // }
+  get graphIds(): string {
+    const ids: string[] = [];
+    this.graphs.forEach((g) => ids.push(g.id));
+    return ids.map((id) => id.slice(0, 6)).join(", ");
+  }
+
+  get graphTemplateIds(): string {
+    const ids: string[] = [];
+    this.graphTemplates.forEach((g) => ids.push(g.id));
+    return ids.map((id) => id.slice(0, 6)).join(", ");
+  }
 
   override addGraphTemplate(template: CodeGraphTemplate): void {
     if (this.events.beforeAddGraphTemplate.emit(template).prevented) {
@@ -66,11 +74,7 @@ export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklava
     }
   }
 
-  // /**
-  //  * Register code.
-  //  * @param code code instance
-  //  */
-  // registerCode(code: Code): void {
-  //   this.code = code;
-  // }
+  saveState(): void {
+    this.state = JSON.stringify(this.save(), null, 2);
+  }
 }

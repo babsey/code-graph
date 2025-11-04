@@ -88,7 +88,6 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     renderInterface: new SequentialHook<{ intf: CodeNodeInterface<unknown>; el: HTMLElement }, null>(null),
   };
 
-  // registerGraphCommands(displayedGraph, commandHandler, switchGraph);
   registerDeleteNodesCommand(displayedGraph, commandHandler);
   registerCreateSubgraphCommand(displayedGraph, commandHandler, switchGraph);
   registerSaveSubgraphCommand(displayedGraph, commandHandler);
