@@ -1,6 +1,6 @@
 // add.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeInputInterface, CodeNodeOutputInterface, defineCodeNode, numberType } from "@babsey/code-graph";
 
@@ -13,6 +13,6 @@ export default defineCodeNode({
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, numberType),
   },
-  // calculate: ({ arg1, arg2 }) => ({ out: `${arg1} + ${arg2}` }),
-  codeTemplate: () => "{{ inputs.arg1 }} + {{ inputs.arg2 }}",
+  calculate: ({ arg1, arg2 }) => ({ out: `${arg1} + ${arg2}` }),
+  codeTemplate: () => "{{  inputs.arg1 }} + {{  inputs.arg2 }}",
 });

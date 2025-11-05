@@ -1,6 +1,6 @@
 // list.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeOutputInterface, ListInputInterface, defineCodeNode, listType } from "@babsey/code-graph";
 

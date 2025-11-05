@@ -1,6 +1,6 @@
 // text.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeOutputInterface, TextInputInterface, defineCodeNode, stringType } from "@babsey/code-graph";
 

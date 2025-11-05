@@ -1,11 +1,6 @@
 <template>
   <div style="display: flex; overflow: hidden; width: 100vw; height: 100vh">
-    <!-- <div style="position: absolute; z-index: 10; color: white; background-color: black;">
-      <div>Editor graph: {{ viewModel.editor.graph.shortId }}</div>
-      <div>Displayed graph: {{ viewModel.displayedGraph.shortId }}</div>
-      <div>Graphs: {{ viewModel.editor.graphIds }}</div>
-      <div>Graph templates: {{ viewModel.editor.graphTemplateIds }}</div>
-    </div> -->
+    <CodeGraphInfo v-if="devMode" :viewModel />
 
     <splitpanes
       class="default-theme"
@@ -37,15 +32,16 @@
 import { ref } from "vue";
 import { Splitpanes, Pane } from "splitpanes";
 
-import { CodeGraphEditor, registerCodeEngine, useCodeGraph } from "@babsey/code-graph";
+import { CodeGraphEditor, CodeGraphInfo, useCodeGraph } from "@babsey/code-graph";
 
 import { MyCode } from "./code";
 import { registerNodeTypes } from "./codeNodeTypes";
 import CodeEditor from "./components/CodeEditor.vue";
 
 const viewModel = useCodeGraph({ code: new MyCode() });
-registerCodeEngine(viewModel);
 registerNodeTypes(viewModel);
+
+const devMode = ref(false);
 
 const size = ref(70);
 const resize = () => (size.value = size.value == 100 ? 70 : 100);

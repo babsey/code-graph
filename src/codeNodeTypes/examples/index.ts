@@ -1,4 +1,4 @@
-// examples
+// codeNodeTypes/examples
 
 export * from "./register";
 

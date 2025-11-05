@@ -1,11 +1,10 @@
-// myFunction.ts
+// text.ts
 
 import {
   CheckboxInterface,
   CodeNodeOutputInterface,
   CodeNodeInputInterface,
   IntegerInterface,
-  ListInputInterface,
   NumberInterface,
   SelectInterface,
   SliderInterface,
@@ -21,13 +20,12 @@ export default defineCodeNode({
   inputs: {
     checkbox: () => new CheckboxInterface("checkbox", true).setOptional(true),
     integer: () => new IntegerInterface("integer", 1).setOptional(true),
-    list: () => new ListInputInterface("list", "").setOptional(true),
     number: () => new NumberInterface("number", 1).setOptional(true),
     select: () => new SelectInterface("select", "a", ["a", "b", "c"]).setOptional(true),
     slider: () => new SliderInterface("slider", 0.5, 0, 1).setOptional(true),
     text_input: () => new TextInputInterface("text input", "a").setOptional(true),
     textarea_input: () => new TextareaInputInterface("textarea input", "a").setOptional(true),
-    code_node_input: () => new CodeNodeInputInterface("input").setOptional(true),
+    code_node_input: () => new CodeNodeInputInterface("code node input").setOptional(true),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface(),

@@ -13,7 +13,7 @@ import "splitpanes/dist/splitpanes.css";
 // import "@baklavajs/themes/dist/classic.css"
 import "@baklavajs/themes/dist/syrup-dark.css";
 
-import "@babsey/code-graph/style.scss";
+import "@babsey/code-graph/style.css";
 
 const app = createApp(App);
 

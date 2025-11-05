@@ -1,6 +1,6 @@
 // dynamicMath.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import {
   CodeNodeOutputInterface,
@@ -19,7 +19,7 @@ export default defineDynamicCodeNode({
   outputs: {
     out: () => new CodeNodeOutputInterface("").use(setType, numberType),
   },
-  onUpdate({ operation }: { operation: string }) {
+  onUpdate({ operation }) {
     if (operation === "Sine") {
       return {
         inputs: {
@@ -38,11 +38,11 @@ export default defineDynamicCodeNode({
   codeTemplate() {
     switch (this.inputs.operation.value) {
       case "Addition":
-        return "{{ inputs.number1 }} + {{ inputs.number2 }}";
+        return "{{  inputs.number1 }} + {{  inputs.number2 }}";
       case "Subtraction":
-        return "{{ inputs.number1 }} - {{ inputs.number2 }}";
+        return "{{  inputs.number1 }} - {{  inputs.number2 }}";
       case "Sine":
-        return "sin({{ inputs.number1 }})";
+        return "sin({{  inputs.number1 }})";
     }
   },
 });
