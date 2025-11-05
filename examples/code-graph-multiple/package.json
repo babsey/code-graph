@@ -16,7 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@babsey/code-graph": "~0.2",
+    "@babsey/code-graph": "~0.3",
     "@codemirror/lang-python": "~6.2",
     "@codemirror/theme-one-dark": "~6.1",
     "baklavajs": "~2.8",
