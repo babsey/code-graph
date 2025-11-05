@@ -61,6 +61,8 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
    * Subscribe view model.
    */
   viewModel.subscribe = () => {
+    // console.log("subscribe");
+
     viewModel.displayedGraph.events.addConnection.subscribe(token, (data: IConnection) => {
       const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId);
       if (tgtNode && tgtNode.isCodeNode) tgtNode.onConnected();
@@ -108,6 +110,8 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
    * Unsubscribe view model.
    */
   viewModel.unsubscribe = () => {
+    // console.log("unsubscribe");
+
     viewModel.displayedGraph.events.addConnection.unsubscribe(token);
     viewModel.displayedGraph.events.removeConnection.unsubscribe(token);
     viewModel.engine?.events.beforeRun.unsubscribe(token);
