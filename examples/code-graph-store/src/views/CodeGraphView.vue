@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { CodeGraphEditor, CodeGraphInfo } from "@babsey/code-graph";
 import { Splitpanes, Pane } from "splitpanes";
 
@@ -47,14 +47,10 @@ const size = ref(70);
 const resize = () => (size.value = size.value == 100 ? 70 : 100);
 
 onMounted(() => {
-  codeGraphStore.subscribe()
-  viewModel.value.subscribe();
-  viewModel.value.engine?.start();
+  codeGraphStore.subscribe();
 });
 
-onUnmounted(() => {
-  codeGraphStore.unsubscribe()
-  viewModel.value.unsubscribe();
-  viewModel.value.engine?.stop();
+onBeforeUnmount(() => {
+  codeGraphStore.unsubscribe();
 });
 </script>

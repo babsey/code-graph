@@ -1,7 +1,7 @@
 // viewModelStore.ts
 
 import { reactive, type UnwrapRef } from "vue";
-import { type IEditorState } from "@baklavajs/core";
+import type { IEditorState } from "@baklavajs/core";
 import { defineStore } from "pinia";
 
 import { useCodeGraph } from "@babsey/code-graph";
