@@ -1,11 +1,11 @@
 // codeGraphNode.ts
 
 import {
-  GraphTemplate,
   NodeInterface,
   getGraphNodeTypeString,
   type CalculateFunction,
   type CalculateFunctionReturnType,
+  type GraphTemplate,
   type IGraphInterface,
   type IGraphNode,
   type INodeState,

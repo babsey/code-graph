@@ -1,7 +1,7 @@
 // viewCodeModel.ts
 
 import { type Ref, computed, reactive, ref, shallowReadonly, watch } from "vue";
-import { type IEditorState, type INodeState } from "@baklavajs/core";
+import type { IEditorState, INodeState } from "@baklavajs/core";
 import { SequentialHook } from "@baklavajs/events";
 import {
   DEFAULT_SETTINGS,
@@ -18,7 +18,7 @@ import {
   useClipboard,
   useCommandHandler,
   useHistory,
-  registerGraphCommands,
+  // registerGraphCommands,
 } from "@baklavajs/renderer-vue";
 
 import type { AbstractCodeNode } from "./codeNode";

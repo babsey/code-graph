@@ -1,11 +1,11 @@
 // defineCodeNode.ts
 
-import {
-  Node,
+import type {
   NodeInterface,
-  type CalculationContext,
-  type INodeDefinition,
-  type NodeInterfaceDefinition,
+  CalculationContext,
+  INodeDefinition,
+  Node,
+  NodeInterfaceDefinition,
 } from "@baklavajs/core";
 import { setType } from "@baklavajs/interface-types";
 import { allowMultipleConnections } from "@baklavajs/engine";

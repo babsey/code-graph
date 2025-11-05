@@ -2,10 +2,10 @@
 
 import {
   AbstractNode,
-  Connection,
   type CalculateFunction,
   type CalculateFunctionReturnType,
   type CalculationContext,
+  type Connection,
   type INodeState,
   type NodeInterfaceDefinition,
 } from "@baklavajs/core";

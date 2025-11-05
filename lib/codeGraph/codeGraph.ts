@@ -2,7 +2,7 @@
 
 import mustache from "mustache";
 import toposort from "toposort";
-import { Graph, type GraphTemplate, Connection, NodeInterface, AbstractNode } from "@baklavajs/core";
+import { Graph, type GraphTemplate, type Connection, type NodeInterface, type AbstractNode } from "@baklavajs/core";
 import { reactive, type UnwrapRef } from "vue";
 import { type IBaklavaEventEmitter, type IBaklavaTapable } from "@baklavajs/events";
 

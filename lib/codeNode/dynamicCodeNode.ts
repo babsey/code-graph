@@ -1,12 +1,12 @@
 // dynamicCodeNode.ts
 
-import {
+import type {
+  CalculationContext,
+  IDynamicNodeDefinition,
+  INodeState,
+  InterfaceFactory,
   NodeInterface,
-  type CalculationContext,
-  type IDynamicNodeDefinition,
-  type INodeState,
-  type InterfaceFactory,
-  type NodeInterfaceDefinition,
+  NodeInterfaceDefinition,
 } from "@baklavajs/core";
 import { setType } from "@baklavajs/interface-types";
 import { allowMultipleConnections } from "@baklavajs/engine";
