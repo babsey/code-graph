@@ -61,7 +61,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./lib", import.meta.url)),
-      // "@babsey/code-graph": fileURLToPath(new URL("./lib", import.meta.url)),
+      "@babsey/code-graph": fileURLToPath(new URL("./lib", import.meta.url)),
     },
   },
   server: {
