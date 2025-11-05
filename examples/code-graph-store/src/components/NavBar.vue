@@ -6,7 +6,7 @@
       v-for="editor in codeGraphStore.state.editorStates"
       :key="editor.graph.id"
       :to="{ name: 'edit', params: { editorId: editor.graph.id } }"
-      :class="{ active: editor.graph.id === codeGraphStore.state.codeGraph.displayedGraph.id }"
+      :class="{ active: editor.graph.id === codeGraphStore.viewModel.displayedGraph.id }"
       :editor
     >
       {{ editor.graph.id.slice(0, 6) }}

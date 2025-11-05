@@ -1,3 +1,5 @@
+// router
+
 import { createRouter, createWebHistory } from "vue-router";
 
 import { useCodeGraphStore } from "@/stores/codeGraphStore";

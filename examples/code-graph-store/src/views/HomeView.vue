@@ -5,10 +5,7 @@
 
       <nav>
         <NavItem :to="{ name: 'new' }">
-          <template #prependIcon>
-            <Plus />
-          </template>
-
+          <template #prependIcon><Plus /></template>
           New graph
         </NavItem>
 
@@ -25,11 +22,12 @@
 </template>
 
 <script setup lang="ts">
-import { useCodeGraphStore } from "@/stores/codeGraphStore";
-const codeGraphStore = useCodeGraphStore();
+import NavItem from "@/components/NavItem.vue";
 
 import { Plus } from "../icons";
-import NavItem from "@/components/NavItem.vue";
+
+import { useCodeGraphStore } from "@/stores/codeGraphStore";
+const codeGraphStore = useCodeGraphStore();
 </script>
 
 <style lang="scss">

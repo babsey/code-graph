@@ -30,7 +30,7 @@ app.use(router);
 
 app.use(VueCodemirror, { tabSize: 2, extensions: [basicSetup, EditorView.lineWrapping, oneDark, python()] });
 
-// mount after the initial navigation is ready
+// mount after the initial navigation is ready.
 await router.isReady();
 
 app.mount("#app");

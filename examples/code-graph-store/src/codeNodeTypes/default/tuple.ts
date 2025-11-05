@@ -1,6 +1,6 @@
 // tuple.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeOutputInterface, TupleInputInterface, defineCodeNode, tupleType } from "@babsey/code-graph";
 

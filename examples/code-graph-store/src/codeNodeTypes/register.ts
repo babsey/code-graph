@@ -3,23 +3,23 @@
 import { type ICodeGraphViewModel } from "@babsey/code-graph";
 
 import { registerDefaultNodeTypes } from "./default";
-import { registerExampleNodeTypes } from "./examples";
-import { registerNorseNodeTypes } from "./norse";
-import { registerTorchNodeTypes } from "./torch";
-import { registerNESTNodeTypes } from "./nest";
 import { registerElephantNodeTypes } from "./elephant";
-import { registerNeoNodeTypes } from "./neo";
-import { registerPandasNodeTypes } from "./pandas";
+import { registerExampleNodeTypes } from "./examples";
 import { registerHumamNodeTypes } from "./humam";
+import { registerNESTNodeTypes } from "./nest";
+import { registerNeoNodeTypes } from "./neo";
+import { registerNorseNodeTypes } from "./norse";
+import { registerPandasNodeTypes } from "./pandas";
+import { registerTorchNodeTypes } from "./torch";
 
 export function registerNodeTypes(viewModel: ICodeGraphViewModel) {
   registerDefaultNodeTypes(viewModel);
-  registerExampleNodeTypes(viewModel);
-  registerNorseNodeTypes(viewModel);
-  registerTorchNodeTypes(viewModel);
-  registerNESTNodeTypes(viewModel);
-  registerElephantNodeTypes(viewModel);
-  registerNeoNodeTypes(viewModel);
-  registerPandasNodeTypes(viewModel);
-  registerHumamNodeTypes(viewModel);
+  // registerElephantNodeTypes(viewModel);
+  // registerExampleNodeTypes(viewModel);
+  // registerHumamNodeTypes(viewModel);
+  // registerNESTNodeTypes(viewModel);
+  // registerNeoNodeTypes(viewModel);
+  // registerNorseNodeTypes(viewModel);
+  // registerPandasNodeTypes(viewModel);
+  // registerTorchNodeTypes(viewModel);
 }
