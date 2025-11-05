@@ -1,6 +1,7 @@
 <template>
   <div style="height: 100vh">
-    <NavBar data-bs-theme="dark" />
+    <CodeGraphInfo v-if="devMode" :viewModel />
+    <NavBar />
 
     <splitpanes
       class="default-theme"
@@ -9,7 +10,7 @@
       @splitterDblclick="() => resize()"
     >
       <pane :size>
-        <CodeGraphEditor :key="codeGraph.code.name" :view-model="codeGraph">
+        <CodeGraphEditor :viewModel>
           <template #sidebarCodeEditor="{ node }">
             <CodeEditor v-model="node.script" :locked="node.lockCode" @update:locked="(v) => (node.lockCode = v)" />
           </template>
@@ -18,9 +19,9 @@
 
       <pane :size="100 - size">
         <CodeEditor
-          v-model="codeGraph.code.script"
-          :locked="codeGraph.code.lockCode"
-          @update:locked="(v) => (codeGraph.code.lockCode = v)"
+          v-model="viewModel.code.script"
+          :locked="viewModel.code.lockCode"
+          @update:locked="(v) => (viewModel.code.lockCode = v)"
         />
       </pane>
     </splitpanes>
@@ -28,16 +29,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { CodeGraphEditor } from '@babsey/code-graph';
-import { Splitpanes, Pane } from 'splitpanes';
+import { computed, ref } from "vue";
+import { CodeGraphEditor, CodeGraphInfo } from "@babsey/code-graph";
+import { Splitpanes, Pane } from "splitpanes";
 
-import CodeEditor from '../components/CodeEditor.vue';
-import NavBar from '@/components/NavBar.vue';
+import CodeEditor from "@/components/CodeEditor.vue";
+import NavBar from "@/components/NavBar.vue";
 
-import { useCodeGraphStore } from '../stores/codeGraphStore';
+import { useCodeGraphStore } from "../stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();
-const codeGraph = computed(() => codeGraphStore.state.codeGraph);
+const viewModel = computed(() => codeGraphStore.viewModel);
+
+const devMode = ref(false);
 
 const size = ref(70);
 const resize = () => (size.value = size.value == 100 ? 70 : 100);

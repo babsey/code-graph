@@ -1,22 +1,21 @@
 // dynamicCodeNode.ts
 
-import {
-  IntegerInterface,
+import type {
+  CalculationContext,
+  IDynamicNodeDefinition,
+  INodeState,
+  InterfaceFactory,
   NodeInterface,
-  TextInputInterface,
-  allowMultipleConnections,
-  displayInSidebar,
-  setType,
-  type CalculateFunction,
-  type IDynamicNodeDefinition,
-  type INodeState,
-  type InterfaceFactory,
-  type NodeInterfaceDefinition,
-} from 'baklavajs';
+  NodeInterfaceDefinition,
+} from "@baklavajs/core";
+import { setType } from "@baklavajs/interface-types";
+import { allowMultipleConnections } from "@baklavajs/engine";
+import { IntegerInterface, TextInputInterface, displayInSidebar } from "@baklavajs/renderer-vue";
 
-import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from './codeNode';
-import { CodeNodeInterface, CodeNodeOutputInterface } from '@/codeNodeInterfaces';
-import { nodeType, numberType, stringType } from '@/interfaceTypes';
+import { CodeNodeInterface, CodeNodeOutputInterface } from "@/codeNodeInterfaces";
+import { nodeType, numberType, stringType } from "@/interfaceTypes";
+
+import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
 
 type Dynamic<T> = T & Record<string, unknown>;
 
@@ -29,15 +28,6 @@ export abstract class DynamicCodeNode<I, O> extends CodeNode<Dynamic<I>, Dynamic
   public abstract outputs: NodeInterfaceDefinition<Dynamic<O>>;
 
   public abstract load(state: INodeState<Dynamic<I>, Dynamic<O>>): void;
-
-  /**
-   * The default implementation does nothing.
-   * Overwrite this method to do calculation.
-   * @param inputs Values of all input interfaces
-   * @param globalValues Set of values passed to every node by the engine plugin
-   * @return Values for output interfaces
-   */
-  public calculate?: CalculateFunction<Dynamic<I>, Dynamic<O>>;
 }
 
 export type DynamicNodeDefinition = Record<string, (() => NodeInterface<unknown>) | undefined>;
@@ -73,15 +63,13 @@ export function defineDynamicCodeNode<I, O>(
     constructor() {
       super();
       this._title = definition.title ?? definition.type;
-      this.executeFactory('input', definition.inputs);
-      this.executeFactory('output', definition.outputs);
+      this.executeFactory("input", definition.inputs);
+      this.executeFactory("output", definition.outputs);
 
-      // if (definition.calculate) {
-      //   this.calculate = (inputs: Dynamic<I>, globalValues: CalculationContext) => ({
-      //     ...definition.calculate?.call(this, inputs, globalValues),
-      //     _code: inputs._code,
-      //   })
-      // }
+      if (definition.calculate) {
+        this.calculate = (inputs: Dynamic<I>, globalValues: CalculationContext) =>
+          definition.calculate?.call(this, inputs, globalValues);
+      }
 
       definition.onCreate?.call(this);
 
@@ -92,16 +80,16 @@ export function defineDynamicCodeNode<I, O>(
       if (definition.variableName) this.state.variableName = definition.variableName;
 
       this.addInput(
-        '_code',
-        new CodeNodeInterface('', []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        "_code",
+        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
       this.addOutput(
-        '_code',
-        new CodeNodeInterface('', []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        "_code",
+        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
 
-      this.staticInputKeys.push('_code');
-      this.staticOutputKeys.push('_code');
+      this.staticInputKeys.push("_code");
+      this.staticOutputKeys.push("_code");
     }
 
     public onPlaced(): void {
@@ -109,11 +97,10 @@ export function defineDynamicCodeNode<I, O>(
         if (!data) return;
 
         if (
-          (data.type === 'input' && this.staticInputKeys.includes(data.name)) ||
-          (data.type === 'output' && this.staticOutputKeys.includes(data.name))
-        ) {
+          (data.type === "input" && this.staticInputKeys.includes(data.name)) ||
+          (data.type === "output" && this.staticOutputKeys.includes(data.name))
+        )
           this.onUpdate();
-        }
       });
       this.onUpdate();
 
@@ -148,13 +135,13 @@ export function defineDynamicCodeNode<I, O>(
       for (const k of this.staticInputKeys) {
         this.inputs[k].load(state.inputs[k]);
         this.inputs[k].nodeId = this.id;
-        if (k === '_code') continue;
+        if (k === "_code") continue;
         this.inputs[k].hidden = state.inputs[k].hidden;
       }
       for (const k of this.staticOutputKeys) {
         this.outputs[k].load(state.outputs[k]);
         this.outputs[k].nodeId = this.id;
-        if (k === '_code') continue;
+        if (k === "_code") continue;
         this.outputs[k].hidden = state.outputs[k].hidden;
       }
 
@@ -170,7 +157,7 @@ export function defineDynamicCodeNode<I, O>(
         if (!this.inputs[k]) {
           const value = state.inputs[k].value;
           let inputInterface;
-          if (typeof value == 'number') {
+          if (typeof value == "number") {
             inputInterface = new IntegerInterface(k, value as number).use(setType, numberType);
           } else {
             inputInterface = new TextInputInterface(k, JSON.stringify(value)).use(setType, stringType);
@@ -208,14 +195,13 @@ export function defineDynamicCodeNode<I, O>(
 
     private onUpdate() {
       if (this.preventUpdate) return;
-
       if (this.graph) this.graph.activeTransactions++;
 
       const inputValues = this.getStaticValues<I>(this.staticInputKeys, this.inputs);
       const outputValues = this.getStaticValues<O>(this.staticOutputKeys, this.outputs);
       const result = definition.onUpdate.call(this, inputValues, outputValues);
-      this.updateInterfaces('input', result.inputs ?? {}, result.forceUpdateInputs ?? []);
-      this.updateInterfaces('output', result.outputs ?? {}, result.forceUpdateOutputs ?? []);
+      this.updateInterfaces("input", result.inputs ?? {}, result.forceUpdateInputs ?? []);
+      this.updateInterfaces("output", result.outputs ?? {}, result.forceUpdateOutputs ?? []);
 
       if (this.graph) this.graph.activeTransactions--;
     }
@@ -228,15 +214,15 @@ export function defineDynamicCodeNode<I, O>(
       return values as T;
     }
 
-    private updateInterfaces(type: 'input' | 'output', newInterfaces: DynamicNodeDefinition, forceUpdates: string[]) {
-      const staticKeys = type === 'input' ? this.staticInputKeys : this.staticOutputKeys;
-      const currentInterfaces = type === 'input' ? this.inputs : this.outputs;
+    private updateInterfaces(type: "input" | "output", newInterfaces: DynamicNodeDefinition, forceUpdates: string[]) {
+      const staticKeys = type === "input" ? this.staticInputKeys : this.staticOutputKeys;
+      const currentInterfaces = type === "input" ? this.inputs : this.outputs;
 
       // remove all interfaces that are outdated
       for (const k of Object.keys(currentInterfaces)) {
         if (staticKeys.includes(k) || (newInterfaces[k] && !forceUpdates.includes(k))) continue;
 
-        if (type === 'input') {
+        if (type === "input") {
           this.removeInput(k);
         } else {
           this.removeOutput(k);
@@ -248,7 +234,7 @@ export function defineDynamicCodeNode<I, O>(
         if (currentInterfaces[k]) continue;
 
         const intf = newInterfaces[k]!();
-        if (type === 'input') {
+        if (type === "input") {
           this.addInput(k, intf);
         } else {
           this.addOutput(k, intf);
@@ -261,10 +247,10 @@ export function defineDynamicCodeNode<I, O>(
       this.onUpdate();
     }
 
-    private executeFactory<V, T extends InterfaceFactory<V>>(type: 'input' | 'output', factory?: T): void {
+    private executeFactory<V, T extends InterfaceFactory<V>>(type: "input" | "output", factory?: T): void {
       (Object.keys(factory || {}) as (keyof V)[]).forEach((k) => {
         const intf = factory![k]();
-        if (type === 'input') {
+        if (type === "input") {
           this.addInput(k as string, intf);
         } else {
           this.addOutput(k as string, intf);

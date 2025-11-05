@@ -1,20 +1,20 @@
 // numpyCorrCoef.ts
 
-import { setType } from 'baklavajs'
+import { setType } from "@baklavajs/interface-types";
 
-import { CodeNodeInputInterface, CodeNodeOutputInterface, defineCodeNode } from '@babsey/code-graph'
+import { CodeNodeInputInterface, CodeNodeOutputInterface, defineCodeNode } from "@babsey/code-graph";
 
-import { arrayType } from './interfaceTypes'
+import { arrayType } from "./interfaceTypes";
 
 export default defineCodeNode({
-  name: 'np.corrcoef',
-  type: 'numpy.corrcoef',
-  title: 'correlation coefficients',
-  variableName: 'cc',
+  name: "np.corrcoef",
+  type: "numpy.corrcoef",
+  title: "correlation coefficients",
+  variableName: "cc",
   inputs: {
-    x: () => new CodeNodeInputInterface('x').use(setType, arrayType),
+    x: () => new CodeNodeInputInterface("x").use(setType, arrayType),
   },
   outputs: {
     out: () => new CodeNodeOutputInterface().use(setType, arrayType),
   },
-})
+});

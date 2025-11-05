@@ -1,11 +1,25 @@
 // codeNodeTypes/register.ts
 
-import { type ICodeGraphViewModel } from '@babsey/code-graph'
+import { type ICodeGraphViewModel } from "@babsey/code-graph";
 
-import { registerDefaultNodeTypes } from './default'
-import { registerExampleNodeTypes } from './examples'
+import { registerDefaultNodeTypes } from "./default";
+import { registerElephantNodeTypes } from "./elephant";
+import { registerExampleNodeTypes } from "./examples";
+import { registerHumamNodeTypes } from "./humam";
+import { registerNESTNodeTypes } from "./nest";
+import { registerNeoNodeTypes } from "./neo";
+import { registerNorseNodeTypes } from "./norse";
+import { registerPandasNodeTypes } from "./pandas";
+import { registerTorchNodeTypes } from "./torch";
 
 export function registerNodeTypes(viewModel: ICodeGraphViewModel) {
-  registerDefaultNodeTypes(viewModel)
-  registerExampleNodeTypes(viewModel)
+  registerDefaultNodeTypes(viewModel);
+  // registerElephantNodeTypes(viewModel);
+  // registerExampleNodeTypes(viewModel);
+  // registerHumamNodeTypes(viewModel);
+  // registerNESTNodeTypes(viewModel);
+  // registerNeoNodeTypes(viewModel);
+  // registerNorseNodeTypes(viewModel);
+  // registerPandasNodeTypes(viewModel);
+  // registerTorchNodeTypes(viewModel);
 }

@@ -1,5 +1,5 @@
 <template>
-  <BaklavaEditor :view-model>
+  <BaklavaEditor :viewModel="viewModelRef">
     <template #palette>
       <CodeNodePalette />
     </template>
@@ -19,28 +19,30 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, toRef } from 'vue';
-import { BaklavaEditor } from 'baklavajs';
+import { onBeforeUnmount, onMounted, toRef, watch } from "vue";
+import { BaklavaEditor } from "@baklavajs/renderer-vue";
 
-import type { AbstractCodeNode } from '@/codeNode';
-import type { ICodeGraphViewModel } from '@/viewModel';
-
-import CodeGraphNode from './node/CodeGraphNode.vue';
-import CodeGraphSidebar from './sidebar/CodeGraphSidebar.vue';
-import CodeNodePalette from './nodePalette/CodeNodePalette.vue';
+import type { AbstractCodeNode } from "@/codeNode";
+import type { ICodeGraphViewModel } from "@/viewModel";
+import { CodeGraphNode, CodeGraphSidebar, CodeNodePalette } from "@/components";
 
 const props = defineProps<{ viewModel: ICodeGraphViewModel }>();
-const viewModel = toRef(props, 'viewModel');
+const viewModelRef = toRef(props, "viewModel");
 
 const onUpdate = (node: AbstractCodeNode) => node.events.update.emit(null);
 
 onMounted(() => {
-  viewModel.value.subscribe();
-  viewModel.value.engine.start();
+  if (viewModelRef.value.subscribe) viewModelRef.value.subscribe();
+  viewModelRef.value.engine?.start();
 });
 
-onUnmounted(() => {
-  viewModel.value.unsubscribe();
-  viewModel.value.engine.stop();
+onBeforeUnmount(() => {
+  if (viewModelRef.value.unsubscribe) viewModelRef.value.unsubscribe();
+  viewModelRef.value.engine?.stop();
+});
+
+watch(viewModelRef, (newValue, oldValue) => {
+  if (oldValue) oldValue.unsubscribe();
+  if (newValue) newValue.subscribe();
 });
 </script>

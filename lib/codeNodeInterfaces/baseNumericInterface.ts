@@ -1,10 +1,11 @@
 // baseNumericInterface.ts
 
-import { computed, nextTick, ref, watch, type Ref } from 'vue';
-import { NodeInterface, setType } from 'baklavajs';
+import { computed, nextTick, ref, watch, type Ref } from "vue";
+import { NodeInterface } from "@baklavajs/core";
+import { setType } from "@baklavajs/interface-types";
 
-import { CodeNodeInputInterface } from './codeNodeInput/codeNodeInputInterface';
-import { numberType } from '@/interfaceTypes';
+import { CodeNodeInputInterface } from "./codeNodeInput/codeNodeInputInterface";
+import { numberType } from "@/interfaceTypes";
 
 const MAX_STRING_LENGTH = 9;
 
@@ -12,8 +13,8 @@ export interface IValidator {
   validate: (v: number) => boolean;
 }
 
-function isValidator(intf): intf is IValidator {
-  return 'validate' in intf;
+function isValidator(intf: unknown): intf is IValidator {
+  return "validate" in intf;
 }
 
 export class BaseNumericInterface extends CodeNodeInputInterface<number> implements IValidator {
@@ -37,7 +38,7 @@ export const useBaseNumericInterface = (intf: Ref<NodeInterface<number>>, precis
   const inputEl = ref<HTMLInputElement | null>(null);
   const editMode = ref(false);
   const invalid = ref(false);
-  const tempValue = ref('0');
+  const tempValue = ref("0");
 
   const stringRepresentation = computed(() => {
     const s = intf.value.value.toFixed(precision);

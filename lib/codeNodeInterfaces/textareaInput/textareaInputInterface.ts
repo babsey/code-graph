@@ -1,9 +1,9 @@
 // textareaInputInteface.ts
 
-import { markRaw, type ComponentOptions } from 'vue';
-import { TextareaInputInterfaceComponent } from 'baklavajs';
+import { TextareaInputInterfaceComponent } from "@baklavajs/renderer-vue";
+import { markRaw, type ComponentOptions } from "vue";
 
-import { BaseStringInterface } from '../baseStringInterface';
+import { BaseStringInterface } from "../baseStringInterface";
 
 export class TextareaInputInterface extends BaseStringInterface {
   component = markRaw(TextareaInputInterfaceComponent) as ComponentOptions;

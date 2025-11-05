@@ -2,19 +2,19 @@
 
 import {
   AbstractNode,
-  Connection,
-  Graph,
-  NodeInterface,
-  sortTopologically,
   type CalculateFunction,
+  type CalculateFunctionReturnType,
+  type CalculationContext,
+  type Connection,
   type INodeState,
   type NodeInterfaceDefinition,
-} from 'baklavajs';
-import mustache from 'mustache';
-import { reactive, type UnwrapRef } from 'vue';
+} from "@baklavajs/core";
+import mustache from "mustache";
+import { reactive, type UnwrapRef } from "vue";
 
-import type { Code } from '@/code';
-import type { CodeNodeInputInterface, CodeNodeInterface, CodeNodeOutputInterface } from '@/codeNodeInterfaces';
+import type { Code } from "@/code";
+import type { CodeNodeInputInterface, CodeNodeInterface, CodeNodeOutputInterface } from "@/codeNodeInterfaces";
+import type { CodeGraph } from "@/codeGraph";
 
 mustache.escape = (value: string) => value;
 
@@ -31,13 +31,12 @@ export interface IAbstractCodeNodeState {
 
 export abstract class AbstractCodeNode extends AbstractNode {
   public state: UnwrapRef<IAbstractCodeNodeState>;
-  public code: Code | undefined;
   public isCodeNode = true;
-  public name: string = '';
+  public name: string = "";
   public codeTemplate: () => string;
 
-  public inputs: Record<string, NodeInterface<unknown>> = {};
-  public outputs: Record<string, NodeInterface<unknown>> = {};
+  public inputs: Record<string, CodeNodeInterface<unknown>> = {};
+  public outputs: Record<string, CodeNodeInterface<unknown>> = {};
 
   public constructor() {
     super();
@@ -46,39 +45,56 @@ export abstract class AbstractCodeNode extends AbstractNode {
     this.twoColumn = true;
 
     this.state = reactive({
-      codeTemplate: '',
+      codeTemplate: "",
       hidden: false,
       integrated: false,
       lockCode: false,
       modules: [],
       props: null,
-      script: '',
-      variableName: 'x',
+      script: "",
+      variableName: "a",
     });
 
     this.codeTemplate = function () {
-      return `${this.name}(${formatInputs(this.codeNodeInputs).join(', ')})`;
+      return `${this.name}(${formatInputs(this.codeNodeInputs).join(", ")})`;
     };
+  }
+
+  get code(): Code {
+    return this.graph.code;
   }
 
   get codeNodeInputs(): Record<string, CodeNodeInputInterface> {
     return Object.fromEntries(
-      Object.entries(this.inputs).filter((intf: [string, NodeInterface]) => intf[1].type != 'node'),
+      Object.entries(this.inputs).filter(
+        (intf: [string, CodeNodeInterface]) => intf[1].isCodeNode && intf[1].type != "node",
+      ),
     ) as Record<string, CodeNodeInputInterface>;
   }
 
   get codeNodeOutputs(): Record<string, CodeNodeOutputInterface> {
     return Object.fromEntries(
-      Object.entries(this.outputs).filter((intf: [string, NodeInterface]) => intf[1].type != 'node'),
+      Object.entries(this.outputs).filter(
+        (intf: [string, CodeNodeInterface]) => intf[1].isCodeNode && intf[1].type != "node",
+      ),
     ) as Record<string, CodeNodeOutputInterface>;
   }
 
+  get graph(): CodeGraph {
+    return super.graph as CodeGraph;
+  }
+
   get idx(): number {
-    return this.code?.codeNodes.filter((node: AbstractCodeNode) => !node.state.integrated).indexOf(this) ?? -1;
+    return this.graph.nodes.filter((node: AbstractCodeNode) => !node.state.integrated).indexOf(this) ?? -1;
   }
 
   get idxByVariableNames(): number {
-    return this.code?.getNodesBySameVariableNames(this.state.variableName).indexOf(this) ?? -1;
+    return (
+      this.graph
+        .getNodesBySameVariableNames(this.state.variableName)
+        .filter((node: AbstractCodeNode) => !node.state.integrated)
+        .indexOf(this) ?? -1
+    );
   }
 
   get lockCode(): boolean {
@@ -103,11 +119,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get script(): string {
-    return this.state.script;
+    return (this.outputs._code?.value as string) ?? "";
   }
 
   set script(value: string) {
-    this.state.script = value;
+    if (this.outputs._code) this.outputs._code.value = value;
     this.events.update.emit(null);
   }
 
@@ -115,12 +131,12 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return this.id.slice(0, 6);
   }
 
-  get subgraph(): Graph | undefined {
+  get subgraph(): CodeGraph | undefined {
     return undefined;
   }
 
   get variableName(): string {
-    return this.state.variableName ? this.state.variableName + (this.idxByVariableNames + 1) : '';
+    return this.state.variableName ? this.state.variableName + (this.idxByVariableNames + 1) : "";
   }
 
   abstract onConnected(): void;
@@ -132,7 +148,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * @param nodeInterface string
    * @returns code node instance or null
    */
-  getConnectedNodeByInterface(nodeInterface: string, type?: 'inputs' | 'outputs'): AbstractCodeNode | null {
+  getConnectedNodeByInterface(nodeInterface: string, type?: "inputs" | "outputs"): AbstractCodeNode | null {
     const nodes = this.getConnectedNodesByInterface(nodeInterface, type);
     return nodes.length > 0 ? (nodes[0] as AbstractCodeNode) : null;
   }
@@ -142,20 +158,20 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * @param type inputs or outputs
    * @returns code node instances
    */
-  getConnectedNodes(type?: 'inputs' | 'outputs'): AbstractCodeNode[] {
+  getConnectedNodes(type?: "inputs" | "outputs"): AbstractCodeNode[] {
     let nodeIds: string[] = [];
 
-    if (type !== 'inputs') {
-      const targets = this.graph?.connections
-        .filter((c: Connection) => c.from.name !== '_code')
+    if (type !== "inputs") {
+      const targets = this.graph.connections
+        .filter((c: Connection) => c.from.name !== "_code")
         .filter((c: Connection) => c.from.nodeId === this.id)
         .map((c: Connection) => c.to.nodeId);
       if (targets) nodeIds = nodeIds.concat(targets);
     }
 
-    if (type !== 'outputs') {
-      const sources = this.graph?.connections
-        .filter((c: Connection) => c.from.name !== '_code')
+    if (type !== "outputs") {
+      const sources = this.graph.connections
+        .filter((c: Connection) => c.from.name !== "_code")
         .filter((c: Connection) => c.to.nodeId === this.id)
         .map((c: Connection) => c.from.nodeId);
 
@@ -163,7 +179,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     }
 
     if (!nodeIds || nodeIds.length == 0) return [];
-    return nodeIds.map((nodeId: string) => this.graph?.findNodeById(nodeId)) as AbstractCodeNode[];
+    return nodeIds.map((nodeId: string) => this.graph.findNodeById(nodeId)) as AbstractCodeNode[];
   }
 
   /**
@@ -171,11 +187,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * @param nodeInterface string
    * @returns code node instances
    */
-  getConnectedNodesByInterface(nodeInterface: string, type?: 'inputs' | 'outputs'): AbstractCodeNode[] {
+  getConnectedNodesByInterface(nodeInterface: string, type?: "inputs" | "outputs"): AbstractCodeNode[] {
     let nodeIds: string[] = [];
 
-    if (type !== 'outputs' && this.inputs[nodeInterface]) {
-      const sources = this.graph?.connections
+    if (type !== "outputs" && this.inputs[nodeInterface]) {
+      const sources = this.graph.connections
         .filter(
           (c: Connection) => c.to.id === this.inputs[nodeInterface]?.id || c.from.id === this.inputs[nodeInterface]?.id,
         )
@@ -183,8 +199,8 @@ export abstract class AbstractCodeNode extends AbstractNode {
       if (sources) nodeIds = nodeIds.concat(sources);
     }
 
-    if (type !== 'inputs' && this.outputs[nodeInterface]) {
-      const targets = this.graph?.connections
+    if (type !== "inputs" && this.outputs[nodeInterface]) {
+      const targets = this.graph.connections
         .filter(
           (c: Connection) =>
             c.from.id === this.outputs[nodeInterface]?.id || c.from.id === this.outputs[nodeInterface]?.id,
@@ -194,7 +210,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     }
 
     if (!nodeIds || nodeIds.length == 0) return [];
-    return nodeIds.map((nodeId) => this.graph?.findNodeById(nodeId)) as AbstractCodeNode[];
+    return nodeIds.map((nodeId) => this.graph.findNodeById(nodeId)) as AbstractCodeNode[];
   }
 
   /**
@@ -208,71 +224,53 @@ export abstract class AbstractCodeNode extends AbstractNode {
   /**
    * Render code of this node.
    */
-  renderCode(): void {
-    // this.state.codeTemplate = this.codeTemplate.call(this)
-
-    if (!this.lockCode) {
-      const inputs: Record<string, unknown> = {};
-      Object.keys(this.inputs).forEach((intfKey: string) => {
-        if (intfKey === '_code') return;
-        const intf = this.inputs[intfKey] as CodeNodeInterface;
-
-        if (intf && intf.state) inputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : intf.getValue();
-      });
-
-      const outputs: Record<string, unknown> = {};
-      Object.keys(this.outputs).forEach((intfKey: string) => {
-        if (intfKey === '_code') return;
-        const intf = this.outputs[intfKey] as CodeNodeInterface;
-
-        if (intf && intf.state) outputs[intfKey] = intf.getValue();
-        // if (intf && intf.state) outputs[intfKey] = intf.state.script.length > 0 ? intf.state.script : value;
-      });
-
-      this.state.script = mustache.render(this.state.codeTemplate, { inputs, outputs });
-    }
-
-    // if (this.outputs._code) this.outputs._code.value = this.state.script
-    if (this.outputs.out) this.outputs.out.state.script = this.script;
+  renderCode(data: { inputs: Record<string, unknown> }): string {
+    return mustache.render(this.state.codeTemplate, data);
   }
 
   /**
-   * Reset script of input interfaces.
+   * Update code templates.
    */
-  resetInputInterfaceScript() {
-    Object.values(this.codeNodeInputs).forEach((intf: CodeNodeInterface) => intf.resetScript());
-  }
-
   updateCodeTemplate(): void {
     this.state.codeTemplate = this.codeTemplate.call(this);
   }
 
-  updateConnectedInputInterfaces() {
-    if (!this.graph) return;
-
-    const { connectionsFromNode } = sortTopologically(this.graph);
-    if (!connectionsFromNode.has(this)) return;
-
-    const connections = connectionsFromNode.get(this);
-    if (!connections) return;
-
-    connections.forEach((c) => {
-      if (!c.from.isCodeNode || !c.to.isCodeNode) return;
-
-      const srcNode = this.graph?.findNodeById(c.from.nodeId) as AbstractCodeNode;
-      if (!srcNode) return;
-      srcNode.renderCode();
-
-      c.to.script = c.from.script;
-    });
+  /**
+   * Update modules.
+   * @param modules a list of modules
+   */
+  updateModules(modules?: string[]): void {
+    if (modules) {
+      this.state.modules = modules;
+    } else if (this.type.includes(".")) {
+      const modules = this.type.split(".");
+      this.state.modules.push(modules.slice(0, modules.length - 1).join("."));
+    }
   }
 
+  /**
+   * Update output names.
+   */
   updateOutputNames(): void {
     Object.values(this.codeNodeOutputs).forEach((output: CodeNodeOutputInterface) => {
-      output.name = this.state.integrated ? '' : this.variableName + output.value;
+      output.name = this.state.integrated ? "" : this.variableName + output.suffix;
+    });
+  }
+  /**
+   * Update output values.
+   * @param output return data of calculate function
+   */
+  updateOutputValues(outputs: CalculateFunctionReturnType<any>): void {
+    Object.keys(this.outputs).forEach((k: string) => {
+      if (k === "_code") return;
+      outputs[k] = this.state.integrated ? outputs._code : this.outputs[k].name;
     });
   }
 
+  /**
+   * Update state props.
+   * @param props
+   */
   updateProps(props: unknown): void {
     this.state.props = props;
   }
@@ -291,7 +289,12 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
    * @param globalValues Set of values passed to every node by the engine plugin
    * @return Values for output interfaces
    */
-  public calculate?: CalculateFunction<I, O>;
+  public calculate?: CalculateFunction<I, O> = (inputs: I, globalValues: CalculationContext) => {
+    const outputs: CalculateFunctionReturnType<any> = {};
+    if (!this.lockCode) outputs._code = this.renderCode({ inputs, ...globalValues });
+    this.updateOutputValues(outputs);
+    return outputs;
+  };
 
   public load(state: ICodeNodeState<I, O>): void {
     super.load(state);
@@ -302,15 +305,6 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
     const state = super.save() as ICodeNodeState<I, O>;
     saveNodeState(this.graph, state);
     return state;
-  }
-
-  updateModules(modules?: string[]): void {
-    if (modules) {
-      this.state.modules = modules;
-    } else if (this.type.includes('.')) {
-      const modules = this.type.split('.');
-      this.state.modules.push(modules.slice(0, modules.length - 1).join('.'));
-    }
   }
 }
 
@@ -329,7 +323,7 @@ export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>, with
     const intf = intfs[inputKey];
     if (intf?.hidden) return;
 
-    const keyword = withKeywords && args.length < inputKeys.indexOf(inputKey) ? `${inputKey}=` : '';
+    const keyword = withKeywords && args.length < inputKeys.indexOf(inputKey) ? `${inputKey}=` : "";
     args.push(`${keyword}{{ inputs.${inputKey} }}`);
   });
 
@@ -341,7 +335,7 @@ export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>, with
  * @param graph code graph
  * @param nodeState node state
  */
-export const loadNodeState = (graph: Graph | undefined, nodeState: ICodeNodeState<unknown, unknown>): void => {
+export const loadNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknown, unknown>): void => {
   if (!graph) return;
 
   const node = graph.findNodeById(nodeState.id);
@@ -356,12 +350,12 @@ export const loadNodeState = (graph: Graph | undefined, nodeState: ICodeNodeStat
   }
 
   Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
-    if (inputKey === '_code') return;
+    if (inputKey === "_code") return;
     if (codeNode.inputs[inputKey]) codeNode.inputs[inputKey].hidden = inputItem.hidden;
   });
 
   Object.entries(nodeState.outputs).forEach(([outputKey, outputItem]) => {
-    if (outputKey === '_code') return;
+    if (outputKey === "_code") return;
     if (codeNode.outputs[outputKey]) codeNode.outputs[outputKey].hidden = outputItem.hidden;
   });
 };
@@ -371,7 +365,7 @@ export const loadNodeState = (graph: Graph | undefined, nodeState: ICodeNodeStat
  * @param graph code graph
  * @param nodeState node state
  */
-export const saveNodeState = (graph: Graph | undefined, nodeState: ICodeNodeState<unknown, unknown>): void => {
+export const saveNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknown, unknown>): void => {
   if (!graph) return;
 
   const node = graph.findNodeById(nodeState.id);
@@ -385,12 +379,12 @@ export const saveNodeState = (graph: Graph | undefined, nodeState: ICodeNodeStat
   }
 
   Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
-    if (inputKey === '_code') return;
+    if (inputKey === "_code") return;
     if (codeNode.inputs[inputKey]) inputItem.hidden = codeNode.inputs[inputKey].hidden;
   });
 
   Object.entries(nodeState.outputs).forEach(([outputKey, outputItem]) => {
-    if (outputKey === '_code') return;
+    if (outputKey === "_code") return;
     if (codeNode.outputs[outputKey]) outputItem.hidden = codeNode.outputs[outputKey].hidden;
   });
 };

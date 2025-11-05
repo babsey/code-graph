@@ -1,14 +1,13 @@
 // codeNodeInterface.ts
 
-import { NodeInterface } from 'baklavajs';
-import { markRaw, reactive, type UnwrapRef } from 'vue';
+import { NodeInterface } from "@baklavajs/core";
+import { markRaw, reactive, type UnwrapRef } from "vue";
 
-import CodeNodeInterfaceComponent from './CodeNodeInterface.vue';
-import type { Code } from '@/code';
+import CodeNodeInterfaceComponent from "./CodeNodeInterface.vue";
+import type { Code } from "@/code";
 
 export interface ICodeNodeInterfaceState {
   optional: boolean;
-  script: string;
 }
 
 export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
@@ -23,7 +22,6 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
 
     this.state = reactive({
       optional: false,
-      script: '',
     });
   }
 
@@ -31,21 +29,11 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
     return this.state.optional;
   }
 
-  get script(): string {
-    return this.state.script;
-  }
-
-  set script(value: string) {
-    this.state.script = value;
-  }
-
   get shortId(): string {
     return this.id.slice(0, 6);
   }
 
-  getValue = (): string => `${this.value ?? 'None'}`;
-
-  resetScript = () => (this.state.script = '');
+  getValue = (): string => `${this.value ?? "None"}`;
 
   setOptional(value: boolean) {
     this.state.optional = value;

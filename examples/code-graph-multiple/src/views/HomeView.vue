@@ -5,14 +5,7 @@
 
       <div style="display: flex; border-radius: 0; vertical-align: middle">
         <div style="text-wrap: nowrap; margin: auto; padding: 0 12px">Create new:</div>
-        <VueSelect
-          v-model="codeGraphStore.state.codeName"
-          :options="[
-            { label: 'example', value: 'example' },
-            { label: 'numpy', value: 'numpy' },
-          ]"
-          placeholder="Select a workspace"
-        />
+        <VueSelect v-model="codeGraphStore.state.codeName" :options placeholder="Select a workspace" />
 
         <div style="text-wrap: nowrap; margin: auto; padding: 0 8px">
           <router-link
@@ -39,13 +32,16 @@
 </template>
 
 <script setup lang="ts">
-import VueSelect from 'vue3-select-component';
+import VueSelect from "vue3-select-component";
 
-import { Plus } from '../icons';
-import NavItem from '@/components/NavItem.vue';
+import { Plus } from "../icons";
+import NavItem from "@/components/NavItem.vue";
 
-import { useCodeGraphStore } from '@/stores/codeGraphStore';
+import { useCodeGraphStore } from "@/stores/codeGraphStore";
+import { computed } from "vue";
 const codeGraphStore = useCodeGraphStore();
+
+const options = computed(() => Object.keys(codeGraphStore.codeGraphs).map((m) => ({ label: m, value: m })));
 </script>
 
 <style lang="scss">

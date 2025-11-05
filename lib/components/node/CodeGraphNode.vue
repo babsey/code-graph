@@ -23,7 +23,8 @@
 
       <template v-if="!renaming">
         <div class="__title-label" style="flex-grow: 1">
-          <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>{{ node.title }}
+          <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>{{ node.title }} {{ node.graph.shortId }}
+          {{ node.shortId }}
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="node.isCodeNode">
@@ -86,7 +87,7 @@
           </div>
 
           <slot v-else name="nodeInterface" type="output" :node :intf="output">
-            <NodeInterface :node :intf="output" :title="output.type" />
+            <NodeInterface :node :intf="output" :title="output.value" />
           </slot>
         </template>
       </div>
@@ -106,7 +107,7 @@
           </div>
 
           <slot v-else :node :intf="input" name="nodeInterface" type="input">
-            <NodeInterface :node :intf="input" :title="input.type" />
+            <NodeInterface :node :intf="input" :title="input.value" />
           </slot>
         </template>
       </div>
@@ -115,11 +116,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onUpdated, onMounted, onBeforeUnmount } from 'vue';
-import { AbstractNode, Components, GRAPH_NODE_TYPE_PREFIX, type IGraphNode, useGraph, useViewModel } from 'baklavajs';
+import { Components, useGraph, useViewModel } from "@baklavajs/renderer-vue";
+import { GRAPH_NODE_TYPE_PREFIX, type IGraphNode } from "@baklavajs/core";
+import { ref, computed, nextTick, onUpdated, onMounted, onBeforeUnmount } from "vue";
 
-import type { AbstractCodeNode } from '@/codeNode';
-import CodeGraphNodeInterface from '../nodeInterface/CodeGraphNodeInterface.vue';
+import type { AbstractCodeNode } from "@/codeNode";
+import { CodeGraphNodeInterface } from "@/components";
 import {
   CodeVariable,
   DotsVertical,
@@ -128,7 +130,7 @@ import {
   LayoutSidebarRightExpand,
   LockCode,
   TransitionBottom,
-} from '@/icons';
+} from "@/icons";
 
 const ContextMenu = Components.ContextMenu;
 const NodeInterface = Components.NodeInterface;
@@ -145,9 +147,9 @@ const props = withDefaults(
 const node = computed(() => props.node as AbstractCodeNode);
 
 const emit = defineEmits<{
-  (e: 'select'): void;
-  (e: 'start-drag', ev: PointerEvent): void;
-  (e: 'update'): void;
+  (e: "select"): void;
+  (e: "start-drag", ev: PointerEvent): void;
+  (e: "update"): void;
 }>();
 
 const { viewModel } = useViewModel();
@@ -155,7 +157,7 @@ const { graph, switchGraph } = useGraph();
 
 const el = ref<HTMLElement | null>(null);
 const renaming = ref(false);
-const tempName = ref('');
+const tempName = ref("");
 const renameInputEl = ref<HTMLInputElement | null>(null);
 const isResizing = ref(false);
 let resizeStartWidth = 0;
@@ -164,40 +166,40 @@ let resizeStartMouseX = 0;
 const showContextMenu = ref(false);
 const contextMenuItems = computed(() => {
   const items = [
-    { value: 'edit', label: 'Edit' },
-    { value: 'rename', label: 'Rename' },
-    { value: 'delete', label: 'Delete' },
+    { value: "edit", label: "Edit" },
+    { value: "rename", label: "Rename" },
+    { value: "delete", label: "Delete" },
   ];
 
   if (props.node.type.startsWith(GRAPH_NODE_TYPE_PREFIX)) {
-    items.push({ value: 'editSubgraph', label: 'Edit Subgraph' });
+    items.push({ value: "editSubgraph", label: "Edit Subgraph" });
   }
 
   return items;
 });
 
 const classes = computed(() => ({
-  '--selected': props.selected,
-  '--dragging': props.dragging,
-  '--two-column': !!props.node.twoColumn,
-  '--hidden': node.value.state?.hidden,
+  "--selected": props.selected,
+  "--dragging": props.dragging,
+  "--two-column": !!props.node.twoColumn,
+  "--hidden": node.value.state?.hidden,
 }));
 
 const classesContent = computed(() => ({
-  '--reverse-y': props.node.reverseY ?? viewModel.value.settings.nodes.reverseY,
+  "--reverse-y": props.node.reverseY ?? viewModel.value.settings.nodes.reverseY,
 }));
 
 const styles = computed(() => ({
-  'top': `${props.node.position?.y ?? 0}px`,
-  'left': `${props.node.position?.x ?? 0}px`,
-  '--width': `${props.node.width ?? viewModel.value.settings.nodes.defaultWidth}px`,
+  "top": `${props.node.position?.y ?? 0}px`,
+  "left": `${props.node.position?.x ?? 0}px`,
+  "--width": `${props.node.width ?? viewModel.value.settings.nodes.defaultWidth}px`,
 }));
 
 const displayedInputs = computed(() => Object.values(props.node.inputs).filter((ni) => !ni.hidden));
 const displayedOutputs = computed(() => Object.values(props.node.outputs).filter((ni) => !ni.hidden));
 
 const select = () => {
-  emit('select');
+  emit("select");
 };
 
 const startDrag = (ev: PointerEvent) => {
@@ -205,7 +207,7 @@ const startDrag = (ev: PointerEvent) => {
     select();
   }
 
-  emit('start-drag', ev);
+  emit("start-drag", ev);
 };
 
 const openContextMenu = () => {
@@ -214,7 +216,7 @@ const openContextMenu = () => {
 
 const closeSidebar = () => {
   const sidebar = viewModel.value.displayedGraph.sidebar;
-  sidebar.nodeId = '';
+  sidebar.nodeId = "";
   sidebar.visible = false;
 };
 
@@ -232,20 +234,20 @@ const updateSidebar = () => {
 
 const onContextMenuClick = async (action: string) => {
   switch (action) {
-    case 'edit':
+    case "edit":
       openSidebar();
       break;
-    case 'delete':
+    case "delete":
       graph.value.removeNode(props.node);
       break;
-    case 'rename':
+    case "rename":
       tempName.value = props.node.title;
       renaming.value = true;
       await nextTick();
       renameInputEl.value?.focus();
       break;
-    case 'editSubgraph':
-      switchGraph((props.node as AbstractNode & IGraphNode).template);
+    case "editSubgraph":
+      switchGraph((props.node as AbstractCodeNode & IGraphNode).template);
       break;
   }
 };
@@ -282,7 +284,7 @@ const startResize = (ev: MouseEvent) => {
 const setIntegrated = (value: boolean) => {
   if (!node.value.state) return;
   node.value.state.integrated = value;
-  emit('update');
+  emit("update");
 };
 
 const doResize = (ev: MouseEvent) => {
@@ -301,13 +303,13 @@ const stopResize = () => {
 onMounted(() => {
   onRender();
 
-  window.addEventListener('mousemove', doResize);
-  window.addEventListener('mouseup', stopResize);
+  window.addEventListener("mousemove", doResize);
+  window.addEventListener("mouseup", stopResize);
 });
 onUpdated(onRender);
 
 onBeforeUnmount(() => {
-  window.removeEventListener('mousemove', doResize);
-  window.removeEventListener('mouseup', stopResize);
+  window.removeEventListener("mousemove", doResize);
+  window.removeEventListener("mouseup", stopResize);
 });
 </script>

@@ -1,18 +1,16 @@
-// register.ts
+// default/register.ts
 
-import type { IBaklavaViewModel } from 'baklavajs';
+import { addDefaultInterfaceTypes, type ICodeGraphViewModel } from "@babsey/code-graph";
 
-import { addDefaultInterfaceTypes } from '@babsey/code-graph';
+import boolean from "./boolean";
+import integer from "./integer";
+import list from "./list";
+import number from "./number";
+import slider from "./slider";
+import text from "./text";
+import tuple from "./tuple";
 
-import boolean from './boolean';
-import integer from './integer';
-import list from './list';
-import number from './number';
-import slider from './slider';
-import text from './text';
-import tuple from './tuple';
-
-export const registerDefaultNodeTypes = (viewModel: IBaklavaViewModel) => {
+export const registerDefaultNodeTypes = (viewModel: ICodeGraphViewModel) => {
   addDefaultInterfaceTypes(viewModel);
 
   viewModel.editor.registerNodeType(boolean);

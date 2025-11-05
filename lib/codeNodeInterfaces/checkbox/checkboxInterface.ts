@@ -1,10 +1,11 @@
 // checkboxInterface.ts
 
-import { markRaw } from 'vue';
-import { CheckboxInterfaceComponent, setType } from 'baklavajs';
+import { CheckboxInterfaceComponent } from "@baklavajs/renderer-vue";
+import { setType } from "@baklavajs/interface-types";
+import { markRaw } from "vue";
 
-import { CodeNodeInputInterface } from '../codeNodeInput/codeNodeInputInterface';
-import { booleanType } from '@/interfaceTypes';
+import { CodeNodeInputInterface } from "../codeNodeInput/codeNodeInputInterface";
+import { booleanType } from "@/interfaceTypes";
 
 export class CheckboxInterface extends CodeNodeInputInterface<boolean> {
   public constructor(name: string, value: boolean) {
@@ -14,5 +15,5 @@ export class CheckboxInterface extends CodeNodeInputInterface<boolean> {
     this.use(setType, booleanType);
   }
 
-  override getValue = (): string => (this.value ? 'True' : 'False');
+  override getValue = (): string => (this.value ? "True" : "False");
 }

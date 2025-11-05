@@ -1,49 +1,51 @@
 // codeGraphNode.ts
 
 import {
-  AbstractNode,
-  allowMultipleConnections,
+  NodeInterface,
   getGraphNodeTypeString,
-  Graph,
-  GraphInputNode,
-  GraphOutputNode,
-  GraphTemplate,
+  type CalculateFunction,
+  type CalculateFunctionReturnType,
+  type GraphTemplate,
   type IGraphInterface,
   type IGraphNode,
-  type IGraphState,
   type INodeState,
-  setType,
-} from 'baklavajs';
-import mustache from 'mustache';
+} from "@baklavajs/core";
+import { allowMultipleConnections, applyResult } from "@baklavajs/engine";
+import { setType } from "@baklavajs/interface-types";
 
-import { CodeNodeOutputInterface, CodeNodeInterface, AbstractCodeNode, nodeType } from '@/main';
+import { CodeNodeInterface } from "@/codeNodeInterfaces";
+import { AbstractCodeNode } from "@/codeNode";
+import { nodeType } from "@/interfaceTypes";
+
+import type { CodeGraph, ICodeGraphState } from "./codeGraph";
+import { CodeGraphInputNode, CodeGraphOutputNode } from "../subgraph/graphInterface";
+import type { CodeGraphTemplate } from "./codeGraphTemplate";
+import mustache from "mustache";
 
 export interface IGraphCodeNodeState extends INodeState<unknown, unknown> {
-  graphState: IGraphState;
+  graphState: ICodeGraphState;
 }
 
 export interface IGraphCodeNode extends IGraphNode {
-  template: GraphTemplate;
-  subgraph: Graph | undefined;
+  template: CodeGraphTemplate;
+  subgraph: CodeGraph | undefined;
 }
-
-export const GRAPH_NODE_TYPE_PREFIX = '__baklava_GraphNode-';
 
 /** Properties that should not be proxied to the original interface */
 const PROXY_INTERFACE_SKIP_PROPERTIES: Array<string | symbol> = [
-  'component',
-  'connectionCount',
-  'events',
-  'hidden',
-  'hooks',
-  'id',
-  'isCodeNode',
-  'isInput',
-  'name',
-  'nodeId',
-  'port',
-  'templateId',
-  'value',
+  "component",
+  "connectionCount",
+  "events",
+  "hidden",
+  "hooks",
+  "id",
+  "isCodeNode",
+  "isInput",
+  "name",
+  "nodeId",
+  "port",
+  "templateId",
+  "value",
 ] satisfies Array<keyof CodeNodeInterface>;
 
 export function createCodeGraphNodeType(template: GraphTemplate): new () => AbstractCodeNode & IGraphNode {
@@ -61,72 +63,63 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
     public outputs: Record<string, CodeNodeInterface<unknown>> = {};
 
     public template = template;
-    public subgraph: Graph | undefined;
+    public subgraph: CodeGraph | undefined;
 
-    // public override calculate: CalculateFunction<Record<string, unknown>, Record<string, unknown>> = async (
-    //   inputs,
-    //   context,
-    // ) => {
-    //   if (!this.subgraph) {
-    //     throw new Error(`GraphNode ${this.id}: calculate called without subgraph being initialized`)
-    //   }
-    //   if (!context.engine || typeof context.engine !== 'object') {
-    //     throw new Error(`GraphNode ${this.id}: calculate called but no engine provided in context`)
-    //   }
+    public update(): void {}
 
-    //   const graphInputs = context.engine.getInputValues(this.subgraph)
+    public onConnected(): void {}
 
-    //   // fill subgraph input placeholders
-    //   for (const input of this.subgraph.inputs) {
-    //     graphInputs.set(input.nodeInterfaceId, inputs[input.id])
-    //   }
+    public onUnconnected(): void {}
 
-    //   const result: Map<string, Map<string, unknown>> = await context.engine.runGraph(
-    //     this.subgraph,
-    //     graphInputs,
-    //     context.globalValues,
-    //   )
+    public override calculate: CalculateFunction<Record<string, unknown>, Record<string, unknown>> = async (
+      inputs,
+      context,
+    ) => {
+      if (!this.subgraph) throw new Error(`GraphNode ${this.id}: calculate called without subgraph being initialized`);
+      if (!context.engine || typeof context.engine !== "object")
+        throw new Error(`GraphNode ${this.id}: calculate called but no engine provided in context`);
 
-    //   const outputs: Record<string, unknown> = {}
-    //   for (const output of this.subgraph.outputs) {
-    //     outputs[output.id] = result.get(output.nodeId)?.get('output')
-    //   }
+      const graphInputs = context.engine.getInputValues(this.subgraph);
 
-    //   outputs._calculationResults = result
-    //   outputs['_code'] = inputs['_code']
+      // fill subgraph input placeholders
+      for (const input of this.subgraph.inputs) {
+        graphInputs.set(input.nodeInterfaceId, inputs[input.id]);
+      }
 
-    //   return outputs
-    // }
+      const result: Map<string, Map<string, unknown>> = await context.engine.runGraph(
+        this.subgraph,
+        graphInputs,
+        context.globalValues,
+      );
 
-    /**
-     * Render code script of code nodes.
-     */
-    renderCodes(): void {
-      if (!this.subgraph) return;
+      context.engine.pause();
+      applyResult(result, context.engine.editor);
+      context.engine.resume();
 
-      this.subgraph.nodes
-        .filter((node: AbstractNode) => node.isCodeNode)
-        .forEach((node: AbstractCodeNode) => node.renderCode());
+      const outputs: CalculateFunctionReturnType<any> = {};
+      for (const output of this.subgraph.outputs) {
+        outputs[output.id] = result.get(output.nodeId)?.get("output");
+      }
+      outputs._calculationResults = result;
 
-      const nodes = this.subgraph.nodes;
-      this.state.script = mustache.render(this.code.state.template || '', { nodes });
-    }
+      // render code of this graph node.
+      if (!this.lockCode) outputs._code = this.renderCode({ inputs, ...context.globalValues });
+      this.updateOutputValues(outputs);
+
+      return outputs;
+    };
 
     public override load(state: IGraphCodeNodeState) {
-      if (!this.subgraph) {
-        throw new Error('Cannot load a graph node without a graph');
-      }
-      if (!this.template) {
-        throw new Error('Unable to load graph node without graph template');
-      }
+      if (!this.subgraph) throw new Error("Cannot load a graph node without a graph");
+      if (!this.template) throw new Error("Unable to load graph node without graph template");
+
       this.subgraph.load(state.graphState);
       super.load(state);
     }
 
     public override save(): IGraphCodeNodeState {
-      if (!this.subgraph) {
-        throw new Error('Cannot save a graph node without a graph');
-      }
+      if (!this.subgraph) throw new Error("Cannot save a graph node without a graph");
+
       const state = super.save();
       return {
         ...state,
@@ -142,30 +135,33 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
       this.initialize();
     }
 
-    public onConnected(): void {}
-
     public override onDestroy() {
       this.template.events.updated.unsubscribe(this);
       this.template.events.nameChanged.unsubscribe(this);
       this.subgraph?.destroy();
     }
 
-    public onUnconnected(): void {}
-
     private initialize() {
-      if (this.subgraph) {
-        this.subgraph.destroy();
-      }
+      if (this.subgraph) this.subgraph.destroy();
+
       this.subgraph = this.template.createGraph();
       this._title = this.template.name;
       this.updateInterfaces();
+      this.state.codeTemplate = "{{ #nodes }}{{ script }}\n{{ /nodes }}";
       this.events.update.emit(null);
     }
 
+    /**
+     * Render code of this node.
+     */
+    renderCode(data: { inputs: Record<string, unknown> }): string {
+      if (this.subgraph) return this.subgraph.renderCode({ nodes: this.subgraph.scriptedCodeNodes });
+
+      return mustache.render(this.state.codeTemplate, data);
+    }
+
     private updateInterfaces() {
-      if (!this.subgraph) {
-        throw new Error('Trying to update interfaces without graph instance');
-      }
+      if (!this.subgraph) throw new Error("Trying to update interfaces without graph instance");
 
       for (const graphInput of this.subgraph.inputs) {
         if (!(graphInput.id in this.inputs)) {
@@ -194,19 +190,16 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
       }
 
       this.addInput(
-        '_code',
-        new CodeNodeInterface('', []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        "_code",
+        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
       this.addOutput(
-        '_code',
-        new CodeNodeInterface('', []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        "_code",
+        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
 
       // Add an internal output to allow accessing the calculation results of nodes inside the graph
-      this.addOutput(
-        '_calculationResults',
-        new CodeNodeOutputInterface('_calculationResults', undefined).setHidden(true),
-      );
+      this.addOutput("_calculationResults", new NodeInterface("_calculationResults", undefined).setHidden(true));
     }
 
     /**
@@ -222,28 +215,28 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
           if (
             PROXY_INTERFACE_SKIP_PROPERTIES.includes(prop) ||
             prop in target ||
-            (typeof prop === 'string' && prop.startsWith('__v_'))
-          ) {
+            (typeof prop === "string" && prop.startsWith("__v_"))
+          )
             return Reflect.get(target, prop);
-          }
+
           // try to find the interface connected to our graph input
           let placeholderIntfId: string | undefined;
           if (isInput) {
             const subgraphInterfaceNode = this.subgraph?.nodes.find(
-              (n) => GraphInputNode.isGraphInputNode(n) && n.graphInterfaceId === graphInterface.id,
-            ) as GraphInputNode | undefined;
+              (n) => CodeGraphInputNode.isGraphInputNode(n) && n.graphInterfaceId === graphInterface.id,
+            ) as CodeGraphInputNode | undefined;
             placeholderIntfId = subgraphInterfaceNode?.outputs.placeholder.id;
           } else {
             const subgraphInterfaceNode = this.subgraph?.nodes.find(
-              (n) => GraphOutputNode.isGraphOutputNode(n) && n.graphInterfaceId === graphInterface.id,
-            ) as GraphOutputNode | undefined;
+              (n) => CodeGraphOutputNode.isGraphOutputNode(n) && n.graphInterfaceId === graphInterface.id,
+            ) as CodeGraphOutputNode | undefined;
             placeholderIntfId = subgraphInterfaceNode?.inputs.placeholder.id;
           }
           const conn = this.subgraph?.connections.find((c) => placeholderIntfId === (isInput ? c.from : c.to)?.id);
           const intf = isInput ? conn?.to : conn?.from;
-          if (intf) {
-            return Reflect.get(intf, prop);
-          }
+
+          if (intf) return Reflect.get(intf, prop);
+
           return undefined;
         },
       });

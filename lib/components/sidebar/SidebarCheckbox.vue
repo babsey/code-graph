@@ -25,6 +25,6 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', v: boolean): void;
+  (e: "update:modelValue", v: boolean): void;
 }>();
 </script>

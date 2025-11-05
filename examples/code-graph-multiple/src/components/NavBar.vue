@@ -6,7 +6,7 @@
       v-for="editorState in codeGraphStore.state.editorStates"
       :key="editorState.graph.id"
       :to="{ name: 'edit', params: { editorId: editorState.graph.id } }"
-      :class="{ active: editorState.graph.id === codeGraphStore.state.codeGraph.displayedGraph.id }"
+      :class="{ active: editorState.graph.id === viewModel.displayedGraph.id }"
       :editor="editorState"
       :title="editorState.codeName"
     >
@@ -26,12 +26,14 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, X } from '../icons';
+import { computed } from "vue";
+import { Plus, X } from "../icons";
 
-import NavItem from './NavItem.vue';
+import NavItem from "./NavItem.vue";
 
-import { useCodeGraphStore } from '@/stores/codeGraphStore';
+import { useCodeGraphStore } from "@/stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();
+const viewModel = computed(() => codeGraphStore.viewModel);
 </script>
 
 <style lang="scss">

@@ -1,17 +1,19 @@
 // defineCodeNode.ts
 
-import {
-  Node,
+import type {
   NodeInterface,
-  allowMultipleConnections,
-  setType,
-  type INodeDefinition,
-  type NodeInterfaceDefinition,
-} from 'baklavajs';
+  CalculationContext,
+  INodeDefinition,
+  Node,
+  NodeInterfaceDefinition,
+} from "@baklavajs/core";
+import { setType } from "@baklavajs/interface-types";
+import { allowMultipleConnections } from "@baklavajs/engine";
 
-import { CodeNode, type AbstractCodeNode } from './codeNode';
-import { CodeNodeInterface } from '@/codeNodeInterfaces';
-import { nodeType } from '../interfaceTypes';
+import { CodeNodeInterface } from "@/codeNodeInterfaces";
+import { nodeType } from "@/interfaceTypes";
+
+import { CodeNode, type AbstractCodeNode } from "./codeNode";
 
 export type NodeConstructor<I, O> = new () => Node<I, O>;
 export type NodeInstanceOf<T> = T extends new () => Node<infer A, infer B> ? Node<A, B> : never;
@@ -40,15 +42,13 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
     constructor() {
       super();
       this._title = definition.title ?? definition.type;
-      this.executeFactory('input', definition.inputs);
-      this.executeFactory('output', definition.outputs);
+      this.executeFactory("input", definition.inputs);
+      this.executeFactory("output", definition.outputs);
 
-      // if (definition.calculate) {
-      //   this.calculate = (inputs: I, globalValues: CalculationContext) => ({
-      //     ...definition.calculate!.call(this, inputs, globalValues),
-      //     _code: inputs._code,
-      //   })
-      // }
+      if (definition.calculate) {
+        this.calculate = (inputs: I, globalValues: CalculationContext) =>
+          definition.calculate!.call(this, { inputs, ...globalValues });
+      }
 
       definition.onCreate?.call(this);
 
@@ -59,12 +59,12 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate;
 
       this.addInput(
-        '_code',
-        new CodeNodeInterface('', []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        "_code",
+        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
       this.addOutput(
-        '_code',
-        new CodeNodeInterface('', []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        "_code",
+        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
     }
 
@@ -88,10 +88,10 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       definition.update?.call(this);
     }
 
-    private executeFactory<V, T extends InterfaceFactory<V>>(type: 'input' | 'output', factory?: T): void {
+    private executeFactory<V, T extends InterfaceFactory<V>>(type: "input" | "output", factory?: T): void {
       (Object.keys(factory || {}) as (keyof V)[]).forEach((k) => {
         const intf = factory![k]();
-        if (type === 'input') {
+        if (type === "input") {
           this.addInput(k as string, intf);
         } else {
           this.addOutput(k as string, intf);
