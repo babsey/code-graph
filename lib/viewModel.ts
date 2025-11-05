@@ -56,7 +56,6 @@ export interface ICodeGraphViewModel {
   switchGraph: (newGraph: CodeGraph | CodeGraphTemplate) => void;
 
   engine?: CodeEngine;
-  init?: () => void;
   loadEditor?: (editorState: IEditorState) => void;
   newGraph?: () => void;
   subscribe?: () => void;

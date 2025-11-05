@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, toRef } from "vue";
+import { onBeforeUnmount, onMounted, toRef } from "vue";
 import { BaklavaEditor } from "@baklavajs/renderer-vue";
 
 import type { AbstractCodeNode } from "@/codeNode";
@@ -36,7 +36,7 @@ onMounted(() => {
   viewModelRef.value.engine?.start();
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (viewModelRef.value.unsubscribe) viewModelRef.value.unsubscribe();
   viewModelRef.value.engine?.stop();
 });

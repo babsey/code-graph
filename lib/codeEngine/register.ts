@@ -23,14 +23,6 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
   registerRunEngineCommands(viewModel.engine, viewModel.commandHandler);
 
   /**
-   * Initialize view model.
-   */
-  viewModel.init = () => {
-    // unsubscribe old engine / graph events if existed.
-    if (viewModel.subscribe) viewModel.subscribe();
-  };
-
-  /**
    * Load editor from editor state
    */
   viewModel.loadEditor = (editorState: IEditorState) => {
@@ -117,6 +109,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
    */
   viewModel.unsubscribe = () => {
     viewModel.displayedGraph.events.addConnection.unsubscribe(token);
+    viewModel.displayedGraph.events.removeConnection.unsubscribe(token);
     viewModel.engine?.events.beforeRun.unsubscribe(token);
     viewModel.engine?.events.afterRun.unsubscribe(token);
   };
