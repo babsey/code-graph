@@ -1,6 +1,6 @@
 // boolean.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeOutputInterface, CheckboxInterface, defineCodeNode, booleanType } from "@babsey/code-graph";
 

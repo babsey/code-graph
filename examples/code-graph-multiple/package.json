@@ -1,5 +1,5 @@
 {
-  "name": "code-graph-store",
+  "name": "code-graph-multiple",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -22,25 +22,25 @@
     "baklavajs": "~2.8",
     "codemirror": "~6.0",
     "pinia": "~3.0",
-    "pinia-plugin-persistedstate": "~4.5",
+    "pinia-plugin-persistedstate": "~4.7",
     "splitpanes": "~4.0",
     "vue": "~3.5",
     "vue-codemirror": "~6.1",
     "vue-router": "~4.6",
-    "vue3-select-component": "~0.12"
+    "vue3-select-component": "~0.14"
   },
   "devDependencies": {
     "@tsconfig/node22": "~22.0",
-    "@types/node": "~24.9",
+    "@types/node": "~24.10",
     "@vitejs/plugin-vue": "~6.0",
     "@vue/tsconfig": "~0.8",
-    "eslint": "~9.38",
+    "eslint": "~9.39",
     "eslint-plugin-vue": "~10.5",
     "npm-run-all2": "~8.0",
     "prettier": "~3.6",
     "sass-embedded": "~1.93",
     "typescript": "~5.9",
-    "vite": "~7.1",
+    "vite": "~7.2",
     "vite-plugin-vue-devtools": "~8.0",
     "vue-tsc": "~3.1"
   }

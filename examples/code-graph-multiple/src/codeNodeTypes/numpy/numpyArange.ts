@@ -1,6 +1,6 @@
 // numpyArange.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeOutputInterface, NumberInterface, defineCodeNode, formatInputs } from "@babsey/code-graph";
 

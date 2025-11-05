@@ -1,6 +1,6 @@
 // numpyHistogram.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeInputInterface, CodeNodeOutputInterface, IntegerInterface, defineCodeNode } from "@babsey/code-graph";
 

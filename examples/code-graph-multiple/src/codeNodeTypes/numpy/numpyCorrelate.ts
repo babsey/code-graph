@@ -1,6 +1,6 @@
 // numpyCorrelate.ts
 
-import { setType } from "baklavajs";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeInputInterface, CodeNodeOutputInterface, SelectInterface, defineCodeNode } from "@babsey/code-graph";
 

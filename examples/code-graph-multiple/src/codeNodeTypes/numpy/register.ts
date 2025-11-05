@@ -27,7 +27,7 @@ export const registerNumpyNodeTypes = (viewModel: ICodeGraphViewModel) => {
   const editor = viewModel.editor;
 
   category = "numpy";
-  viewModel.state.modules[category] = "import numpy as np";
+  editor.registerCategoryModule(category, "import numpy as np");
   editor.registerNodeType(numpyArange, { category });
   editor.registerNodeType(numpyArgwhere, { category });
   editor.registerNodeType(numpyConcatenate, { category });
@@ -39,7 +39,7 @@ export const registerNumpyNodeTypes = (viewModel: ICodeGraphViewModel) => {
   editor.registerNodeType(numpyLinspace, { category });
 
   category = "numpy.random";
-  viewModel.state.modules[category] = "import numpy as np";
+  editor.registerCategoryModule(category, "import numpy as np");
   editor.registerNodeType(numpyRandomNormal, { category });
   editor.registerNodeType(numpyRandomRandint, { category });
   editor.registerNodeType(numpyRandomSeed, { category });

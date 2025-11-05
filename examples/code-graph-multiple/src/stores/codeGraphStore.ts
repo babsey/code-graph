@@ -1,10 +1,10 @@
 // codeGraphStore.ts
 
 import { defineStore } from "pinia";
-import { reactive, type UnwrapRef } from "vue";
-import { type IEditorState } from "baklavajs";
+import { reactive, ref, type Ref, type UnwrapRef } from "vue";
+import type { IEditorState } from "@baklavajs/core";
 
-import { type ICodeGraphViewModel } from "@babsey/code-graph";
+import type { ICodeGraphViewModel } from "@babsey/code-graph";
 
 import { registerExampleCodeGraph, registerNumpyCodeGraph } from "@/codes";
 
@@ -12,48 +12,52 @@ export const useCodeGraphStore = defineStore(
   "code-graph",
   () => {
     const state: UnwrapRef<{
-      codeGraph: ICodeGraphViewModel | null;
-      codeGraphs: Record<string, ICodeGraphViewModel>;
       codeName: string;
       editorStates: Record<string, IEditorState>;
       token: symbol | null;
     }> = reactive({
-      codeGraph: null,
-      codeGraphs: {},
       codeName: "example",
       editorStates: {},
       token: null,
     });
 
-    const init = () => {
-      // console.log('init')
-      state.codeGraphs["example"] = registerExampleCodeGraph();
-      state.codeGraphs["numpy"] = registerNumpyCodeGraph();
-    };
+    const token = Symbol("CodeGraphStore");
+
+    const viewModel = ref(null) as Ref<ICodeGraphViewModel>;
+
+    const codeGraphs = {
+      example: registerExampleCodeGraph(),
+      numpy: registerNumpyCodeGraph(),
+    } as Record<string, ICodeGraphViewModel>;
 
     const loadCodeGraph = (codeName: string) => {
       // console.log('load code graph', codeName)
-      unsubscribe();
 
-      if (state.codeGraph) {
-        state.codeGraph.unsubscribe();
-        state.codeGraph.engine.stop();
+      // unsubscribe()
+
+      if (viewModel.value) {
+        // viewModel.value.unsubscribe();
+        viewModel.value.engine.stop();
       }
 
-      if (!state.codeGraph || state.codeGraph.code.name !== codeName) state.codeGraph = state.codeGraphs[codeName];
+      if (!viewModel.value || viewModel.value.code.name !== codeName) viewModel.value = codeGraphs[codeName];
 
-      state.codeGraph.subscribe();
-      state.codeGraph.engine.start();
-      subscribe();
+      // viewModel.value.unsubscribe();
+      // viewModel.value.engine.stop();
+
+      // viewModel.value.subscribe();
+      viewModel.value.engine.start();
+
+      // subscribe()
     };
 
     const loadEditor = (editorId?: string) => {
       // console.log('load editor', editorId)
 
-      unsubscribe();
+      unsubscribe()
 
       const editorIds = Object.keys(state.editorStates);
-      if (!editorId || !editorIds.includes(editorId)) return newEditor(state.codeGraph.code.name);
+      if (!editorId || !editorIds.includes(editorId)) return newEditor(viewModel.value.code.name);
 
       const editorState = state.editorStates[editorId];
 
@@ -62,10 +66,10 @@ export const useCodeGraphStore = defineStore(
         if (editorState.codeName) loadCodeGraph(editorState.codeName as string);
 
         // load editor from editor state
-        if (state.codeGraph.displayedGraph.id !== editorId) state.codeGraph.loadEditor(editorState);
+        if (viewModel.value.displayedGraph.id !== editorId) viewModel.value.loadEditor(editorState);
       }
 
-      subscribe();
+      subscribe()
 
       return true;
     };
@@ -75,7 +79,7 @@ export const useCodeGraphStore = defineStore(
       loadCodeGraph(codeName as string);
 
       // create new graph
-      state.codeGraph.newGraph();
+      viewModel.value.newGraph();
 
       const editorId = saveEditor();
       return { name: "edit", params: { editorId } };
@@ -87,35 +91,41 @@ export const useCodeGraphStore = defineStore(
     };
 
     const saveEditor = () => {
-      // console.log('save editor', state.codeGraph.editor.graph.id)
-      state.editorStates[state.codeGraph.editor.graph.id] = state.codeGraph.editor.save();
-      return state.codeGraph.editor.graph.id;
+      // console.log('save editor', viewModel.value.editor.graph.id)
+      state.editorStates[viewModel.value.editor.graph.id] = viewModel.value.editor.save();
+      return viewModel.value.editor.graph.id;
     };
 
     const subscribe = () => {
-      if (state.token) unsubscribe();
+      // console.log("subscribe");
+      if (!viewModel.value) return;
 
-      const token = Symbol();
-      state.codeGraph.engine.events.afterRun.subscribe(token, saveEditor);
-      state.codeGraph.editor.hooks.save.subscribe(token, (editorState: IEditorState) => {
-        editorState.codeName = state.codeGraph.code.name;
+      viewModel.value.engine.events.afterRun.subscribe(token, saveEditor);
+      viewModel.value.editor.hooks.save.subscribe(token, (editorState: IEditorState) => {
+        editorState.codeName = viewModel.value.code.name;
         return editorState;
       });
-
-      state.token = token;
     };
 
     const unsubscribe = () => {
-      if (!state.token || !state.codeGraph) return;
-      state.codeGraph.engine.events.afterRun.unsubscribe(state.token);
-      state.codeGraph.editor.hooks.save.unsubscribe(state.token);
+      // console.log("unsubscribe");
+      if (!viewModel.value) return;
 
-      state.token = null;
+      viewModel.value.engine.events.afterRun.unsubscribe(token);
+      viewModel.value.editor.hooks.save.unsubscribe(token);
     };
 
-    init();
-
-    return { init, loadCodeGraph, loadEditor, newEditor, removeEditorState, state };
+    return {
+      codeGraphs,
+      loadCodeGraph,
+      loadEditor,
+      newEditor,
+      removeEditorState,
+      state,
+      subscribe,
+      unsubscribe,
+      viewModel,
+    };
   },
   {
     persist: {
