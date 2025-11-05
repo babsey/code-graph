@@ -2,7 +2,7 @@
 
 import mustache from "mustache";
 import toposort from "toposort";
-import { Graph, type GraphTemplate, Connection, NodeInterface, AbstractNode } from "baklavajs";
+import { Graph, type GraphTemplate, Connection, NodeInterface, AbstractNode } from "@baklavajs/core";
 import { reactive, type UnwrapRef } from "vue";
 import { type IBaklavaEventEmitter, type IBaklavaTapable } from "@baklavajs/events";
 
@@ -63,7 +63,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   }
 
   get scriptedCodeNodes(): AbstractCodeNode[] {
-    return this.nodes.filter((codeNode: AbstractCodeNode) => !codeNode.state?.integrated) as AbstractCodeNode[];
+    return this.nodes.filter((node: AbstractCodeNode) => !node.state?.integrated) as AbstractCodeNode[];
   }
 
   get shortId(): string {
@@ -78,15 +78,15 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     return this.nodes.filter((node: AbstractCodeNode) => !node.state?.hidden) as AbstractCodeNode[];
   }
 
-  /**
-   * Add code node to graph.
-   * @param node code node
-   * @param props optional
-   */
-  public override addNode(node: AbstractCodeNode, props?: unknown): AbstractCodeNode | undefined {
-    if (props) node.state.props = props;
-    return super.addNode(node as AbstractNode) as AbstractCodeNode;
-  }
+  // /**
+  //  * Add code node to graph.
+  //  * @param node code node
+  //  * @param props optional
+  //  */
+  // public override addNode(node: AbstractCodeNode, props?: unknown): AbstractCodeNode | undefined {
+  //   if (node.state && props) node.state.props = props;
+  //   return super.addNode(node as AbstractNode) as AbstractCodeNode;
+  // }
 
   /**
    * Add code node at coordinates.
@@ -111,8 +111,8 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * @param to code node interface
    */
   public override addConnection(from: CodeNodeInterface, to: CodeNodeInterface): void {
-    if (from.name !== "_code") from.hidden = false;
-    if (to.name !== "_code") to.hidden = false;
+    if (from?.name !== "_code") from.hidden = false;
+    if (to?.name !== "_code") to.hidden = false;
     super.addConnection(from, to);
   }
 
@@ -132,7 +132,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * @returns node instance
    */
   public findNodeByType(nodeType: string): AbstractCodeNode | undefined {
-    return this.nodes.find((codeNode: AbstractCodeNode) => codeNode.type === nodeType);
+    return this.nodes.find((node: AbstractCodeNode) => node.type === nodeType);
   }
 
   /**
@@ -141,7 +141,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * @returns a list of node instances
    */
   public getNodesBySameType(type: string): AbstractCodeNode[] {
-    return this.nodes.filter((codeNode: AbstractCodeNode) => codeNode.type === type) as AbstractCodeNode[];
+    return this.nodes.filter((node: AbstractCodeNode) => node.type === type) as AbstractCodeNode[];
   }
 
   /**
@@ -151,7 +151,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    */
   public getNodesBySameVariableNames(variableName: string): AbstractCodeNode[] {
     return this.nodes.filter(
-      (codeNode: AbstractCodeNode) => codeNode.state.variableName === variableName,
+      (node: AbstractCodeNode) => node.state?.variableName === variableName,
     ) as AbstractCodeNode[];
   }
 
@@ -171,7 +171,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * Render code script.
    */
   public renderCode(data: { nodes: AbstractCodeNode[] }): string {
-    return mustache.render(this.state.codeTemplate || "", data);
+    return mustache.render(this.state?.codeTemplate || "", data);
   }
 
   /**
@@ -210,26 +210,6 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     } catch {
       console.warn("Failed to sort nodes.");
     }
-  }
-
-  /**
-   * Update code nodes.
-   */
-  updateCodeNodes(): void {
-    this.nodes.forEach((codeNode: AbstractCodeNode) => {
-      if (codeNode.isSubgraph) codeNode.subgraph.update();
-      codeNode.update();
-    });
-  }
-
-  /**
-   * Update code templates.
-   */
-  updateCodeTemplates(): void {
-    this.nodes.forEach((codeNode: AbstractCodeNode) => {
-      if (codeNode.isSubgraph) codeNode.subgraph.updateCodeTemplate();
-      codeNode.updateCodeTemplate();
-    });
   }
 }
 

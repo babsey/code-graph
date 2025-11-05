@@ -1,7 +1,8 @@
 // baseNumericInterface.ts
 
 import { computed, nextTick, ref, watch, type Ref } from "vue";
-import { NodeInterface, setType } from "baklavajs";
+import { NodeInterface } from "@baklavajs/core";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeInputInterface } from "./codeNodeInput/codeNodeInputInterface";
 import { numberType } from "@/interfaceTypes";

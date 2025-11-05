@@ -1,6 +1,6 @@
 // codeNodeInterface.ts
 
-import { NodeInterface } from "baklavajs";
+import { NodeInterface } from "@baklavajs/core";
 import { markRaw, reactive, type UnwrapRef } from "vue";
 
 import CodeNodeInterfaceComponent from "./CodeNodeInterface.vue";

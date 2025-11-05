@@ -1,8 +1,7 @@
 // runEngine.command.ts
 
-import type { ICommandHandler } from "baklavajs";
+import type { ICommandHandler } from "@baklavajs/renderer-vue";
 
-import type { CodeGraph } from "@/codeGraph";
 import { RUN_ENGINE_COMMAND } from "@/settings";
 import type { CodeEngine } from "./codeEngine";
 

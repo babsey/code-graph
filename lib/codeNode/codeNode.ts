@@ -8,7 +8,7 @@ import {
   type CalculationContext,
   type INodeState,
   type NodeInterfaceDefinition,
-} from "baklavajs";
+} from "@baklavajs/core";
 import mustache from "mustache";
 import { reactive, type UnwrapRef } from "vue";
 
@@ -89,7 +89,12 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get idxByVariableNames(): number {
-    return this.graph.getNodesBySameVariableNames(this.state.variableName).indexOf(this) ?? -1;
+    return (
+      this.graph
+        .getNodesBySameVariableNames(this.state.variableName)
+        .filter((node: AbstractCodeNode) => !node.state.integrated)
+        .indexOf(this) ?? -1
+    );
   }
 
   get lockCode(): boolean {
@@ -231,6 +236,19 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   /**
+   * Update modules.
+   * @param modules a list of modules
+   */
+  updateModules(modules?: string[]): void {
+    if (modules) {
+      this.state.modules = modules;
+    } else if (this.type.includes(".")) {
+      const modules = this.type.split(".");
+      this.state.modules.push(modules.slice(0, modules.length - 1).join("."));
+    }
+  }
+
+  /**
    * Update output names.
    */
   updateOutputNames(): void {
@@ -238,9 +256,19 @@ export abstract class AbstractCodeNode extends AbstractNode {
       output.name = this.state.integrated ? "" : this.variableName + output.suffix;
     });
   }
+  /**
+   * Update output values.
+   * @param output return data of calculate function
+   */
+  updateOutputValues(outputs: CalculateFunctionReturnType<any>): void {
+    Object.keys(this.outputs).forEach((k: string) => {
+      if (k === "_code") return;
+      outputs[k] = this.state.integrated ? outputs._code : this.outputs[k].name;
+    });
+  }
 
   /**
-   * Update state props
+   * Update state props.
    * @param props
    */
   updateProps(props: unknown): void {
@@ -277,22 +305,6 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
     const state = super.save() as ICodeNodeState<I, O>;
     saveNodeState(this.graph, state);
     return state;
-  }
-
-  updateModules(modules?: string[]): void {
-    if (modules) {
-      this.state.modules = modules;
-    } else if (this.type.includes(".")) {
-      const modules = this.type.split(".");
-      this.state.modules.push(modules.slice(0, modules.length - 1).join("."));
-    }
-  }
-
-  updateOutputValues(outputs: CalculateFunctionReturnType<any>): void {
-    Object.keys(this.outputs).forEach((k: string) => {
-      if (k === "_code") return;
-      outputs[k] = this.state.integrated ? outputs._code : this.outputs[k].name;
-    });
   }
 }
 

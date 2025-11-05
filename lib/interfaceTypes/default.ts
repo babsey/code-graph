@@ -1,7 +1,8 @@
 // default/interfaceTypes.ts
 
 // Create the types. It is recommended to define them in a separate file and import them when creating the nodes.
-import { BaklavaInterfaceTypes, type IBaklavaViewModel, NodeInterfaceType } from "baklavajs";
+import { BaklavaInterfaceTypes, NodeInterfaceType } from "@baklavajs/interface-types";
+import type { IBaklavaViewModel } from "@baklavajs/renderer-vue";
 
 export const booleanType = new NodeInterfaceType<boolean>("boolean");
 export const dictType = new NodeInterfaceType<object>("dict");

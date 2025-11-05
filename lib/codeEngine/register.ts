@@ -1,13 +1,8 @@
 // codeEngine.ts
 
-import {
-  applyResult,
-  Commands,
-  type CalculationResult,
-  type IConnection,
-  type IEditorState,
-  type INodeState,
-} from "baklavajs";
+import type { CalculationResult, IConnection, IEditorState, INodeState } from "@baklavajs/core";
+import { applyResult } from "@baklavajs/engine";
+import { Commands } from "@baklavajs/renderer-vue";
 import { v4 as uuidv4 } from "uuid";
 
 import type { ICodeGraphViewModel } from "@/viewModel";
@@ -109,8 +104,8 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
       // render code from scripted code nodes.
       if (!viewModel.code.state.lockCode)
         viewModel.code.renderCode({
-          nodes: viewModel.displayedGraph.scriptedCodeNodes,
-          modules: viewModel.displayedGraph.modules,
+          nodes: viewModel.editor.graph.scriptedCodeNodes,
+          modules: viewModel.editor.graph.modules,
         });
 
       viewModel.engine?.resume();

@@ -3,16 +3,15 @@
 import {
   GraphTemplate,
   NodeInterface,
-  allowMultipleConnections,
-  applyResult,
   getGraphNodeTypeString,
-  setType,
   type CalculateFunction,
   type CalculateFunctionReturnType,
   type IGraphInterface,
   type IGraphNode,
   type INodeState,
-} from "baklavajs";
+} from "@baklavajs/core";
+import { allowMultipleConnections, applyResult } from "@baklavajs/engine";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeInterface } from "@/codeNodeInterfaces";
 import { AbstractCodeNode } from "@/codeNode";
@@ -93,22 +92,19 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
         context.globalValues,
       );
 
-      if (result) {
-        context.engine.pause();
+      context.engine.pause();
+      applyResult(result, context.engine.editor);
+      context.engine.resume();
 
-        applyResult(result, context.engine.editor);
-
-        if (!this.lockCode) this.outputs._code.value = this.renderCode({ inputs, ...context.globalValues });
-
-        context.engine.resume();
-      }
-
-      const outputs: Record<string, unknown> = {};
+      const outputs: CalculateFunctionReturnType<any> = {};
       for (const output of this.subgraph.outputs) {
         outputs[output.id] = result.get(output.nodeId)?.get("output");
       }
-
       outputs._calculationResults = result;
+
+      // render code of this graph node.
+      if (!this.lockCode) outputs._code = this.renderCode({ inputs, ...context.globalValues });
+      this.updateOutputValues(outputs);
 
       return outputs;
     };

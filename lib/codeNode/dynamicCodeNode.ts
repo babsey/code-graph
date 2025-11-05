@@ -1,20 +1,16 @@
 // dynamicCodeNode.ts
 
 import {
-  IntegerInterface,
   NodeInterface,
-  TextInputInterface,
-  allowMultipleConnections,
-  displayInSidebar,
-  setType,
-  type CalculateFunction,
-  type CalculateFunctionReturnType,
   type CalculationContext,
   type IDynamicNodeDefinition,
   type INodeState,
   type InterfaceFactory,
   type NodeInterfaceDefinition,
-} from "baklavajs";
+} from "@baklavajs/core";
+import { setType } from "@baklavajs/interface-types";
+import { allowMultipleConnections } from "@baklavajs/engine";
+import { IntegerInterface, TextInputInterface, displayInSidebar } from "@baklavajs/renderer-vue";
 
 import { CodeNodeInterface, CodeNodeOutputInterface } from "@/codeNodeInterfaces";
 import { nodeType, numberType, stringType } from "@/interfaceTypes";

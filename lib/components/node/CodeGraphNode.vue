@@ -87,7 +87,7 @@
           </div>
 
           <slot v-else name="nodeInterface" type="output" :node :intf="output">
-            <NodeInterface :node :intf="output" :title="output.type" />
+            <NodeInterface :node :intf="output" :title="output.value" />
           </slot>
         </template>
       </div>
@@ -107,7 +107,7 @@
           </div>
 
           <slot v-else :node :intf="input" name="nodeInterface" type="input">
-            <NodeInterface :node :intf="input" :title="input.type" />
+            <NodeInterface :node :intf="input" :title="input.value" />
           </slot>
         </template>
       </div>
@@ -116,8 +116,9 @@
 </template>
 
 <script setup lang="ts">
+import { Components, useGraph, useViewModel } from "@baklavajs/renderer-vue";
+import { GRAPH_NODE_TYPE_PREFIX, type IGraphNode } from "@baklavajs/core";
 import { ref, computed, nextTick, onUpdated, onMounted, onBeforeUnmount } from "vue";
-import { Components, GRAPH_NODE_TYPE_PREFIX, type IGraphNode, useGraph, useViewModel } from "baklavajs";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import { CodeGraphNodeInterface } from "@/components";

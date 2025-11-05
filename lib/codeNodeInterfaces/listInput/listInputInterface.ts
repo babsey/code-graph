@@ -1,7 +1,8 @@
 // listInputInterface.ts
 
 import { markRaw } from "vue";
-import { setType, TextInputInterfaceComponent } from "baklavajs";
+import { TextInputInterfaceComponent } from "@baklavajs/renderer-vue";
+import { setType } from "@baklavajs/interface-types";
 
 import { CodeNodeInputInterface } from "../codeNodeInput/codeNodeInputInterface";
 import { listType } from "@/interfaceTypes";

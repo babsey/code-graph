@@ -1,6 +1,6 @@
 // sliderInterface.ts
 
-import { SliderInterfaceComponent } from "baklavajs";
+import { SliderInterfaceComponent } from "@baklavajs/renderer-vue";
 import { markRaw, type ComponentOptions } from "vue";
 
 import { BaseNumericInterface } from "../baseNumericInterface";

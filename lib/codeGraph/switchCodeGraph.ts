@@ -35,7 +35,7 @@ export function useSwitchCodeGraph(editor: Ref<CodeEditor>, displayedGraph: Ref<
     newGraphInstance.sidebar = newGraphInstance.sidebar ?? { visible: false, nodeId: "", optionName: "" };
 
     displayedGraph.value = newGraphInstance;
-    newGraphInstance.code.engine?.runOnce(null);
+    newGraphInstance.code?.engine?.runOnce(null);
   };
 
   return { switchGraph };

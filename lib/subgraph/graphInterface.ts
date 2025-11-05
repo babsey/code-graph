@@ -1,7 +1,7 @@
 // graphInterface.ts
 
 import { v4 as uuidv4 } from "uuid";
-import { NodeInterface, type CalculateFunction, type IGraphInterface } from "baklavajs";
+import { NodeInterface, type CalculateFunction, type IGraphInterface } from "@baklavajs/core";
 
 import { AbstractCodeNode, CodeNode, type ICodeNodeState } from "@/codeNode";
 

@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, toRef } from "vue";
-import { BaklavaEditor } from "baklavajs";
+import { BaklavaEditor } from "@baklavajs/renderer-vue";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import type { ICodeGraphViewModel } from "@/viewModel";

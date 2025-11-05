@@ -18,13 +18,14 @@ import {
   useClipboard,
   useCommandHandler,
   useHistory,
+  registerGraphCommands,
 } from "@baklavajs/renderer-vue";
 
 import type { AbstractCodeNode } from "./codeNode";
-import type { CodeEngine } from "./codeEngine";
 import type { CodeNodeInterface } from "./codeNodeInterfaces";
 import { Code } from "./code";
 import { CodeEditor } from "./codeEditor";
+import { registerCodeEngine, type CodeEngine } from "./codeEngine";
 import { registerCreateSubgraphCommand, SubgraphInputNode, SubgraphOutputNode } from "./subgraph";
 import { registerCustomCommands, updateToolbarItems } from "./settings";
 import { useSwitchCodeGraph, type CodeGraph, type CodeGraphTemplate } from "./codeGraph";
@@ -88,6 +89,22 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     renderInterface: new SequentialHook<{ intf: CodeNodeInterface<unknown>; el: HTMLElement }, null>(null),
   };
 
+  const viewModel = reactive({
+    clipboard,
+    code,
+    commandHandler,
+    displayedGraph,
+    editor,
+    history,
+    hooks,
+    isSubgraph,
+    settings,
+    switchGraph,
+  }) as ICodeGraphViewModel;
+
+  registerCodeEngine(viewModel);
+
+  // registerGraphCommands(displayedGraph, commandHandler, switchGraph)
   registerDeleteNodesCommand(displayedGraph, commandHandler);
   registerCreateSubgraphCommand(displayedGraph, commandHandler, switchGraph);
   registerSaveSubgraphCommand(displayedGraph, commandHandler);
@@ -160,16 +177,5 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     { immediate: true },
   );
 
-  return reactive({
-    clipboard,
-    code,
-    commandHandler,
-    displayedGraph,
-    editor,
-    history,
-    hooks,
-    isSubgraph,
-    settings,
-    switchGraph,
-  }) as ICodeGraphViewModel;
+  return viewModel;
 }

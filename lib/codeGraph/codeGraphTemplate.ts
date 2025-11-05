@@ -7,7 +7,7 @@ import {
   type IGraphTemplateState,
   type INodeInterfaceState,
   type INodeState,
-} from "baklavajs";
+} from "@baklavajs/core";
 
 import type { CodeEditor } from "@/codeEditor";
 import type { CodeNodeInterface } from "@/codeNodeInterfaces";

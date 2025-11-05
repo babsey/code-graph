@@ -1,6 +1,6 @@
 // codeNodeInputInterface.ts
 
-import { displayInSidebar } from "baklavajs";
+import { displayInSidebar } from "@baklavajs/renderer-vue";
 import { markRaw } from "vue";
 
 import { CodeNodeInterface, CodeNodeInterfaceComponent } from "../codeNode";

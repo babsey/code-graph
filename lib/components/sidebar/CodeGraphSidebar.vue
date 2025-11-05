@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef } from "vue";
-import { useGraph, useViewModel } from "baklavajs";
+import { useGraph, useViewModel } from "@baklavajs/renderer-vue";
 
 import SidebarCheckbox from "./SidebarCheckbox.vue";
 import type { AbstractCodeNode } from "@/codeNode";

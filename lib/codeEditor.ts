@@ -9,13 +9,14 @@ import type { Code } from "./code";
 export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklavaTapable {
   public code: Code;
   public graph: CodeGraph;
-  public state: string = "";
+  public state: IEditorState;
 
   public constructor(code: Code) {
     super();
     this.code = code;
     this.graph = new CodeGraph(this);
     this.code.registerGraph(this.graph);
+    this.saveState();
   }
 
   get graphIds(): string {
@@ -30,10 +31,13 @@ export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklava
     return ids.map((id) => id.slice(0, 6)).join(", ");
   }
 
+  /**
+   * Add code graph template.
+   * @param template code graph template
+   */
   override addGraphTemplate(template: CodeGraphTemplate): void {
-    if (this.events.beforeAddGraphTemplate.emit(template).prevented) {
-      return;
-    }
+    if (this.events.beforeAddGraphTemplate.emit(template).prevented) return;
+
     this._graphTemplates.push(template);
     this.graphTemplateEvents.addTarget(template.events);
     this.graphTemplateHooks.addTarget(template.hooks);
@@ -74,7 +78,19 @@ export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklava
     }
   }
 
+  /**
+   * Register category module
+   * @param category string
+   * @param module string
+   */
+  registerCategoryModule(category: string, module: string): void {
+    this.code.state.modules[category] = module;
+  }
+
+  /**
+   * Save editor state.
+   */
   saveState(): void {
-    this.state = JSON.stringify(this.save(), null, 2);
+    this.state = this.save();
   }
 }

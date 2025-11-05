@@ -1,7 +1,7 @@
 // codeNodeOutputInterface.ts
 
 import { markRaw } from "vue";
-import { useGraph } from "baklavajs";
+import { useGraph } from "@baklavajs/renderer-vue";
 
 import { type AbstractCodeNode } from "@/codeNode";
 import { CodeNodeInterface, CodeNodeInterfaceComponent } from "../codeNode";

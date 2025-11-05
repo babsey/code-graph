@@ -3,13 +3,12 @@
 import {
   Node,
   NodeInterface,
-  allowMultipleConnections,
-  setType,
-  type CalculateFunctionReturnType,
   type CalculationContext,
   type INodeDefinition,
   type NodeInterfaceDefinition,
-} from "baklavajs";
+} from "@baklavajs/core";
+import { setType } from "@baklavajs/interface-types";
+import { allowMultipleConnections } from "@baklavajs/engine";
 
 import { CodeNodeInterface } from "@/codeNodeInterfaces";
 import { nodeType } from "@/interfaceTypes";

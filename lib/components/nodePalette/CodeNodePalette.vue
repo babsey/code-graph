@@ -40,16 +40,10 @@
 </template>
 
 <script setup lang="ts">
+import { AbstractNode, type INodeTypeInformation } from "@baklavajs/core";
+import { Components, useNodeCategories, useTransform, useViewModel } from "@baklavajs/renderer-vue";
 import { type CSSProperties, type Ref, computed, inject, reactive, ref } from "vue";
 import { usePointer } from "@vueuse/core";
-import {
-  AbstractNode,
-  Components,
-  type INodeTypeInformation,
-  useNodeCategories,
-  useTransform,
-  useViewModel,
-} from "baklavajs";
 
 import { filterObject } from "@/utils";
 

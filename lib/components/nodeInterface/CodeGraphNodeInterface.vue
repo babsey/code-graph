@@ -15,9 +15,10 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUpdated, type Ref, ref } from "vue";
-import { NodeInterface, useTemporaryConnection, useViewModel } from "baklavajs";
+import { useTemporaryConnection, useViewModel } from "@baklavajs/renderer-vue";
+import type { NodeInterface } from "@baklavajs/core";
 
-import { AbstractCodeNode } from "@/codeNode";
+import type { AbstractCodeNode } from "@/codeNode";
 
 const props = defineProps<{
   node: AbstractCodeNode;

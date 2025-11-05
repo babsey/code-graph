@@ -1,6 +1,7 @@
 // components
 
 export { default as CodeGraphEditor } from "./CodeGraphEditor.vue";
+export { default as CodeGraphInfo } from "./dev/CodeGraphInfo.vue";
 export { default as CodeGraphNode } from "./node/CodeGraphNode.vue";
 export { default as CodeGraphNodeInterface } from "./nodeInterface/CodeGraphNodeInterface.vue";
 export { default as CodeNodePalette } from "./nodePalette/CodeNodePalette.vue";

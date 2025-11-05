@@ -6,7 +6,6 @@ import { BaseEngine, type ITopologicalSortingResult, sortTopologically } from "@
 import type { CodeGraph } from "@/codeGraph";
 import type { CodeEditor } from "@/codeEditor";
 import type { CodeNodeInterface } from "@/codeNodeInterfaces";
-import type { AbstractCodeNode } from "..";
 
 export const allowMultipleConnections = <T extends Array<unknown>>(intf: CodeNodeInterface<T>) => {
   intf.allowMultipleConnections = true;
@@ -31,7 +30,8 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     inputs: Map<string, unknown>,
     calculationData: CalculationData,
   ): Promise<CalculationResult> {
-    if (!this.order.has(graph.id)) this.order.set(graph.id, sortTopologically(graph));
+    // console.log(graph.shortId, "run graph");
+    this.order.has(graph.id) || this.order.set(graph.id, sortTopologically(graph));
     const { calculationOrder, connectionsFromNode } = this.order.get(graph.id)!;
 
     const result: CalculationResult = new Map();
