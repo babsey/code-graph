@@ -1,8 +1,13 @@
 // codeNodeTypes/register.ts
 
-import { registerDefaultNodeTypes, registerExampleNodeTypes } from ".";
+import type { ICodeGraphViewModel } from "@babsey/code-graph";
 
-export const registerNodeTypes = (codeGraph: ICodeGraphViewModel) => {
-  registerDefaultNodeTypes(codeGraph);
-  registerExampleNodeTypes(codeGraph);
+import { registerDefaultNodeTypes } from "./default";
+import { registerExampleNodeTypes } from "./examples";
+import { registerNumpyNodeTypes } from "./numpy";
+
+export const registerNodeTypes = (viewModel: ICodeGraphViewModel) => {
+  registerDefaultNodeTypes(viewModel);
+  registerExampleNodeTypes(viewModel);
+  registerNumpyNodeTypes(viewModel);
 };
