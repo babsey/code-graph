@@ -6,6 +6,7 @@ import { SequentialHook } from "@baklavajs/events";
 import {
   DEFAULT_SETTINGS,
   registerDeleteNodesCommand,
+  // registerGraphCommands,
   registerSaveSubgraphCommand,
   registerSidebarCommands,
   registerSwitchToMainGraphCommand,
@@ -18,7 +19,6 @@ import {
   useClipboard,
   useCommandHandler,
   useHistory,
-  // registerGraphCommands,
 } from "@baklavajs/renderer-vue";
 
 import type { AbstractCodeNode } from "./codeNode";
@@ -101,6 +101,7 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     switchGraph,
   }) as ICodeGraphViewModel;
 
+  code.value.registerViewModel(viewModel);
   registerCodeEngine(viewModel);
 
   // registerGraphCommands(displayedGraph, commandHandler, switchGraph)

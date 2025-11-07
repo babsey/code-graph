@@ -9,14 +9,11 @@ import type { Code } from "./code";
 export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklavaTapable {
   public code: Code;
   public graph: CodeGraph;
-  public state: IEditorState;
 
   public constructor(code: Code) {
     super();
     this.code = code;
     this.graph = new CodeGraph(this);
-    this.code.registerGraph(this.graph);
-    this.saveState();
   }
 
   get graphIds(): string {
@@ -85,12 +82,5 @@ export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklava
    */
   registerCategoryModule(category: string, module: string): void {
     this.code.state.modules[category] = module;
-  }
-
-  /**
-   * Save editor state.
-   */
-  saveState(): void {
-    this.state = this.save();
   }
 }

@@ -16,7 +16,6 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
 
   public constructor(editor: CodeEditor) {
     super(editor);
-    editor.code.registerEngine(this);
   }
 
   public override start() {

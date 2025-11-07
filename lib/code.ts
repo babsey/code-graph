@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { AbstractCodeNode } from "./codeNode";
 import type { CodeGraph } from "./codeGraph";
 import type { CodeEngine } from "./codeEngine";
+import type { ICodeGraphViewModel } from "./viewModel";
 
 mustache.escape = (value: string) => value;
 
@@ -19,9 +20,8 @@ export interface ICodeState {
 
 export class Code {
   private _id: string;
-  private _graph: CodeGraph | null = null;
   private _state: UnwrapRef<ICodeState>;
-  private _engine: CodeEngine | null = null;
+  public viewModel: ICodeGraphViewModel | undefined;
 
   constructor() {
     this._id = uuidv4();
@@ -34,12 +34,12 @@ export class Code {
     });
   }
 
-  get engine(): CodeEngine | null {
-    return this._engine;
+  get engine(): CodeEngine | undefined {
+    return this.viewModel?.engine;
   }
 
-  get graph(): CodeGraph | null {
-    return this._graph;
+  get graph(): CodeGraph | undefined {
+    return this.viewModel?.editor.graph;
   }
 
   get id(): string {
@@ -104,19 +104,11 @@ export class Code {
   }
 
   /**
-   * Register engine instance.
-   * @param engine engine
+   * Register code view model instance.
+   * @param viewModel view model
    */
-  registerEngine(engine: CodeEngine): void {
-    this._engine = engine;
-  }
-
-  /**
-   * Register code graph instance.
-   * @param graph code graph
-   */
-  registerGraph(graph: CodeGraph): void {
-    this._graph = graph;
+  registerViewModel(viewModel: ICodeGraphViewModel): void {
+    this.viewModel = viewModel;
   }
 
   /**

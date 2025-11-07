@@ -92,9 +92,6 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
       // apply results from calculation on editor.
       applyResult(result, viewModel.editor);
 
-      // save editor state.
-      viewModel.editor.saveState();
-
       // render code from scripted code nodes.
       if (!viewModel.code.state.lockCode)
         viewModel.code.renderCode({
