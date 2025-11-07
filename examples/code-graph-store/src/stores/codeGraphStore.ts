@@ -1,4 +1,4 @@
-// viewModelStore.ts
+// codeGraphStore.ts
 
 import { reactive, type UnwrapRef } from "vue";
 import type { IEditorState } from "@baklavajs/core";

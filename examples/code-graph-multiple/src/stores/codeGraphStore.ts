@@ -54,7 +54,7 @@ export const useCodeGraphStore = defineStore(
     const loadEditor = (editorId?: string) => {
       // console.log('load editor', editorId)
 
-      unsubscribe()
+      unsubscribe();
 
       const editorIds = Object.keys(state.editorStates);
       if (!editorId || !editorIds.includes(editorId)) return newEditor(viewModel.value.code.name);
@@ -69,7 +69,7 @@ export const useCodeGraphStore = defineStore(
         if (viewModel.value.displayedGraph.id !== editorId) viewModel.value.loadEditor(editorState);
       }
 
-      subscribe()
+      subscribe();
 
       return true;
     };
