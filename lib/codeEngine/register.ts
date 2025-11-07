@@ -96,7 +96,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
       if (!viewModel.code.state.lockCode)
         viewModel.code.renderCode({
           nodes: viewModel.editor.graph.scriptedCodeNodes,
-          modules: viewModel.editor.graph.modules,
+          modules: viewModel.editor.code.modules,
         });
 
       viewModel.engine?.resume();
