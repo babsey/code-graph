@@ -2,7 +2,7 @@
 
 import { Code, useCodeGraph } from "@babsey/code-graph";
 
-import { registerDefaultNodeTypes, registerExampleNodeTypes } from "@/codeNodeTypes";
+import { registerDefaultNodeTypes, registerExampleNodeTypes } from "../../../../src/codeNodeTypes";
 
 export class ExampleCode extends Code {
   public readonly name = "example";

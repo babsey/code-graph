@@ -2,7 +2,7 @@
 
 import { Code, useCodeGraph } from "@babsey/code-graph";
 
-import { registerNumpyNodeTypes } from "@/codeNodeTypes/numpy";
+import { registerNumpyNodeTypes } from "../../../../src/codeNodeTypes";
 
 export class NumpyCode extends Code {
   public readonly name = "numpy";
