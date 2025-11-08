@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import type { ICodeGraphViewModel } from "@/viewModel";
 
-const props = defineProps<{ viewModel: ICodeGraphViewModel }>();
+defineProps<{ viewModel: ICodeGraphViewModel }>();
 </script>
 
 <style lang="scss">

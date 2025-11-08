@@ -118,3 +118,19 @@ export class Code {
     this.state.script = mustache.render(this.state.template || "", data);
   }
 }
+
+export class PythonCode extends Code {
+  constructor() {
+    super();
+
+    this.loadTemplate(import("./templates/python.mustache?raw"));
+  }
+}
+
+export class JavascriptCode extends Code {
+  constructor() {
+    super();
+
+    this.loadTemplate(import("./templates/javascript.mustache?raw"));
+  }
+}

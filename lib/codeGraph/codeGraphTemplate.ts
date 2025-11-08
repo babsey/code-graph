@@ -18,15 +18,13 @@ import { CodeGraph, type ICodeGraphState } from "./codeGraph";
 
 type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
-export interface ICodeGraphTemplateState extends IGraphTemplateState {}
-
 export class CodeGraphTemplate extends GraphTemplate implements ICodeGraphState {
   /** Create a new GraphTemplate from the nodes and connections inside the graph instance */
   public static override fromGraph(graph: CodeGraph, editor: CodeEditor): CodeGraphTemplate {
     return new CodeGraphTemplate(graph.save(), editor);
   }
 
-  constructor(state: Optional<ICodeGraphTemplateState, "id" | "name">, editor: CodeEditor) {
+  constructor(state: Optional<IGraphTemplateState, "id" | "name">, editor: CodeEditor) {
     super(state, editor);
   }
 
@@ -53,9 +51,9 @@ export class CodeGraphTemplate extends GraphTemplate implements ICodeGraphState 
       return newId;
     };
 
-    const mapNodeInterfaceIds = (interfaceStates: Record<string, INodeInterfaceState<any>>) => {
+    const mapNodeInterfaceIds = (interfaceStates: Record<string, INodeInterfaceState<unknown>>) => {
       return mapValues(interfaceStates, (intf: CodeNodeInterface) => {
-        const clonedIntf: INodeInterfaceState<any> = {
+        const clonedIntf: INodeInterfaceState<unknown> = {
           id: createNewId(intf.id),
           templateId: intf.id,
           value: intf.value,

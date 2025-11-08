@@ -260,7 +260,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Update output values.
    * @param output return data of calculate function
    */
-  updateOutputValues(outputs: CalculateFunctionReturnType<any>): void {
+  updateOutputValues(outputs: CalculateFunctionReturnType<unknown>): void {
     Object.keys(this.outputs).forEach((k: string) => {
       if (k === "_code") return;
       outputs[k] = this.state.integrated ? outputs._code : this.outputs[k].name;
@@ -290,7 +290,7 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
    * @return Values for output interfaces
    */
   public calculate?: CalculateFunction<I, O> = (inputs: I, globalValues: CalculationContext) => {
-    const outputs: CalculateFunctionReturnType<any> = {};
+    const outputs: CalculateFunctionReturnType<unknown> = {};
     if (!this.lockCode) outputs._code = this.renderCode({ inputs, ...globalValues });
     this.updateOutputValues(outputs);
     return outputs;

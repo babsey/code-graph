@@ -47,7 +47,7 @@ abstract class CodeGraphInterfaceNode<I, O> extends CodeNode<I, O> {
   update() {}
 }
 
-export class CodeGraphInputNode extends CodeGraphInterfaceNode<{ name: string }, { placeholder: any }> {
+export class CodeGraphInputNode extends CodeGraphInterfaceNode<{ name: string }, { placeholder: unknown }> {
   public static isGraphInputNode(v: AbstractCodeNode): v is CodeGraphInputNode {
     return v.type === GRAPH_INPUT_NODE_TYPE;
   }
@@ -60,9 +60,12 @@ export class CodeGraphInputNode extends CodeGraphInterfaceNode<{ name: string },
     placeholder: new NodeInterface("Value", undefined),
   };
 }
-export type CodeGraphInputNodeState = IGraphInterfaceNodeState<{ name: string }, { placeholder: any }>;
+export type CodeGraphInputNodeState = IGraphInterfaceNodeState<{ name: string }, { placeholder: unknown }>;
 
-export class CodeGraphOutputNode extends CodeGraphInterfaceNode<{ name: string; placeholder: any }, { output: any }> {
+export class CodeGraphOutputNode extends CodeGraphInterfaceNode<
+  { name: string; placeholder: unknown },
+  { output: unknown }
+> {
   public static isGraphOutputNode(v: AbstractCodeNode): v is CodeGraphOutputNode {
     return v.type === GRAPH_OUTPUT_NODE_TYPE;
   }
@@ -75,8 +78,11 @@ export class CodeGraphOutputNode extends CodeGraphInterfaceNode<{ name: string; 
   public outputs = {
     output: new NodeInterface("Output", undefined).setHidden(true),
   };
-  public override calculate: CalculateFunction<{ placeholder: any }, { output: any }> = ({ placeholder }) => ({
+  public override calculate: CalculateFunction<{ placeholder: unknown }, { output: unknown }> = ({ placeholder }) => ({
     output: placeholder,
   });
 }
-export type CodeGraphOutputNodeState = IGraphInterfaceNodeState<{ name: string; placeholder: any }, { output: any }>;
+export type CodeGraphOutputNodeState = IGraphInterfaceNodeState<
+  { name: string; placeholder: unknown },
+  { output: unknown }
+>;

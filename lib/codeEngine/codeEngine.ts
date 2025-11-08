@@ -30,7 +30,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     calculationData: CalculationData,
   ): Promise<CalculationResult> {
     // console.log(graph.shortId, "run graph");
-    this.order.has(graph.id) || this.order.set(graph.id, sortTopologically(graph));
+    if (!this.order.has(graph.id)) this.order.set(graph.id, sortTopologically(graph));
     const { calculationOrder, connectionsFromNode } = this.order.get(graph.id)!;
 
     const result: CalculationResult = new Map();
@@ -55,11 +55,9 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
         // Set calculation result to node interface.
         if (connectionsFromNode.has(n)) {
           for (const [k, value] of Object.entries(r)) {
-            const v = this.hooks.transferData.execute(r[k], value);
+            this.hooks.transferData.execute(r[k], value);
 
-            connectionsFromNode.get(n)!.forEach((c) => {
-              inputs.set(c.to.id, value);
-            });
+            connectionsFromNode.get(n)!.forEach((c) => inputs.set(c.to.id, value));
           }
         }
       } else {

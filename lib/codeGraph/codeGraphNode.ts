@@ -96,7 +96,7 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
       applyResult(result, context.engine.editor);
       context.engine.resume();
 
-      const outputs: CalculateFunctionReturnType<any> = {};
+      const outputs: CalculateFunctionReturnType<unknown> = {};
       for (const output of this.subgraph.outputs) {
         outputs[output.id] = result.get(output.nodeId)?.get("output");
       }

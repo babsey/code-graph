@@ -68,7 +68,7 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
   const editor: Ref<CodeEditor> = ref(props?.existingEditor ?? new CodeEditor(code.value)) as Ref<CodeEditor>;
   const token = Symbol("ViewModelToken");
 
-  const _displayedGraph = ref(null as any) as Ref<CodeGraph>;
+  const _displayedGraph = ref(null as unknown) as Ref<CodeGraph>;
   const displayedGraph = shallowReadonly(_displayedGraph);
   const { switchGraph } = useSwitchCodeGraph(editor, _displayedGraph);
 

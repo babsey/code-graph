@@ -1,0 +1,7 @@
+{{ #modules }}
+{{ . }}
+{{ /modules }}
+
+{{ #nodes }}
+{{ #commented }}// {{ /commented }}{{ #variableName }}var {{ variableName }} = {{ /variableName }}{{ script }};
+{{ /nodes }}
