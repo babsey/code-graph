@@ -1,3 +1,5 @@
+// router
+
 import { createRouter, createWebHistory } from "vue-router";
 
 import { useCodeGraphStore } from "@/stores/codeGraphStore";
@@ -16,10 +18,9 @@ const router = createRouter({
       component: () => import("../views/AboutView.vue"),
     },
     {
-      path: "/new/:codeName",
+      path: "/new",
       name: "new",
       component: () => import("../views/CodeGraphView.vue"),
-      props: true,
     },
     {
       path: "/edit/:editorId",
@@ -31,15 +32,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  // console.log('before router', to.name)
-
   if (!["new", "edit"].includes(to.name)) return true;
 
   const codeGraphStore = useCodeGraphStore();
 
   switch (to.name) {
     case "new":
-      return codeGraphStore.newEditor(to.params.codeName as string);
+      return codeGraphStore.newEditor();
     case "edit":
       return codeGraphStore.loadEditor(to.params.editorId as string);
   }

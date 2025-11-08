@@ -22,9 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import NavItem from "@/components/NavItem.vue";
-
-import { Plus } from "../icons";
+import { NavItem, Plus } from "@babsey/code-graph";
 
 import { useCodeGraphStore } from "@/stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();

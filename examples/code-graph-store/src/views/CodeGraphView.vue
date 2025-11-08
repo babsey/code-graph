@@ -1,7 +1,15 @@
 <template>
   <div style="height: 100vh">
     <CodeGraphInfo v-if="devMode" :viewModel />
-    <NavBar />
+    <NavBar
+      :viewModel
+      :editorStates="codeGraphStore.state.editorStates"
+      @click:remove="codeGraphStore.removeEditorState"
+    >
+      <template #prepend>
+        <NavItem :to="{ name: 'home' }">Home</NavItem>
+      </template>
+    </NavBar>
 
     <splitpanes
       class="default-theme"
@@ -22,7 +30,7 @@
           v-if="viewModel.code"
           v-model="viewModel.code.script"
           :locked="viewModel.code.lockCode"
-          @update:locked="(v) => (viewModel.code.lockCode = v)"
+          @update:locked="(v: boolean) => (viewModel.code.lockCode = v)"
         />
       </pane>
     </splitpanes>
@@ -31,11 +39,9 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { CodeGraphEditor, CodeGraphInfo } from "@babsey/code-graph";
 import { Splitpanes, Pane } from "splitpanes";
 
-import CodeEditor from "@/components/CodeEditor.vue";
-import NavBar from "@/components/NavBar.vue";
+import { CodeEditor, CodeGraphEditor, CodeGraphInfo, NavBar, NavItem } from "@babsey/code-graph";
 
 import { useCodeGraphStore } from "../stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();

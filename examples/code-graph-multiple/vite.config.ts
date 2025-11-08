@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@codeNodeTypes': fileURLToPath(new URL('../../src/codeNodeTypes', import.meta.url)),
     },
   },
 })

@@ -8,10 +8,7 @@
         <VueSelect v-model="codeGraphStore.state.codeName" :options placeholder="Select a workspace" />
 
         <div style="text-wrap: nowrap; margin: auto; padding: 0 8px">
-          <router-link
-            :class="{ disabled: codeGraphStore.state.codeName == null }"
-            :to="{ name: 'new', params: { codeName: codeGraphStore.state.codeName } }"
-          >
+          <router-link :class="{ disabled: codeGraphStore.state.codeName == null }" :to="{ name: 'new' }">
             <Plus style="height: 20px; color: black" />
           </router-link>
         </div>
@@ -19,12 +16,12 @@
 
       <nav>
         <NavItem
-          v-for="editor in codeGraphStore.state.editorStates"
-          :key="editor.graph.id"
-          :to="{ name: 'edit', params: { editorId: editor.graph.id } }"
+          v-for="editorState in codeGraphStore.state.editorStates"
+          :key="editorState.graph.id"
+          :to="{ name: 'edit', params: { editorId: editorState.graph.id } }"
         >
-          {{ editor.codeName }}:
-          {{ editor.graph.id.slice(0, 6) }}
+          {{ editorState.codeName }}:
+          {{ editorState.graph.id.slice(0, 6) }}
         </NavItem>
       </nav>
     </div>
@@ -32,13 +29,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import VueSelect from "vue3-select-component";
 
-import { Plus } from "../icons";
-import NavItem from "@/components/NavItem.vue";
+import { NavItem, Plus } from "@babsey/code-graph";
 
 import { useCodeGraphStore } from "@/stores/codeGraphStore";
-import { computed } from "vue";
 const codeGraphStore = useCodeGraphStore();
 
 const options = computed(() => Object.keys(codeGraphStore.codeGraphs).map((m) => ({ label: m, value: m })));

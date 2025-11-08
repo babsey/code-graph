@@ -4,10 +4,8 @@ import { reactive, type UnwrapRef } from "vue";
 import type { IEditorState } from "@baklavajs/core";
 import { defineStore } from "pinia";
 
-import { useCodeGraph } from "@babsey/code-graph";
-
-import { MyCode } from "@/code";
-import { registerNodeTypes } from "@/codeNodeTypes";
+import { PythonCode, useCodeGraph } from "@babsey/code-graph";
+import { registerNodeTypes } from "@codeNodeTypes/register";
 
 export const useCodeGraphStore = defineStore(
   "code-graph",
@@ -20,7 +18,7 @@ export const useCodeGraphStore = defineStore(
 
     const token = Symbol("CodeGraphStore");
 
-    const viewModel = useCodeGraph({ code: new MyCode() });
+    const viewModel = useCodeGraph({ code: new PythonCode() });
     registerNodeTypes(viewModel);
 
     const loadEditor = (editorId?: string) => {
