@@ -28,10 +28,13 @@ export default defineConfig({
         "@baklavajs/themes",
         "@vueuse/core",
         "baklavajs",
+        "codemirror",
         "mustache",
+        "splitpanes",
         "toposort",
         "uuid",
         "vue",
+        "vue-codemirror"
       ],
       output: {
         // Provide global variables to use in the UMD build for externalized deps
@@ -44,10 +47,13 @@ export default defineConfig({
           "@baklavajs/themes": "@baklavajs/themes",
           "@vueuse/core": "@vueuse/core",
           "baklavajs": "baklavajs",
+          "codemirror": "codemirror",
           "mustache": "mustache",
+          "splitpanes": "splitpanes",
           "toposort": "toposort",
           "uuid": "uuid",
           "vue": "vue",
+          "vue-codemirror": "vue-codemirror",
         },
       },
     },
