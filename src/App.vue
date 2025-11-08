@@ -32,13 +32,11 @@
 import { ref } from "vue";
 import { Splitpanes, Pane } from "splitpanes";
 
-import { CodeGraphEditor, CodeGraphInfo, useCodeGraph } from "@babsey/code-graph";
+import { CodeEditor, CodeGraphEditor, CodeGraphInfo, PythonCode, useCodeGraph } from "@babsey/code-graph";
 
-import { MyCode } from "./code";
 import { registerNodeTypes } from "./codeNodeTypes";
-import CodeEditor from "./components/CodeEditor.vue";
 
-const viewModel = useCodeGraph({ code: new MyCode() });
+const viewModel = useCodeGraph({ code: new PythonCode() });
 registerNodeTypes(viewModel);
 
 const devMode = ref(false);
