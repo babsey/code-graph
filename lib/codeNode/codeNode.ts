@@ -30,10 +30,11 @@ export interface IAbstractCodeNodeState {
 }
 
 export abstract class AbstractCodeNode extends AbstractNode {
-  public state: UnwrapRef<IAbstractCodeNodeState>;
-  public isCodeNode = true;
-  public name: string = "";
   public codeTemplate: () => string;
+  public isCodeNode = true;
+  public mask: unknown = null;
+  public name: string = "";
+  public state: UnwrapRef<IAbstractCodeNodeState>;
 
   public inputs: Record<string, CodeNodeInterface<unknown>> = {};
   public outputs: Record<string, CodeNodeInterface<unknown>> = {};
@@ -60,7 +61,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
     };
   }
 
-  get code(): Code {
+  get code(): Code | null {
     return this.graph.code;
   }
 
@@ -211,14 +212,6 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
     if (!nodeIds || nodeIds.length == 0) return [];
     return nodeIds.map((nodeId) => this.graph.findNodeById(nodeId)) as AbstractCodeNode[];
-  }
-
-  /**
-   * Register code
-   * @param code
-   */
-  registerCode(code: Code) {
-    this.code = code;
   }
 
   /**

@@ -23,7 +23,7 @@ export interface ICodeGraphState {
 
 export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTapable {
   public code: Code | null = null;
-  public editor: CodeEditor;
+  public override editor: CodeEditor;
 
   private _state: UnwrapRef<ICodeGraphState> = reactive({
     codeTemplate: "{{ #nodes }}{{ script }}{{ /nodes }}",
@@ -78,15 +78,15 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     return this.nodes.filter((node: AbstractCodeNode) => !node.state?.hidden) as AbstractCodeNode[];
   }
 
-  // /**
-  //  * Add code node to graph.
-  //  * @param node code node
-  //  * @param props optional
-  //  */
-  // public override addNode(node: AbstractCodeNode, props?: unknown): AbstractCodeNode | undefined {
-  //   if (node.state && props) node.state.props = props;
-  //   return super.addNode(node as AbstractNode) as AbstractCodeNode;
-  // }
+  /**
+   * Add code node to graph.
+   * @param node code node
+   * @param props optional
+   */
+  public override addNode(node: AbstractCodeNode, props?: unknown): AbstractCodeNode | undefined {
+    if (node.state && props) node.state.props = props;
+    return super.addNode(node as AbstractNode) as AbstractCodeNode;
+  }
 
   /**
    * Add code node at coordinates.
