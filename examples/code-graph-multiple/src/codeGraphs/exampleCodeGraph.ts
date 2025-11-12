@@ -2,7 +2,7 @@
 
 import { useCodeGraph } from "@babsey/code-graph";
 
-import { registerDefaultNodeTypes, registerExampleNodeTypes } from "@codeNodeTypes";
+import { registerExampleNodeTypes } from "@codeNodeTypes";
 import { MyPythonCode } from "@/code";
 
 export const useExampleCodeGraph = () => {

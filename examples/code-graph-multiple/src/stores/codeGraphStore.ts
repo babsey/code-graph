@@ -34,7 +34,6 @@ export const useCodeGraphStore = defineStore(
      * @param codeName code name
      */
     const loadCodeGraph = (codeName: string) => {
-
       unsubscribe();
 
       if (viewModel.value) {
@@ -56,7 +55,6 @@ export const useCodeGraphStore = defineStore(
      * @param editorId editor id
      */
     const loadEditor = (editorId?: string) => {
-
       const editorIds = Object.keys(state.editorStates);
       if (!editorId || !editorIds.includes(editorId)) return newEditor();
 
@@ -77,7 +75,6 @@ export const useCodeGraphStore = defineStore(
      * Create new editor
      */
     const newEditor = (codeName?: string) => {
-
       // load code graph.
       loadCodeGraph(codeName ?? state.codeName);
 
