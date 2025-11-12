@@ -50,10 +50,6 @@ const remove = (graphId: string) => {
   margin: 0;
   padding: 0;
 
-  svg.plus {
-    height: 1.4rem;
-  }
-
   .appendIcon {
     button.remove {
       background-color: transparent;
