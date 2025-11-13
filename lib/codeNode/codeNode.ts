@@ -53,7 +53,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
       modules: [],
       props: null,
       script: "",
-      variableName: "a",
+      variableName: "",
     });
 
     this.codeTemplate = function () {
