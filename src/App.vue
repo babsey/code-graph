@@ -39,6 +39,17 @@ import { registerNodeTypes } from "./codeNodeTypes";
 const viewModel = useCodeGraph({ code: new PythonCode() });
 registerNodeTypes(viewModel);
 
+viewModel.onMounted = () => {
+  if (viewModel.subscribe) viewModel.subscribe();
+  viewModel.engine?.start();
+  viewModel.engine?.runOnce(null);
+};
+
+viewModel.onBeforeUnmount = () => {
+  if (viewModel.unsubscribe) viewModel.unsubscribe();
+  viewModel.engine?.stop();
+};
+
 const devMode = ref(false);
 
 const size = ref(70);
