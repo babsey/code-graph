@@ -20,7 +20,7 @@ import {
 } from "@/codeNodeInterfaces";
 import { nodeType } from "@/interfaceTypes";
 
-import { CodeNode, loadNodeState, saveNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
+import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
 
 type Dynamic<T> = T & Record<string, unknown>;
 

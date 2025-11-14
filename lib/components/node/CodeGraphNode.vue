@@ -1,11 +1,11 @@
 <template>
   <div
-    :id="node.id"
-    ref="el"
     :class="classes"
     :data-node-type="node.type"
+    :id="node.id"
     :style="styles"
     class="baklava-node"
+    ref="el"
     @pointerdown="select"
   >
     <div v-if="viewModel.settings.nodes.resizable" class="__resize-handle" @mousedown="startResize" />
@@ -13,8 +13,8 @@
     <div class="__title" @pointerdown.self.stop="startDrag" @contextmenu.prevent="openContextMenu">
       <CodeGraphNodeInterface
         v-if="node.inputs._code"
-        :node
         :intf="node.inputs._code"
+        :node
         :title="node.inputs._code.value"
         class="--input"
         data-interface-type="node"

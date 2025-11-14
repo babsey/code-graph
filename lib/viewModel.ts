@@ -60,6 +60,8 @@ export interface ICodeGraphViewModel {
   newGraph?: () => void;
   subscribe?: () => void;
   unsubscribe?: () => void;
+  onMounted: () => void;
+  onBeforeUnmount: () => void;
 }
 
 export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code }): ICodeGraphViewModel {
@@ -97,6 +99,8 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     history,
     hooks,
     isSubgraph,
+    onBeforeUnmount: () => {},
+    onMounted: () => {},
     settings,
     switchGraph,
   }) as ICodeGraphViewModel;

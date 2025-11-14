@@ -1,5 +1,5 @@
 <template>
-  <BaklavaEditor :viewModel="viewModelRef">
+  <BaklavaEditor :view-model="viewModelRef">
     <template #palette>
       <CodeNodePalette />
     </template>
@@ -31,18 +31,11 @@ const viewModelRef = toRef(props, "viewModel");
 
 const onUpdate = (node: AbstractCodeNode) => node.events.update.emit(null);
 
-onMounted(() => {
-  if (viewModelRef.value.subscribe) viewModelRef.value.subscribe();
-  viewModelRef.value.engine?.start();
-});
-
-onBeforeUnmount(() => {
-  if (viewModelRef.value.unsubscribe) viewModelRef.value.unsubscribe();
-  viewModelRef.value.engine?.stop();
-});
+onMounted(viewModelRef.value.onMounted);
+onBeforeUnmount(viewModelRef.value.onBeforeUnmount);
 
 watch(viewModelRef, (newValue, oldValue) => {
-  if (oldValue) oldValue.unsubscribe();
-  if (newValue) newValue.subscribe();
+  if (oldValue) oldValue.onBeforeUnmount();
+  if (newValue) newValue.onMounted();
 });
 </script>

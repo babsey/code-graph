@@ -25,8 +25,8 @@
       <PaletteEntry
         v-for="(ni, nt) in filterNodesBySearch(c.nodeTypes)"
         :key="nt"
-        :type="nt"
         :title="ni.title"
+        :type="nt"
         @pointerdown="onDragStart(nt, ni)"
       />
     </section>
