@@ -3,19 +3,24 @@
 import type {
   CalculationContext,
   IDynamicNodeDefinition,
-  INodeState,
   InterfaceFactory,
   NodeInterface,
   NodeInterfaceDefinition,
 } from "@baklavajs/core";
 import { setType } from "@baklavajs/interface-types";
 import { allowMultipleConnections } from "@baklavajs/engine";
-import { IntegerInterface, TextInputInterface, displayInSidebar } from "@baklavajs/renderer-vue";
+import { displayInSidebar } from "@baklavajs/renderer-vue";
 
-import { CodeNodeInterface, CodeNodeOutputInterface } from "@/codeNodeInterfaces";
-import { nodeType, numberType, stringType } from "@/interfaceTypes";
+import {
+  CodeNodeInterface,
+  CodeNodeOutputInterface,
+  IntegerInterface,
+  TextInputInterface,
+  createInterface,
+} from "@/codeNodeInterfaces";
+import { nodeType } from "@/interfaceTypes";
 
-import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
+import { CodeNode, loadNodeState, saveNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
 
 type Dynamic<T> = T & Record<string, unknown>;
 
@@ -27,7 +32,8 @@ export abstract class DynamicCodeNode<I, O> extends CodeNode<Dynamic<I>, Dynamic
   public abstract inputs: NodeInterfaceDefinition<Dynamic<I>>;
   public abstract outputs: NodeInterfaceDefinition<Dynamic<O>>;
 
-  public abstract load(state: INodeState<Dynamic<I>, Dynamic<O>>): void;
+  public abstract load(state: ICodeNodeState<Dynamic<I>, Dynamic<O>>): void;
+  public abstract save(): ICodeNodeState<Dynamic<I>, Dynamic<O>>;
 }
 
 export type DynamicNodeDefinition = Record<string, (() => NodeInterface<unknown>) | undefined>;
@@ -81,11 +87,11 @@ export function defineDynamicCodeNode<I, O>(
 
       this.addInput(
         "_code",
-        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
       this.addOutput(
         "_code",
-        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
 
       this.staticInputKeys.push("_code");
@@ -152,17 +158,25 @@ export function defineDynamicCodeNode<I, O>(
 
       // load the state for all generated interfaces
       for (const k of Object.keys(state.inputs)) {
-        if (this.staticInputKeys.includes(k)) continue;
+        if (this.staticInputKeys.includes(k) || !state.inputs[k]) continue;
 
         if (!this.inputs[k]) {
-          const value = state.inputs[k].value;
+          const inputState = state.inputs[k];
+          const value = inputState.value;
+
           let inputInterface;
-          if (typeof value == "number") {
-            inputInterface = new IntegerInterface(k, value as number).use(setType, numberType);
+          if (inputState.component) {
+            inputInterface = createInterface(inputState.component, { ...inputState, ...{ id: k } });
+          } else if (typeof value == "number") {
+            inputInterface = new IntegerInterface(k, value as number);
           } else {
-            inputInterface = new TextInputInterface(k, JSON.stringify(value)).use(setType, stringType);
+            inputInterface = new TextInputInterface(k, JSON.stringify(value));
           }
+
           inputInterface.use(displayInSidebar, true);
+          inputInterface.setOptional(inputState.optional ?? false);
+          inputInterface.setHidden(inputState.hidden ?? false);
+
           this.addInput(k, inputInterface);
         }
 
@@ -173,7 +187,7 @@ export function defineDynamicCodeNode<I, O>(
         }
       }
       for (const k of Object.keys(state.outputs)) {
-        if (this.staticOutputKeys.includes(k)) continue;
+        if (this.staticOutputKeys.includes(k) || !state.outputs[k]) continue;
 
         if (!this.outputs[k]) {
           const outputInterface = new CodeNodeOutputInterface(k);

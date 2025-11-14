@@ -113,9 +113,10 @@ export class Code {
 
   /**
    * Render code script.
+   * @param data data for render template.
    */
-  renderCode(data: { nodes: AbstractCodeNode[]; modules: string[] }): void {
-    this.state.script = mustache.render(this.state.template || "", data);
+  renderCode(data?: { nodes: AbstractCodeNode[]; modules: string[] }): void {
+    this.state.script = mustache.render(this.state.template || "", data ?? {});
   }
 }
 

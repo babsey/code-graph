@@ -191,11 +191,11 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
 
       this.addInput(
         "_code",
-        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
       this.addOutput(
         "_code",
-        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
 
       // Add an internal output to allow accessing the calculation results of nodes inside the graph

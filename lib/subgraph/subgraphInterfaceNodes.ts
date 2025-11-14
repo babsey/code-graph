@@ -11,11 +11,11 @@ import { nodeType } from "@/interfaceTypes";
 export class SubgraphInputNode extends CodeGraphInputNode {
   protected override _title = "Subgraph Input";
   public override inputs = {
-    _code: new CodeNodeInterface("", "").use(setType, nodeType).setHidden(true),
+    _code: new CodeNodeInterface("_code", "").use(setType, nodeType).setHidden(true),
     name: new TextInputInterface("Name", "Input").setPort(false),
   };
   public override outputs = {
-    _code: new CodeNodeInterface("", "").use(setType, nodeType).setHidden(true),
+    _code: new CodeNodeInterface("_code", "").use(setType, nodeType).setHidden(true),
     placeholder: new NodeInterface("Connection", undefined),
   };
 }
@@ -23,12 +23,12 @@ export class SubgraphInputNode extends CodeGraphInputNode {
 export class SubgraphOutputNode extends CodeGraphOutputNode {
   protected override _title = "Subgraph Output";
   public override inputs = {
-    _code: new CodeNodeInterface("", "").use(setType, nodeType).setHidden(true),
+    _code: new CodeNodeInterface("_code", "").use(setType, nodeType).setHidden(true),
     name: new TextInputInterface("Name", "Output").setPort(false),
     placeholder: new NodeInterface("Connection", undefined),
   };
   public override outputs = {
-    _code: new CodeNodeInterface("", "").use(setType, nodeType).setHidden(true),
+    _code: new CodeNodeInterface("_code", "").use(setType, nodeType).setHidden(true),
     output: new NodeInterface("Output", undefined).setHidden(true),
   };
 }

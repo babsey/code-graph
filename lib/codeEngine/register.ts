@@ -20,7 +20,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
   const token = Symbol("CodeEngineToken");
 
   viewModel.engine = new CodeEngine(viewModel.editor);
-  registerRunEngineCommands(viewModel.engine, viewModel.commandHandler);
+  registerRunEngineCommands(viewModel.editor.graph, viewModel.engine, viewModel.commandHandler);
 
   /**
    * Load editor from editor state

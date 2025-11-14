@@ -60,11 +60,11 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
       this.addInput(
         "_code",
-        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
       this.addOutput(
         "_code",
-        new CodeNodeInterface("", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
     }
 

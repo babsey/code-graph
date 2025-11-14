@@ -249,6 +249,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
       output.name = this.state.integrated ? "" : this.variableName + output.suffix;
     });
   }
+
   /**
    * Update output values.
    * @param output return data of calculate function
@@ -266,6 +267,19 @@ export abstract class AbstractCodeNode extends AbstractNode {
    */
   updateProps(props: unknown): void {
     this.state.props = props;
+  }
+
+  /**
+   * Update input values
+   * @param props values for inputs
+   */
+  updateInputValues(props: Record<string, unknown>): void {
+    const inputKeys = Object.keys(this.inputs);
+    Object.keys(props).forEach((key: string) => {
+      if (!inputKeys.includes(key) || !this.inputs[key]) return;
+      this.inputs[key].value = props[key];
+      this.inputs[key].setHidden(false);
+    });
   }
 }
 
@@ -373,7 +387,13 @@ export const saveNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
 
   Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
     if (inputKey === "_code") return;
-    if (codeNode.inputs[inputKey]) inputItem.hidden = codeNode.inputs[inputKey].hidden;
+    if (codeNode.inputs[inputKey]) {
+      const codeInputNodeInterface = codeNode.inputs[inputKey];
+      inputItem.hidden = codeInputNodeInterface.hidden;
+      if (codeInputNodeInterface.component?.__name) inputItem.component = codeInputNodeInterface.component.__name;
+      // if (codeInputNodeInterface.min) inputItem.min = codeInputNodeInterface.min;
+      // if (codeInputNodeInterface.max) inputItem.min = codeInputNodeInterface.max;
+    }
   });
 
   Object.entries(nodeState.outputs).forEach(([outputKey, outputItem]) => {

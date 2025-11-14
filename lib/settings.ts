@@ -1,7 +1,7 @@
 // settings.ts
 
 import { computed, type Ref } from "vue";
-import { DEFAULT_TOOLBAR_COMMANDS, type ICommandHandler, type IViewSettings } from "@baklavajs/renderer-vue";
+import { Commands, DEFAULT_TOOLBAR_COMMANDS, type ICommandHandler, type IViewSettings } from "@baklavajs/renderer-vue";
 
 import * as Icons from "./icons";
 import type { CodeGraph } from "./codeGraph";
@@ -33,7 +33,14 @@ export const registerCustomCommands = (
 
   // Clear all nodes from the graph
   handler.registerCommand(CLEAR_ALL_COMMAND, {
-    execute: () => displayedGraph.value.clear(),
+    execute: () => {
+      // clear clipboard and history before clearing graph.
+      handler.executeCommand<Commands.ClearClipboardCommand>(Commands.CLEAR_CLIPBOARD_COMMAND);
+      handler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND);
+
+      displayedGraph.value.clear();
+      displayedGraph.value.editor.code.clear();
+    },
     canExecute: () => displayedGraph.value.nodes.length > 0,
   });
 

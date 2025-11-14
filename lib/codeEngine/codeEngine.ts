@@ -81,6 +81,8 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
             );
           }
           const v = this.hooks.transferData.execute(r[intfKey], c);
+          if (intfKey === '_code') return
+
           if (c.to.allowMultipleConnections) {
             if (inputs.has(c.to.id)) {
               (inputs.get(c.to.id)! as Array<unknown>).push(v);
