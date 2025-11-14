@@ -31,7 +31,4 @@ export default defineCodeNode({
     out: () => new CodeNodeOutputInterface(),
     custom: () => new CodeNodeOutputInterface(".custom", ".custom").setOptional(true),
   },
-  // codeTemplate() {
-  //   return `myFunction(${formatInputs(this.codeNodeInputs).join(', ')})`
-  // },
 });
