@@ -111,8 +111,8 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * @param to code node interface
    */
   public override addConnection(from: CodeNodeInterface, to: CodeNodeInterface): void {
-    if (from?.name !== "_code") from.hidden = false;
-    if (to?.name !== "_code") to.hidden = false;
+    if (from && from?.name !== "_code") from.hidden = false;
+    if (to && to?.name !== "_code") to.hidden = false;
     super.addConnection(from, to);
   }
 
