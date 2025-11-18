@@ -136,20 +136,20 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   }
 
   /**
-   * Get nodes of the same type.
+   * Get nodes of the type.
    * @param type node type
    * @returns a list of node instances
    */
-  public getNodesBySameType(type: string): AbstractCodeNode[] {
+  public getNodesByType(type: string): AbstractCodeNode[] {
     return this.nodes.filter((node: AbstractCodeNode) => node.type === type) as AbstractCodeNode[];
   }
 
   /**
-   * Get nodes of the same variable name.
+   * Get nodes of the variable name.
    * @param variableName variable name
    * @returns a list of node instances
    */
-  public getNodesBySameVariableNames(variableName: string): AbstractCodeNode[] {
+  public getNodesByVariableName(variableName: string): AbstractCodeNode[] {
     return this.nodes.filter(
       (node: AbstractCodeNode) => node.state?.variableName === variableName,
     ) as AbstractCodeNode[];

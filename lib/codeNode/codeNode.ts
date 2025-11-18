@@ -92,7 +92,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   get idxByVariableNames(): number {
     return (
       this.graph
-        .getNodesBySameVariableNames(this.state.variableName)
+        .getNodesByVariableName(this.state.variableName)
         .filter((node: AbstractCodeNode) => !node.state.integrated)
         .indexOf(this) ?? -1
     );
