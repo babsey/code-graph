@@ -1,6 +1,6 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
