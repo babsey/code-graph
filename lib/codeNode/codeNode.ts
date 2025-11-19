@@ -140,6 +140,8 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return this.state.variableName ? this.state.variableName + (this.idxByVariableNames + 1) : "";
   }
 
+  abstract afterGraphLoaded(): void;
+  abstract afterLoaded(): void;
   abstract onConnected(): void;
   abstract onUnconnected(): void;
   abstract update(): void;
@@ -212,6 +214,13 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
     if (!nodeIds || nodeIds.length == 0) return [];
     return nodeIds.map((nodeId) => this.graph.findNodeById(nodeId)) as AbstractCodeNode[];
+  }
+
+  /**
+   * Remove this node from the graph.
+   */
+  remove(): void {
+    this.graph?.removeNode(this);
   }
 
   /**
@@ -306,6 +315,7 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
   public load(state: ICodeNodeState<I, O>): void {
     super.load(state);
     loadNodeState(this.graph, state);
+    this.afterLoaded();
   }
 
   public save(): ICodeNodeState<I, O> {
@@ -352,23 +362,28 @@ export const loadNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
 
   if (codeNode.state) {
     codeNode.state.integrated = nodeState.integrated;
-    codeNode.state.modules = nodeState.modules;
     codeNode.state.props = nodeState.props;
   }
 
   Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
     if (inputKey === "_code") return;
-    if (codeNode.inputs[inputKey]) codeNode.inputs[inputKey].hidden = inputItem.hidden;
+    if (codeNode.inputs[inputKey]) {
+      codeNode.inputs[inputKey].hidden = inputItem.hidden;
+      codeNode.inputs[inputKey].state.optional = inputItem.optional;
+    }
   });
 
   Object.entries(nodeState.outputs).forEach(([outputKey, outputItem]) => {
     if (outputKey === "_code") return;
-    if (codeNode.outputs[outputKey]) codeNode.outputs[outputKey].hidden = outputItem.hidden;
+    if (codeNode.outputs[outputKey]) {
+      codeNode.outputs[outputKey].hidden = outputItem.hidden;
+      codeNode.outputs[outputKey].state.optional = outputItem.optional;
+    }
   });
 };
 
 /**
- * Save state of node.
+ * Save node state.
  * @param graph code graph
  * @param nodeState node state
  */
@@ -382,7 +397,7 @@ export const saveNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
 
   if (codeNode.state) {
     nodeState.integrated = codeNode.state.integrated;
-    nodeState.modules = codeNode.state.modules;
+    if (codeNode.state.props) nodeState.props = codeNode.state.props;
   }
 
   Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
@@ -390,6 +405,7 @@ export const saveNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
     if (codeNode.inputs[inputKey]) {
       const codeInputNodeInterface = codeNode.inputs[inputKey];
       inputItem.hidden = codeInputNodeInterface.hidden;
+      inputItem.optional = codeInputNodeInterface.state.optional;
       if (codeInputNodeInterface.component?.__name) inputItem.component = codeInputNodeInterface.component.__name;
       // if (codeInputNodeInterface.min) inputItem.min = codeInputNodeInterface.min;
       // if (codeInputNodeInterface.max) inputItem.min = codeInputNodeInterface.max;

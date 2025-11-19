@@ -45,6 +45,8 @@ export interface DynamicNodeUpdateResult {
 }
 
 export interface IDynamicCodeNodeDefinition<I, O> extends IDynamicNodeDefinition<I, O> {
+  afterGraphLoaded?: () => void;
+  afterLoaded?: () => void;
   codeTemplate?: (node?: AbstractCodeNode) => string;
   name?: string;
   modules?: string[];
@@ -96,6 +98,14 @@ export function defineDynamicCodeNode<I, O>(
 
       this.staticInputKeys.push("_code");
       this.staticOutputKeys.push("_code");
+    }
+
+    public afterGraphLoaded(): void {
+      definition.afterGraphLoaded?.call(this);
+    }
+
+    public afterLoaded(): void {
+      definition.afterLoaded?.call(this);
     }
 
     public onPlaced(): void {
@@ -208,7 +218,7 @@ export function defineDynamicCodeNode<I, O>(
     }
 
     private onUpdate() {
-      if (this.preventUpdate) return;
+      if (!definition.onUpdate || this.preventUpdate) return;
       if (this.graph) this.graph.activeTransactions++;
 
       const inputValues = this.getStaticValues<I>(this.staticInputKeys, this.inputs);
@@ -226,6 +236,10 @@ export function defineDynamicCodeNode<I, O>(
         values[k] = interfaces[k].value;
       }
       return values as T;
+    }
+
+    public updateInputInterfaces(newInterfaces: DynamicNodeDefinition, forceUpdates: string[]): void {
+      this.updateInterfaces("input", newInterfaces, forceUpdates);
     }
 
     private updateInterfaces(type: "input" | "output", newInterfaces: DynamicNodeDefinition, forceUpdates: string[]) {

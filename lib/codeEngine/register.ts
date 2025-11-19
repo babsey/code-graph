@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import type { ICodeGraphViewModel } from "@/viewModel";
 
-import { registerRunEngineCommands } from "./runEngine.command";
 import { CodeEngine } from "./codeEngine";
+import { registerRunEngineCommands } from "./runEngine.command";
 
 export interface IViewNodeState extends INodeState<unknown, unknown> {
   position: { x: number; y: number };

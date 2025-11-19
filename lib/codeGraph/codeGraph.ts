@@ -2,7 +2,14 @@
 
 import mustache from "mustache";
 import toposort from "toposort";
-import { Graph, type GraphTemplate, type Connection, type NodeInterface, type AbstractNode } from "@baklavajs/core";
+import {
+  Graph,
+  type GraphTemplate,
+  type Connection,
+  type NodeInterface,
+  type AbstractNode,
+  type IGraphState,
+} from "@baklavajs/core";
 import { reactive, type UnwrapRef } from "vue";
 import { type IBaklavaEventEmitter, type IBaklavaTapable } from "@baklavajs/events";
 
@@ -165,6 +172,19 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     return this.connections.some(
       (connection: Connection) => connection.from.id === from.id && connection.to.id === to.id,
     );
+  }
+
+  /**
+   * Load a state
+   * @param state State to load
+   * @returns An array of warnings that occured during loading. If the array is empty, the state was successfully loaded.
+   */
+  public override load(state: IGraphState): string[] {
+    const warnings = super.load(state);
+
+    this.nodes.forEach((node) => node.afterGraphLoaded());
+
+    return warnings;
   }
 
   /**

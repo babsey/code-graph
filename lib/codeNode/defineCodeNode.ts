@@ -24,6 +24,8 @@ export type InterfaceFactory<T> = {
 };
 
 export interface ICodeNodeDefinition<I, O> extends INodeDefinition<I, O> {
+  afterGraphLoaded?: () => void;
+  afterLoaded?: () => void;
   codeTemplate?: (node?: AbstractCodeNode) => string;
   modules?: string[];
   name?: string;
@@ -66,6 +68,14 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
         "_code",
         new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
       );
+    }
+
+    public afterGraphLoaded(): void {
+      definition.afterGraphLoaded?.call(this);
+    }
+
+    public afterLoaded(): void {
+      definition.afterLoaded?.call(this);
     }
 
     public onPlaced(): void {
