@@ -280,13 +280,13 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
   /**
    * Update input values
-   * @param props values for inputs
+   * @param inputs input values
    */
-  updateInputValues(props: Record<string, unknown>): void {
+  updateInputValues(inputs: Record<string, unknown>): void {
     const inputKeys = Object.keys(this.inputs);
-    Object.keys(props).forEach((key: string) => {
+    Object.keys(inputs).forEach((key: string) => {
       if (!inputKeys.includes(key) || !this.inputs[key]) return;
-      this.inputs[key].value = props[key];
+      this.inputs[key].value = inputs[key];
       this.inputs[key].setHidden(false);
     });
   }

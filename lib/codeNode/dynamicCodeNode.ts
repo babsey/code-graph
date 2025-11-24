@@ -238,11 +238,15 @@ export function defineDynamicCodeNode<I, O>(
       return values as T;
     }
 
-    public updateInputInterfaces(newInterfaces: DynamicNodeDefinition, forceUpdates: string[]): void {
+    public updateInputInterfaces(newInterfaces: DynamicNodeDefinition = {}, forceUpdates: string[] = []): void {
       this.updateInterfaces("input", newInterfaces, forceUpdates);
     }
 
-    private updateInterfaces(type: "input" | "output", newInterfaces: DynamicNodeDefinition, forceUpdates: string[]) {
+    private updateInterfaces(
+      type: "input" | "output",
+      newInterfaces: DynamicNodeDefinition = {},
+      forceUpdates: string[] = [],
+    ) {
       const staticKeys = type === "input" ? this.staticInputKeys : this.staticOutputKeys;
       const currentInterfaces = type === "input" ? this.inputs : this.outputs;
 

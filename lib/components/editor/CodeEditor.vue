@@ -18,7 +18,7 @@ import type { Extension } from "@codemirror/state";
 import { LockCode } from "@/icons";
 import CopyToClipboard from "./CopyToClipboard.vue";
 
-const model = defineModel({ required: true, type: String });
+const model = defineModel<string>({ required: true });
 defineProps<{ locked: boolean; extensions?: Extension[] }>();
 
 const emit = defineEmits<{
