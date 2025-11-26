@@ -89,6 +89,10 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return this.graph.nodes.filter((node: AbstractCodeNode) => !node.state.integrated).indexOf(this) ?? -1;
   }
 
+  get idxByType(): number {
+    return this.graph.getNodesByType(this.type).indexOf(this) ?? -1;
+  }
+
   get idxByVariableNames(): number {
     return (
       this.graph

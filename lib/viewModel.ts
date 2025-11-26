@@ -28,7 +28,7 @@ import { CodeEditor } from "./codeEditor";
 import { registerCodeEngine, type CodeEngine } from "./codeEngine";
 import { registerCreateSubgraphCommand, SubgraphInputNode, SubgraphOutputNode } from "./subgraph";
 import { registerCustomCommands, updateToolbarItems } from "./settings";
-import { useSwitchCodeGraph, type CodeGraph, type CodeGraphTemplate } from "./codeGraph";
+import { NODE_DEFAULT_WITH, useSwitchCodeGraph, type CodeGraph, type CodeGraphTemplate } from "./codeGraph";
 
 interface IViewNodeState extends INodeState<unknown, unknown> {
   position: { x: number; y: number };
@@ -77,7 +77,7 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
   const isSubgraph = computed(() => displayedGraph.value && displayedGraph.value !== editor.value.graph);
 
   const settings: IViewSettings = reactive(DEFAULT_SETTINGS());
-  settings.nodes.defaultWidth = 400;
+  settings.nodes.defaultWidth = NODE_DEFAULT_WITH;
 
   const commandHandler = useCommandHandler();
   const history = useHistory(displayedGraph, commandHandler);

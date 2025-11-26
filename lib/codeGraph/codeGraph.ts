@@ -18,6 +18,8 @@ import type { Code } from "@/code";
 import type { CodeEditor } from "@/codeEditor";
 import type { CodeNodeInterface } from "@/codeNodeInterfaces";
 
+export const NODE_DEFAULT_WITH = 350;
+
 interface IPosition {
   x: number;
   y: number;
@@ -262,7 +264,7 @@ export const getCodeNodes = (graph: CodeGraph): AbstractCodeNode[] => {
  * @returns position
  */
 export const getPositionAtColumn = (col: number = 0, offset: number = 100): IPosition => {
-  const width = 350;
+  const width = NODE_DEFAULT_WITH;
   const padding = 70;
 
   return {
@@ -279,7 +281,7 @@ export const getPositionAtColumn = (col: number = 0, offset: number = 100): IPos
 export const getPositionBeforeNode = (node: AbstractCodeNode): IPosition => {
   const position = { ...node.position };
 
-  position.x -= 440;
+  position.x -= NODE_DEFAULT_WITH + 70;
   position.y += 50;
 
   return position;
