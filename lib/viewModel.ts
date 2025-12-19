@@ -1,6 +1,6 @@
 // viewCodeModel.ts
 
-import { type Ref, computed, reactive, ref, shallowReadonly, watch } from "vue";
+import { type Ref, computed, nextTick, reactive, ref, shallowReadonly, watch } from "vue";
 import type { IEditorState, INodeState } from "@baklavajs/core";
 import { SequentialHook } from "@baklavajs/events";
 import {
@@ -41,6 +41,7 @@ export interface ICodeGraphViewModel {
   editor: CodeEditor;
   /** Currently displayed graph */
   displayedGraph: CodeGraph;
+  isReady: boolean;
   /** True if the currently displayed graph is a subgraph, false if it is the root graph */
   isSubgraph: Readonly<boolean>;
   settings: IViewSettings;
@@ -98,6 +99,7 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     editor,
     history,
     hooks,
+    isReady: false,
     isSubgraph,
     onBeforeUnmount: () => {},
     onMounted: () => {},
@@ -180,6 +182,8 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     },
     { immediate: true },
   );
+
+  nextTick(() => (viewModel.isReady = true));
 
   return viewModel;
 }
