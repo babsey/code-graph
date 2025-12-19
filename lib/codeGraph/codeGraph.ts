@@ -177,7 +177,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   }
 
   /**
-   * Load a state
+   * Load a state.
    * @param state State to load
    * @returns An array of warnings that occured during loading. If the array is empty, the state was successfully loaded.
    */
@@ -187,6 +187,13 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     this.nodes.forEach((node) => node.afterGraphLoaded());
 
     return warnings;
+  }
+
+  /**
+   * Trigger on graph update.
+   */
+  public onUpdate(): void {
+    this.nodes.forEach((node) => node.onGraphUpdate());
   }
 
   /**

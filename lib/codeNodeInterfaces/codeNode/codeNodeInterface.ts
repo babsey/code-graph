@@ -1,5 +1,6 @@
 // codeNodeInterface.ts
 
+// import { BaklavaEvent } from "@baklavajs/events";
 import { NodeInterface } from "@baklavajs/core";
 import { markRaw, reactive, type UnwrapRef } from "vue";
 
@@ -23,6 +24,8 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
     this.state = reactive({
       optional: false,
     });
+
+    // this.events.setHidden = new BaklavaEvent<void, NodeInterface<T>>(this)
   }
 
   get optional(): boolean {
@@ -35,11 +38,17 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
 
   getValue = (): string => `${this.value ?? "None"}`;
 
-  setOptional(value: boolean) {
+  setOptional(value: boolean): this {
     this.state.optional = value;
     this.setHidden(value);
     return this;
   }
+
+  // override setHidden(value: boolean): this {
+  //   this.hidden = value
+  //   this.events.setHidden.emit(value)
+  //   return this
+  // }
 }
 
 export { CodeNodeInterfaceComponent };

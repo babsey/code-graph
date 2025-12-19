@@ -1,10 +1,11 @@
 // codeEngine.ts
 
-import type { CalculationResult, IConnection, IEditorState, INodeState } from "@baklavajs/core";
+import type { CalculationResult, Editor, IConnection, IEditorState, INodeState } from "@baklavajs/core";
 import { applyResult } from "@baklavajs/engine";
 import { Commands } from "@baklavajs/renderer-vue";
 import { v4 as uuidv4 } from "uuid";
 
+import type { AbstractCodeNode } from "@/codeNode";
 import type { ICodeGraphViewModel } from "@/viewModel";
 
 import { CodeEngine } from "./codeEngine";
@@ -64,20 +65,22 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     // console.log("subscribe");
 
     viewModel.displayedGraph.events.addConnection.subscribe(token, (data: IConnection) => {
-      const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId);
+      const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId) as AbstractCodeNode;
       if (tgtNode && tgtNode.isCodeNode) tgtNode.onConnected();
-      const srcNode = viewModel.displayedGraph.findNodeById(data.from.nodeId);
+      const srcNode = viewModel.displayedGraph.findNodeById(data.from.nodeId) as AbstractCodeNode;
       if (srcNode && srcNode.isCodeNode) srcNode.onConnected();
     });
 
     viewModel.displayedGraph.events.removeConnection.subscribe(token, (data: IConnection) => {
-      const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId);
+      const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId) as AbstractCodeNode;
       if (tgtNode && tgtNode.isCodeNode) tgtNode.onUnconnected();
-      const srcNode = viewModel.displayedGraph.findNodeById(data.from.nodeId);
+      const srcNode = viewModel.displayedGraph.findNodeById(data.from.nodeId) as AbstractCodeNode;
       if (srcNode && srcNode.isCodeNode) srcNode.onUnconnected();
     });
 
     viewModel.engine?.events.beforeRun.subscribe(token, () => {
+      viewModel.displayedGraph.onUpdate();
+
       viewModel.engine?.pause();
 
       // sort code nodes using toposort.
@@ -90,7 +93,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
       viewModel.engine?.pause();
 
       // apply results from calculation on editor.
-      applyResult(result, viewModel.editor);
+      applyResult(result, viewModel.editor as Editor);
 
       // render code from scripted code nodes.
       if (!viewModel.code.state.lockCode)

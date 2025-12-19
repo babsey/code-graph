@@ -30,6 +30,7 @@ export interface ICodeNodeDefinition<I, O> extends INodeDefinition<I, O> {
   modules?: string[];
   name?: string;
   onConnected?: () => void;
+  onGraphUpdate?: () => void;
   onUnconnected?: () => void;
   update?: (node?: AbstractCodeNode) => void;
   variableName?: string;
@@ -88,6 +89,10 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
     public onDestroy(): void {
       definition.onDestroy?.call(this);
+    }
+
+    public onGraphUpdate(): void {
+      definition.onGraphUpdate?.call(this);
     }
 
     public onUnconnected(): void {

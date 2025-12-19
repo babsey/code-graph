@@ -147,6 +147,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   abstract afterGraphLoaded(): void;
   abstract afterLoaded(): void;
   abstract onConnected(): void;
+  abstract onGraphUpdate(): void;
   abstract onUnconnected(): void;
   abstract update(): void;
 
@@ -373,7 +374,7 @@ export const loadNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
     if (inputKey === "_code") return;
     if (codeNode.inputs[inputKey]) {
       codeNode.inputs[inputKey].hidden = inputItem.hidden;
-      codeNode.inputs[inputKey].state.optional = inputItem.optional;
+      if (inputItem.optional) codeNode.inputs[inputKey].state.optional = inputItem.optional;
     }
   });
 
@@ -381,7 +382,7 @@ export const loadNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
     if (outputKey === "_code") return;
     if (codeNode.outputs[outputKey]) {
       codeNode.outputs[outputKey].hidden = outputItem.hidden;
-      codeNode.outputs[outputKey].state.optional = outputItem.optional;
+      if (outputItem.optional) codeNode.outputs[outputKey].state.optional = outputItem.optional;
     }
   });
 };
@@ -409,7 +410,7 @@ export const saveNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
     if (codeNode.inputs[inputKey]) {
       const codeInputNodeInterface = codeNode.inputs[inputKey];
       inputItem.hidden = codeInputNodeInterface.hidden;
-      inputItem.optional = codeInputNodeInterface.state.optional;
+      if (codeInputNodeInterface.state?.optional) inputItem.optional = codeInputNodeInterface.state.optional;
       if (codeInputNodeInterface.component?.__name) inputItem.component = codeInputNodeInterface.component.__name;
       // if (codeInputNodeInterface.min) inputItem.min = codeInputNodeInterface.min;
       // if (codeInputNodeInterface.max) inputItem.min = codeInputNodeInterface.max;

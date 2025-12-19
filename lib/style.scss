@@ -1,3 +1,7 @@
+:root {
+  --baklava-node-color-background: rgba(27, 32, 44, 0.5);
+}
+
 .baklava-node {
   &:hover {
     .baklava-node-interface[data-interface-type="node"] {

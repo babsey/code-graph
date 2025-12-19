@@ -8,8 +8,9 @@
         top: -8px;
         background-color: var(--baklava-node-color-background);
       "
-      >{{ intf.name }}</label
     >
+      {{ intf.name }}
+    </label>
     <input v-model="v" type="text" class="baklava-input" :placeholder="intf.name" :title="intf.name" />
   </div>
 </template>

@@ -51,6 +51,7 @@ export interface IDynamicCodeNodeDefinition<I, O> extends IDynamicNodeDefinition
   name?: string;
   modules?: string[];
   onConnected?: () => void;
+  onGraphUpdate?: () => void;
   onUnconnected?: () => void;
   update?: (node?: AbstractCodeNode) => void;
   variableName?: string;
@@ -129,6 +130,10 @@ export function defineDynamicCodeNode<I, O>(
 
     public onDestroy(): void {
       definition.onDestroy?.call(this);
+    }
+
+    public onGraphUpdate(): void {
+      definition.onGraphUpdate?.call(this);
     }
 
     public onUnconnected(): void {
