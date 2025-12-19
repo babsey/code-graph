@@ -4,7 +4,7 @@ export { default as Check } from "./Check.vue";
 export { default as CodeVariable } from "./CodeVariable.vue";
 export { default as Copy } from "./Copy.vue";
 export { default as DotsVertical } from "./DotsVertical.vue";
-export { default as Download } from "./Download.vue"
+export { default as Download } from "./Download.vue";
 export { default as LayoutSidebarLeftCollapse } from "./LayoutSidebarLeftCollapse.vue";
 export { default as LayoutSidebarLeftExpand } from "./LayoutSidebarLeftExpand.vue";
 export { default as LayoutSidebarRight } from "./LayoutSidebarRight.vue";
@@ -17,5 +17,5 @@ export { default as Restore } from "./Restore.vue";
 export { default as Schema } from "./Schema.vue";
 export { default as SchemaOff } from "./SchemaOff.vue";
 export { default as TransitionBottom } from "./TransitionBottom.vue";
-export { default as Upload } from "./Upload.vue"
+export { default as Upload } from "./Upload.vue";
 export { default as X } from "./X.vue";
