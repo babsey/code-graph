@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; overflow: hidden; width: 100vw; height: 100vh">
+  <div v-if="viewModel.isReady" style="display: flex; overflow: hidden; width: 100vw; height: 100vh">
     <CodeGraphInfo v-if="devMode" :viewModel />
 
     <splitpanes
@@ -11,7 +11,11 @@
       <pane :size>
         <CodeGraphEditor :viewModel>
           <template #sidebarCodeEditor="{ node }">
-            <CodeEditor v-model="node.script" :locked="node.lockCode" @update:locked="(v) => (node.lockCode = v)" />
+            <CodeEditor
+              v-model="node.script"
+              :locked="node.lockCode"
+              @update:locked="(v: boolean) => (node.lockCode = v)"
+            />
           </template>
         </CodeGraphEditor>
       </pane>
@@ -21,7 +25,7 @@
           v-if="viewModel.code"
           v-model="viewModel.code.script"
           :locked="viewModel.code.lockCode"
-          @update:locked="(v) => (viewModel.code.lockCode = v)"
+          @update:locked="(v: boolean) => (viewModel.code.lockCode = v)"
         />
       </pane>
     </splitpanes>
@@ -32,7 +36,8 @@
 import { ref } from "vue";
 import { Splitpanes, Pane } from "splitpanes";
 
-import { CodeEditor, CodeGraphEditor, CodeGraphInfo, PythonCode, useCodeGraph } from "@babsey/code-graph";
+import { PythonCode, components, useCodeGraph } from "@babsey/code-graph";
+const { CodeEditor, CodeGraphEditor, CodeGraphInfo } = components;
 
 import { registerNodeTypes } from "./codeNodeTypes";
 
