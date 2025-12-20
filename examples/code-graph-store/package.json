@@ -16,7 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@babsey/code-graph": "~0.4",
+    "@babsey/code-graph": "~0.6",
     "@codemirror/lang-python": "~6.2",
     "@codemirror/theme-one-dark": "~6.1",
     "baklavajs": "~2.8",
@@ -34,12 +34,12 @@
     "@vitejs/plugin-vue": "~6.0",
     "@vue/tsconfig": "~0.8",
     "eslint": "~9.39",
-    "eslint-plugin-vue": "~10.5",
+    "eslint-plugin-vue": "~10.6",
     "npm-run-all2": "~8.0",
-    "prettier": "~3.6",
-    "sass-embedded": "~1.93",
+    "prettier": "~3.7",
+    "sass-embedded": "~1.97",
     "typescript": "~5.9",
-    "vite": "~7.2",
+    "vite": "~7.3",
     "vite-plugin-vue-devtools": "~8.0",
     "vue-tsc": "~3.1"
   }

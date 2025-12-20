@@ -22,7 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import { NavItem, Plus } from "@babsey/code-graph";
+import { components, icons } from "@babsey/code-graph";
+const { NavItem } = components;
+const { Plus } = icons;
 
 import { useCodeGraphStore } from "@/stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();

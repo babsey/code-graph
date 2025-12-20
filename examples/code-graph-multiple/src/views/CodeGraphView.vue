@@ -44,7 +44,8 @@
 import { computed, ref } from "vue";
 import { Splitpanes, Pane } from "splitpanes";
 
-import { CodeEditor, CodeGraphEditor, CodeGraphInfo, NavBar, NavItem } from "@babsey/code-graph";
+import { components } from "@babsey/code-graph";
+const { CodeEditor, CodeGraphEditor, CodeGraphInfo, NavBar, NavItem } = components;
 
 import { useCodeGraphStore } from "../stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();

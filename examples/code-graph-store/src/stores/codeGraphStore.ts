@@ -19,7 +19,7 @@ export const useCodeGraphStore = defineStore(
     const token = Symbol("CodeGraphStore");
 
     const viewModel = useCodeGraph({ code: new PythonCode() });
-    registerNodeTypes(viewModel);
+    registerNodeTypes(viewModel, ["default", "norse"]);
 
     viewModel.onMounted = () => {
       if (viewModel.subscribe) viewModel.subscribe();
@@ -76,7 +76,7 @@ export const useCodeGraphStore = defineStore(
   },
   {
     persist: {
-      storage: sessionStorage, // localStorage
+      storage: localStorage, // localStorage, sessionStorage
       pick: ["state.editorStates"],
     },
   },

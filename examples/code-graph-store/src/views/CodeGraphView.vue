@@ -20,7 +20,11 @@
       <pane :size>
         <CodeGraphEditor :viewModel>
           <template #sidebarCodeEditor="{ node }">
-            <CodeEditor v-model="node.script" :locked="node.lockCode" @update:locked="(v) => (node.lockCode = v)" />
+            <CodeEditor
+              v-model="node.script"
+              :locked="node.lockCode"
+              @update:locked="(v: boolean) => (node.lockCode = v)"
+            />
           </template>
         </CodeGraphEditor>
       </pane>
@@ -41,7 +45,8 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { Splitpanes, Pane } from "splitpanes";
 
-import { CodeEditor, CodeGraphEditor, CodeGraphInfo, NavBar, NavItem } from "@babsey/code-graph";
+import { components } from "@babsey/code-graph";
+const { CodeEditor, CodeGraphEditor, CodeGraphInfo, NavBar, NavItem } = components;
 
 import { useCodeGraphStore } from "../stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();
