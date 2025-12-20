@@ -15,6 +15,7 @@ RUN yarn install
 # build app for production with minification
 RUN yarn build-only
 
+# TODO: temporary solution for the issue that nodes are not positioned in graph in the production.
 RUN npm link
 
 WORKDIR examples/code-graph-store/
@@ -22,10 +23,7 @@ WORKDIR examples/code-graph-store/
 # install project dependencies
 RUN yarn install
 
-# # TODO: temporary solution for the issue that nodes are not positioned in graph in the production.
-# EXPOSE 80
-# CMD ["yarn", "dev", "--host", "--port", "80"]
-
+# TODO: temporary solution for the issue that nodes are not positioned in graph in the production.
 RUN npm link @babsey/code-graph
 
 # build app for production with minification
