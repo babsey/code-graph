@@ -46,8 +46,9 @@
 }
 
 .--disabled {
-  pointer-events: none;
   --baklava-control-color-primary: var(--baklava-control-color-disabled-foreground);
+  color: var(--baklava-control-color-disabled-foreground);
+  pointer-events: none !important;
 }
 
 .mx-1 {

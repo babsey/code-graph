@@ -19,7 +19,7 @@ import {
 } from "@/codeNodeInterfaces";
 import { nodeType } from "@/interfaceTypes";
 
-import { CodeNode, loadNodeState, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
+import { CodeNode, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
 
 type Dynamic<T> = T & Record<string, unknown>;
 
@@ -155,14 +155,10 @@ export function defineDynamicCodeNode<I, O>(
       for (const k of this.staticInputKeys) {
         this.inputs[k].load(state.inputs[k]);
         this.inputs[k].nodeId = this.id;
-        if (k === "_code") continue;
-        this.inputs[k].hidden = state.inputs[k].hidden;
       }
       for (const k of this.staticOutputKeys) {
         this.outputs[k].load(state.outputs[k]);
         this.outputs[k].nodeId = this.id;
-        if (k === "_code") continue;
-        this.outputs[k].hidden = state.outputs[k].hidden;
       }
 
       // run the update function to correctly generate all interfaces
@@ -188,16 +184,12 @@ export function defineDynamicCodeNode<I, O>(
           }
 
           inputInterface.use(displayInSidebar, true);
-          inputInterface.setOptional(inputState.optional ?? false);
-          inputInterface.setHidden(inputState.hidden ?? false);
-
           this.addInput(k, inputInterface);
         }
 
         if (this.inputs[k]) {
           this.inputs[k].load(state.inputs[k]);
           this.inputs[k].nodeId = this.id;
-          // this.inputs[k].hidden = state.inputs[k].hidden;
         }
       }
       for (const k of Object.keys(state.outputs)) {
@@ -211,11 +203,8 @@ export function defineDynamicCodeNode<I, O>(
         if (this.outputs[k]) {
           this.outputs[k].load(state.outputs[k]);
           this.outputs[k].nodeId = this.id;
-          // this.outputs[k].hidden = state.outputs[k].hidden;
         }
       }
-
-      loadNodeState(this.graph, state);
 
       this.preventUpdate = false;
       this.events.loaded.emit(this);

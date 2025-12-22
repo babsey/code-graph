@@ -1,7 +1,7 @@
 // viewCodeModel.ts
 
 import { type Ref, computed, nextTick, reactive, ref, shallowReadonly, watch } from "vue";
-import type { IEditorState, INodeState } from "@baklavajs/core";
+import type { IEditorState } from "@baklavajs/core";
 import { SequentialHook } from "@baklavajs/events";
 import {
   DEFAULT_SETTINGS,
@@ -21,7 +21,7 @@ import {
   useHistory,
 } from "@baklavajs/renderer-vue";
 
-import type { AbstractCodeNode } from "./codeNode";
+import type { AbstractCodeNode, ICodeNodeState } from "./codeNode";
 import type { CodeNodeInterface } from "./codeNodeInterfaces";
 import { Code } from "./code";
 import { CodeEditor } from "./codeEditor";
@@ -29,12 +29,6 @@ import { registerCodeEngine, type CodeEngine } from "./codeEngine";
 import { registerCreateSubgraphCommand, SubgraphInputNode, SubgraphOutputNode } from "./subgraph";
 import { registerCustomCommands, updateToolbarItems } from "./settings";
 import { NODE_DEFAULT_WITH, useSwitchCodeGraph, type CodeGraph, type CodeGraphTemplate } from "./codeGraph";
-
-interface IViewNodeState extends INodeState<unknown, unknown> {
-  position: { x: number; y: number };
-  width: number;
-  twoColumn: boolean;
-}
 
 export interface ICodeGraphViewModel {
   code: Code;
@@ -137,16 +131,26 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
         newValue.graph.hooks.save.unsubscribe(token);
       }
       if (newValue) {
-        newValue.nodeHooks.beforeLoad.subscribe(token, (state, node) => {
-          node.position = (state as IViewNodeState).position ?? { x: 0, y: 0 };
-          node.width = (state as IViewNodeState).width ?? settings.nodes.defaultWidth;
-          node.twoColumn = (state as IViewNodeState).twoColumn ?? false;
+        newValue.nodeHooks.beforeLoad.subscribe(token, (state: ICodeNodeState, node: AbstractCodeNode) => {
+          node.position = state.position ?? { x: 0, y: 0 };
+
+          if (node.state) {
+            node.state.integrated = state.integrated;
+            if (state.props) node.state.props = state.props;
+            if (state.variableName) node.state.variableName = state.variableName;
+          }
+
           return state;
         });
-        newValue.nodeHooks.afterSave.subscribe(token, (state, node) => {
-          (state as IViewNodeState).position = node.position;
-          (state as IViewNodeState).width = node.width;
-          (state as IViewNodeState).twoColumn = node.twoColumn;
+        newValue.nodeHooks.afterSave.subscribe(token, (state: ICodeNodeState, node: AbstractCodeNode) => {
+          state.position = node.position;
+
+          if (node.state) {
+            state.integrated = node.state.integrated;
+            if (node.state.props) state.props = node.state.props;
+            if (node.state.variableName) state.variableName = node.state.variableName;
+          }
+
           return state;
         });
         newValue.graphTemplateHooks.beforeLoad.subscribe(token, (state, template) => {

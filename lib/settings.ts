@@ -47,19 +47,19 @@ export const registerCustomCommands = (
     canExecute: () => displayedGraph.value.nodes.length > 0,
   });
 
-  // Toggle palette in the graph
+  // Toggle minimap.
+  handler.registerCommand(TOGGLE_MINIMAP_COMMAND, {
+    execute: () => (settings.enableMinimap = !settings.enableMinimap),
+    canExecute: () => displayedGraph.value.nodes.length > 1,
+  });
+
+  // Toggle palette.
   handler.registerCommand(TOGGLE_PALETTE_COMMAND, {
     execute: () => {
       settings.palette.enabled = !settings.palette.enabled;
       settings.zoomToFit.paddingLeft = settings.palette.enabled ? defaultPaddingLeft : 50;
     },
     canExecute: () => true,
-  });
-
-  // Toggle minimap
-  handler.registerCommand(TOGGLE_MINIMAP_COMMAND, {
-    execute: () => (settings.enableMinimap = !settings.enableMinimap),
-    canExecute: () => displayedGraph.value.nodes.length > 1,
   });
 
   // Upload editor state.
@@ -119,7 +119,9 @@ export const updateToolbarItems = (settings: IViewSettings) => {
   const toggle_palette = {
     command: TOGGLE_PALETTE_COMMAND,
     title: "Toggle palette",
-    icon: computed(() => (settings.palette.enabled ? Icons.LayoutSidebarLeftCollapse : Icons.LayoutSidebarLeftExpand)),
+    icon: computed(() =>
+      settings.palette.enabled ? Icons.LayoutSidebarRightCollapse : Icons.LayoutSidebarRightExpand,
+    ),
   };
 
   const upload_editor_state = {

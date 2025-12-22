@@ -75,6 +75,10 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     return this.nodes.filter((node: AbstractCodeNode) => !node.state?.integrated) as AbstractCodeNode[];
   }
 
+  get selectedNodeIds(): string[] {
+    return this.selectedNodes.map((node: AbstractCodeNode) => node.id);
+  }
+
   get shortId(): string {
     return this.id.slice(0, 6);
   }

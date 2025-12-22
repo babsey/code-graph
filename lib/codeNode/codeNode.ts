@@ -26,6 +26,7 @@ export interface IAbstractCodeNodeState {
   lockCode: boolean;
   modules: string[];
   props?: unknown | null;
+  position?: { x: number; y: number };
   script: string;
   variableName: string;
 }
@@ -87,6 +88,10 @@ export abstract class AbstractCodeNode extends AbstractNode {
     return super.graph as CodeGraph;
   }
 
+  get hasConnectedOutputNodes(): boolean {
+    return this.getConnectedNodes("outputs").length > 0;
+  }
+
   get idx(): number {
     return this.graph.nodes.filter((node: AbstractCodeNode) => !node.state.integrated).indexOf(this) ?? -1;
   }
@@ -102,6 +107,10 @@ export abstract class AbstractCodeNode extends AbstractNode {
         .filter((node: AbstractCodeNode) => !node.state.integrated)
         .indexOf(this) ?? -1
     );
+  }
+
+  get isSelected(): boolean {
+    return this.graph.selectedNodeIds.includes(this.id);
   }
 
   get lockCode(): boolean {
@@ -335,16 +344,9 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
     });
   }
 
-  load(state: ICodeNodeState<I, O>): void {
+  override load(state: ICodeNodeState<I, O>): void {
     super.load(state);
-    loadNodeState(this.graph, state);
     this.afterLoaded();
-  }
-
-  save(): ICodeNodeState<I, O> {
-    const state = super.save() as ICodeNodeState<I, O>;
-    saveNodeState(this.graph, state);
-    return state;
   }
 }
 
@@ -368,77 +370,4 @@ export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>, with
   });
 
   return args;
-};
-
-/**
- * Load node state.
- * @param graph code graph
- * @param nodeState node state
- */
-export const loadNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknown, unknown>): void => {
-  if (!graph) return;
-
-  const node = graph.findNodeById(nodeState.id);
-  if (!node || node.subgraph) return;
-
-  const codeNode = node as AbstractCodeNode;
-
-  if (codeNode.state) {
-    codeNode.state.integrated = nodeState.integrated;
-    if (nodeState.props) codeNode.state.props = nodeState.props;
-    if (nodeState.variableName) codeNode.state.variableName = nodeState.variableName;
-  }
-
-  Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
-    if (inputKey === "_code") return;
-    if (codeNode.inputs[inputKey]) {
-      codeNode.inputs[inputKey].hidden = inputItem.hidden;
-      if (inputItem.optional) codeNode.inputs[inputKey].state.optional = inputItem.optional;
-    }
-  });
-
-  Object.entries(nodeState.outputs).forEach(([outputKey, outputItem]) => {
-    if (outputKey === "_code") return;
-    if (codeNode.outputs[outputKey]) {
-      codeNode.outputs[outputKey].hidden = outputItem.hidden;
-      if (outputItem.optional) codeNode.outputs[outputKey].state.optional = outputItem.optional;
-    }
-  });
-};
-
-/**
- * Save node state.
- * @param graph code graph
- * @param nodeState node state
- */
-export const saveNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknown, unknown>): void => {
-  if (!graph) return;
-
-  const node = graph.findNodeById(nodeState.id);
-  if (!node || node.subgraph) return;
-
-  const codeNode = node as AbstractCodeNode;
-
-  if (codeNode.state) {
-    nodeState.integrated = codeNode.state.integrated;
-    if (codeNode.state.props) nodeState.props = codeNode.state.props;
-    if (codeNode.state.variableName) nodeState.variableName = codeNode.state.variableName;
-  }
-
-  Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
-    if (inputKey === "_code") return;
-    if (codeNode.inputs[inputKey]) {
-      const codeInputNodeInterface = codeNode.inputs[inputKey];
-      inputItem.hidden = codeInputNodeInterface.hidden;
-      if (codeInputNodeInterface.state?.optional) inputItem.optional = codeInputNodeInterface.state.optional;
-      if (codeInputNodeInterface.component?.__name) inputItem.component = codeInputNodeInterface.component.__name;
-      // if (codeInputNodeInterface.min) inputItem.min = codeInputNodeInterface.min;
-      // if (codeInputNodeInterface.max) inputItem.min = codeInputNodeInterface.max;
-    }
-  });
-
-  Object.entries(nodeState.outputs).forEach(([outputKey, outputItem]) => {
-    if (outputKey === "_code") return;
-    if (codeNode.outputs[outputKey]) outputItem.hidden = codeNode.outputs[outputKey].hidden;
-  });
 };

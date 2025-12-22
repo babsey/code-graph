@@ -18,7 +18,7 @@ export interface IViewNodeState extends INodeState<unknown, unknown> {
 }
 
 export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
-  const _token = Symbol("CodeEngineToken");
+  const token = Symbol("CodeEngineToken");
 
   viewModel.engine = new CodeEngine(viewModel.editor);
   registerRunEngineCommands(viewModel.editor.graph, viewModel.engine, viewModel.commandHandler);
@@ -61,7 +61,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
   /**
    * Subscribe view model.
    */
-  viewModel.subscribe = (token = _token) => {
+  viewModel.subscribe = () => {
     // console.log("subscribe");
 
     viewModel.displayedGraph.nodeEvents.titleChanged.subscribe(token, () => {
@@ -113,7 +113,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
   /**
    * Unsubscribe view model.
    */
-  viewModel.unsubscribe = (token = _token) => {
+  viewModel.unsubscribe = () => {
     // console.log("unsubscribe");
 
     viewModel.displayedGraph.events.addConnection.unsubscribe(token);

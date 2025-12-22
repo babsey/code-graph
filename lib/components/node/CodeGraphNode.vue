@@ -30,22 +30,16 @@
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="node.isCodeNode">
-            <LockCode class="--clickable mx-1" @click="node.lockCode = false" v-if="node.state.lockCode" />
-            <CodeVariable class="--clickable mx-1" @click="setIntegrated(false)" v-if="node.state.integrated" />
-            <TransitionBottom class="--clickable mx-1" @click="setIntegrated(true)" v-else />
+            <LockCode v-if="node.state.lockCode" class="--clickable mx-1" @click="node.lockCode = false" />
+            <template v-if="node.hasConnectedOutputNodes">
+              <TransitionBottom v-if="!node.state.integrated" class="--clickable mx-1" @click="setIntegrated(true)" />
+              <CodeVariable v-else class="--clickable mx-1" @click="setIntegrated(false)" />
+            </template>
             <LayoutSidebarRightExpand
               class="--clickable mx-1"
               @click="openSidebar"
-              v-if="!viewModel.displayedGraph.sidebar.visible && viewModel.displayedGraph.sidebar.nodeId !== node.id"
+              v-if="node.isSelected && !viewModel.displayedGraph.sidebar.visible"
             />
-            <LayoutSidebarRight
-              class="--clickable mx-1"
-              @click="updateSidebar"
-              v-else-if="
-                viewModel.displayedGraph.sidebar.visible && viewModel.displayedGraph.sidebar.nodeId !== node.id
-              "
-            />
-            <LayoutSidebarRightCollapse class="--clickable mx-1" @click="closeSidebar" v-else />
           </template>
           <DotsVertical class="--clickable mx-1" @click="openContextMenu" />
           <ContextMenu v-model="showContextMenu" :x="0" :y="0" :items="contextMenuItems" @click="onContextMenuClick" />
@@ -56,7 +50,7 @@
         ref="renameInputEl"
         v-model="tempName"
         class="baklava-input"
-        placeholder="Node Name"
+        placeholder="Variable name"
         style="flex-grow: 1"
         type="text"
         @blur="doneRenaming"
@@ -124,15 +118,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref } from "
 
 import type { AbstractCodeNode } from "@/codeNode";
 import { CodeGraphNodeInterface } from "@/components";
-import {
-  CodeVariable,
-  DotsVertical,
-  LayoutSidebarRight,
-  LayoutSidebarRightCollapse,
-  LayoutSidebarRightExpand,
-  LockCode,
-  TransitionBottom,
-} from "@/icons";
+import { CodeVariable, DotsVertical, LayoutSidebarRightExpand, LockCode, TransitionBottom } from "@/icons";
 
 const ContextMenu = Components.ContextMenu;
 const NodeInterface = Components.NodeInterface;
@@ -199,7 +185,7 @@ const displayedInputs = computed(() => Object.values(props.node.inputs).filter((
 const displayedOutputs = computed(() => Object.values(props.node.outputs).filter((ni) => !ni.hidden));
 
 const select = () => {
-  if (viewModel.value.displayedGraph.sidebar.visible) updateSidebar();
+  updateSidebar();
   emit("select");
 };
 
@@ -210,12 +196,6 @@ const startDrag = (ev: PointerEvent) => {
 
 const openContextMenu = () => {
   showContextMenu.value = true;
-};
-
-const closeSidebar = () => {
-  const sidebar = viewModel.value.displayedGraph.sidebar;
-  sidebar.nodeId = "";
-  sidebar.visible = false;
 };
 
 const openSidebar = () => {
