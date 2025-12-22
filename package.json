@@ -1,15 +1,12 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.6.4",
+  "version": "0.8.0",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
   "main": "./dist/code-mirror.umd.cjs",
   "module": "./dist/code-graph.js",
   "types": "./dist/index.d.ts",
