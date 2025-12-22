@@ -120,7 +120,7 @@
 <script setup lang="ts">
 import { AbstractNode, GRAPH_NODE_TYPE_PREFIX, type IGraphNode } from "@baklavajs/core";
 import { Components, useGraph, useViewModel } from "@baklavajs/renderer-vue";
-import { computed, nextTick,onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import { CodeGraphNodeInterface } from "@/components";
@@ -199,14 +199,12 @@ const displayedInputs = computed(() => Object.values(props.node.inputs).filter((
 const displayedOutputs = computed(() => Object.values(props.node.outputs).filter((ni) => !ni.hidden));
 
 const select = () => {
+  if (viewModel.value.displayedGraph.sidebar.visible) updateSidebar();
   emit("select");
 };
 
 const startDrag = (ev: PointerEvent) => {
-  if (!props.selected) {
-    select();
-  }
-
+  if (!props.selected) select();
   emit("start-drag", ev);
 };
 
@@ -254,6 +252,7 @@ const onContextMenuClick = async (action: string) => {
 
 const doneRenaming = () => {
   node.value.state.variableName = tempName.value; // props.node.title
+  node.value.events.titleChanged.emit(node.value.state.variableName);
   renaming.value = false;
 };
 

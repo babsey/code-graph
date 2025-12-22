@@ -64,6 +64,10 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
   viewModel.subscribe = (token = _token) => {
     // console.log("subscribe");
 
+    viewModel.displayedGraph.nodeEvents.titleChanged.subscribe(token, () => {
+      viewModel.engine?.runOnce(null);
+    });
+
     viewModel.displayedGraph.events.addConnection.subscribe(token, (data: IConnection) => {
       const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId) as AbstractCodeNode;
       if (tgtNode && tgtNode.isCodeNode) tgtNode.onConnected();
