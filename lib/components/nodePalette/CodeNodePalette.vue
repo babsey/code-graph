@@ -45,7 +45,7 @@ import { Components, useNodeCategories, useTransform, useViewModel } from "@bakl
 import { type CSSProperties, type Ref, computed, inject, reactive, ref } from "vue";
 import { usePointer } from "@vueuse/core";
 
-import { filterObject } from "@/utils";
+import { filterObject } from "@/utils/object";
 
 const PaletteEntry = Components.PaletteEntry;
 

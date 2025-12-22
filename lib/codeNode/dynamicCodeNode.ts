@@ -3,7 +3,6 @@
 import type {
   CalculationContext,
   IDynamicNodeDefinition,
-  InterfaceFactory,
   NodeInterface,
   NodeInterfaceDefinition,
 } from "@baklavajs/core";
@@ -86,7 +85,7 @@ export function defineDynamicCodeNode<I, O>(
       this.updateModules(definition.modules);
 
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate;
-      if (definition.variableName) this.state.variableName = definition.variableName;
+      if (definition.variableName) this._variableName = definition.variableName;
 
       this.addInput(
         "_code",
@@ -282,17 +281,6 @@ export function defineDynamicCodeNode<I, O>(
     override updateProps(props: unknown): void {
       this.state.props = props;
       this.onUpdate();
-    }
-
-    private executeFactory<V, T extends InterfaceFactory<V>>(type: "input" | "output", factory?: T): void {
-      (Object.keys(factory || {}) as (keyof V)[]).forEach((k) => {
-        const intf = factory![k]();
-        if (type === "input") {
-          this.addInput(k as string, intf);
-        } else {
-          this.addOutput(k as string, intf);
-        }
-      });
     }
   };
 }

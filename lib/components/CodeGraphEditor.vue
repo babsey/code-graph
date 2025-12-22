@@ -1,5 +1,5 @@
 <template>
-  <BaklavaEditor :view-model="viewModelRef">
+  <BaklavaEditor :viewModel="viewModelRef">
     <template #palette>
       <CodeNodePalette />
     </template>
@@ -19,8 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, toRef, watch } from "vue";
 import { BaklavaEditor } from "@baklavajs/renderer-vue";
+import { onBeforeUnmount, onMounted, toRef, watch } from "vue";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import type { ICodeGraphViewModel } from "@/viewModel";

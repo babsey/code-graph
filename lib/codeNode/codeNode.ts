@@ -1,7 +1,9 @@
 // codeNode.ts
 
+import mustache from "mustache";
 import {
   AbstractNode,
+  NodeInterface,
   type CalculateFunction,
   type CalculateFunctionReturnType,
   type CalculationContext,
@@ -9,7 +11,6 @@ import {
   type INodeState,
   type NodeInterfaceDefinition,
 } from "@baklavajs/core";
-import mustache from "mustache";
 import { reactive, type UnwrapRef } from "vue";
 
 import type { Code } from "@/code";
@@ -35,6 +36,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   public mask: unknown = null;
   public name: string = "";
   public state: UnwrapRef<IAbstractCodeNodeState>;
+  public _variableName: string = "";
 
   public inputs: Record<string, CodeNodeInterface<unknown>> = {};
   public outputs: Record<string, CodeNodeInterface<unknown>> = {};
@@ -96,7 +98,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   get idxByVariableNames(): number {
     return (
       this.graph
-        .getNodesByVariableName(this.state.variableName)
+        .getNodesByVariableName(this.state.variableName ?? this._variableName)
         .filter((node: AbstractCodeNode) => !node.state.integrated)
         .indexOf(this) ?? -1
     );
@@ -141,7 +143,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get variableName(): string {
-    return this.state.variableName ? this.state.variableName + (this.idxByVariableNames + 1) : "";
+    return (this.state.variableName ? this.state.variableName : this._variableName) + (this.idxByVariableNames + 1);
   }
 
   abstract afterGraphLoaded(): void;
@@ -299,6 +301,11 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
 export interface ICodeNodeState<I, O> extends INodeState<I, O>, IAbstractCodeNodeState {}
 
+export type NodeInterfaceFactory<T> = () => NodeInterface<T>;
+export type InterfaceFactory<T> = {
+  [K in keyof T]: NodeInterfaceFactory<T[K]>;
+};
+
 export abstract class CodeNode<I, O> extends AbstractCodeNode {
   abstract inputs: NodeInterfaceDefinition<I>;
   abstract outputs: NodeInterfaceDefinition<O>;
@@ -310,20 +317,31 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
    * @param globalValues Set of values passed to every node by the engine plugin
    * @return Values for output interfaces
    */
-  public calculate?: CalculateFunction<I, O> = (inputs: I, globalValues: CalculationContext) => {
+  calculate?: CalculateFunction<I, O> = (inputs: I, globalValues: CalculationContext) => {
     const outputs: CalculateFunctionReturnType<unknown> = {};
     if (!this.lockCode) outputs._code = this.renderCode({ inputs, ...globalValues });
     this.updateOutputValues(outputs);
     return outputs;
   };
 
-  public load(state: ICodeNodeState<I, O>): void {
+  executeFactory<V, T extends InterfaceFactory<V>>(type: "input" | "output", factory?: T): void {
+    (Object.keys(factory || {}) as (keyof V)[]).forEach((k) => {
+      const intf = factory![k]();
+      if (type === "input") {
+        this.addInput(k as string, intf);
+      } else {
+        this.addOutput(k as string, intf);
+      }
+    });
+  }
+
+  load(state: ICodeNodeState<I, O>): void {
     super.load(state);
     loadNodeState(this.graph, state);
     this.afterLoaded();
   }
 
-  public save(): ICodeNodeState<I, O> {
+  save(): ICodeNodeState<I, O> {
     const state = super.save() as ICodeNodeState<I, O>;
     saveNodeState(this.graph, state);
     return state;
@@ -367,7 +385,8 @@ export const loadNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
 
   if (codeNode.state) {
     codeNode.state.integrated = nodeState.integrated;
-    codeNode.state.props = nodeState.props;
+    if (nodeState.props) codeNode.state.props = nodeState.props;
+    if (nodeState.variableName) codeNode.state.variableName = nodeState.variableName;
   }
 
   Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {
@@ -403,6 +422,7 @@ export const saveNodeState = (graph: CodeGraph, nodeState: ICodeNodeState<unknow
   if (codeNode.state) {
     nodeState.integrated = codeNode.state.integrated;
     if (codeNode.state.props) nodeState.props = codeNode.state.props;
+    if (codeNode.state.variableName) nodeState.variableName = codeNode.state.variableName;
   }
 
   Object.entries(nodeState.inputs).forEach(([inputKey, inputItem]) => {

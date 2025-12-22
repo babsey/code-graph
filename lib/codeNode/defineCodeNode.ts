@@ -1,12 +1,6 @@
 // defineCodeNode.ts
 
-import type {
-  NodeInterface,
-  CalculationContext,
-  INodeDefinition,
-  Node,
-  NodeInterfaceDefinition,
-} from "@baklavajs/core";
+import type { CalculationContext, INodeDefinition, Node, NodeInterfaceDefinition } from "@baklavajs/core";
 import { setType } from "@baklavajs/interface-types";
 import { allowMultipleConnections } from "@baklavajs/engine";
 
@@ -17,11 +11,6 @@ import { CodeNode, type AbstractCodeNode } from "./codeNode";
 
 export type NodeConstructor<I, O> = new () => Node<I, O>;
 export type NodeInstanceOf<T> = T extends new () => Node<infer A, infer B> ? Node<A, B> : never;
-
-export type NodeInterfaceFactory<T> = () => NodeInterface<T>;
-export type InterfaceFactory<T> = {
-  [K in keyof T]: NodeInterfaceFactory<T[K]>;
-};
 
 export interface ICodeNodeDefinition<I, O> extends INodeDefinition<I, O> {
   afterGraphLoaded?: () => void;
@@ -50,7 +39,7 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
       if (definition.calculate) {
         this.calculate = (inputs: I, globalValues: CalculationContext) =>
-          definition.calculate!.call(this, { inputs, ...globalValues });
+          definition.calculate!.call(this, inputs, globalValues);
       }
 
       definition.onCreate?.call(this);
@@ -58,8 +47,8 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       this.name = definition.name ?? definition.type;
       this.updateModules(definition.modules);
 
-      if (definition.variableName != undefined) this.state.variableName = definition.variableName;
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate;
+      if (definition.variableName != undefined) this._variableName = definition.variableName;
 
       this.addInput(
         "_code",
@@ -101,17 +90,6 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
     public update(): void {
       definition.update?.call(this);
-    }
-
-    private executeFactory<V, T extends InterfaceFactory<V>>(type: "input" | "output", factory?: T): void {
-      (Object.keys(factory || {}) as (keyof V)[]).forEach((k) => {
-        const intf = factory![k]();
-        if (type === "input") {
-          this.addInput(k as string, intf);
-        } else {
-          this.addOutput(k as string, intf);
-        }
-      });
     }
   };
 }

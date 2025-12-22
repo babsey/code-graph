@@ -32,6 +32,7 @@
               <label>Variable name</label>
               <input
                 v-model="codeNode.state.variableName"
+                :placeholder="codeNode.variableName"
                 type="text"
                 class="baklava-input"
                 title="Variable name"

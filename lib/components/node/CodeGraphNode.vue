@@ -23,7 +23,9 @@
 
       <template v-if="!renaming">
         <div class="__title-label" style="flex-grow: 1">
-          <span v-if="node.idx > -1">{{ node.idx + 1 }} > </span>{{ node.title }}
+          <span v-if="node.idx > -1">{{ node.idx + 1 }} > </span>
+          <!-- {{ node.title }} -->
+          {{ node.state.variableName.length > 0 ? node.state.variableName : node.title }}
           <!-- {{ node.graph.shortId }} {{ node.shortId }} -->
         </div>
         <div class="__menu" style="display: flex">
@@ -116,9 +118,9 @@
 </template>
 
 <script setup lang="ts">
+import { AbstractNode, GRAPH_NODE_TYPE_PREFIX, type IGraphNode } from "@baklavajs/core";
 import { Components, useGraph, useViewModel } from "@baklavajs/renderer-vue";
-import { GRAPH_NODE_TYPE_PREFIX, type IGraphNode } from "@baklavajs/core";
-import { ref, computed, nextTick, onUpdated, onMounted, onBeforeUnmount } from "vue";
+import { computed, nextTick,onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
 
 import type { AbstractCodeNode } from "@/codeNode";
 import { CodeGraphNodeInterface } from "@/components";
@@ -171,9 +173,7 @@ const contextMenuItems = computed(() => {
     { value: "delete", label: "Delete" },
   ];
 
-  if (props.node.type.startsWith(GRAPH_NODE_TYPE_PREFIX)) {
-    items.push({ value: "editSubgraph", label: "Edit Subgraph" });
-  }
+  if (props.node.type.startsWith(GRAPH_NODE_TYPE_PREFIX)) items.push({ value: "editSubgraph", label: "Edit Subgraph" });
 
   return items;
 });
@@ -238,10 +238,10 @@ const onContextMenuClick = async (action: string) => {
       openSidebar();
       break;
     case "delete":
-      graph.value.removeNode(props.node);
+      graph.value.removeNode(props.node as AbstractNode);
       break;
     case "rename":
-      tempName.value = props.node.title;
+      tempName.value = props.node.state.variableName; // props.node.title
       renaming.value = true;
       await nextTick();
       renameInputEl.value?.focus();
@@ -253,14 +253,12 @@ const onContextMenuClick = async (action: string) => {
 };
 
 const doneRenaming = () => {
-  node.value.title = tempName.value;
+  node.value.state.variableName = tempName.value; // props.node.title
   renaming.value = false;
 };
 
 const onRender = () => {
-  if (el.value) {
-    viewModel.value.hooks.renderNode.execute({ node: props.node, el: el.value });
-  }
+  if (el.value) viewModel.value.hooks.renderNode.execute({ node: props.node, el: el.value });
 };
 
 const startResize = (ev: MouseEvent) => {
