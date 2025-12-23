@@ -1,6 +1,6 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
@@ -25,8 +25,9 @@
     "build-only": "vite build",
     "type-check": "vue-tsc",
     "clean": "rimraf dist",
-    "lint": "eslint . --fix",
-    "format": "prettier --write examples/**/src/ lib/ src/"
+    "lint": "eslint ./lib --fix",
+    "lint:all": "eslint . --fix",
+    "format": "prettier --write lib/ src/"
   },
   "dependencies": {
     "@codemirror/lang-python": "~6.2",
