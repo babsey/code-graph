@@ -36,10 +36,12 @@ import { components, icons } from "@babsey/code-graph";
 const { NavItem } = components;
 const { Plus } = icons;
 
+import { codeGraphs } from "@/helpers/state";
+
 import { useCodeGraphStore } from "@/stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();
 
-const options = computed(() => Object.keys(codeGraphStore.codeGraphs).map((m) => ({ label: m, value: m })));
+const options = computed(() => Object.keys(codeGraphs).map((m) => ({ label: m, value: m })));
 </script>
 
 <style lang="scss">

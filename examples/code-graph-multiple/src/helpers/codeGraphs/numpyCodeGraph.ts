@@ -2,8 +2,8 @@
 
 import { useCodeGraph } from "@babsey/code-graph";
 
-import { registerNumpyNodeTypes } from "@codeNodeTypes";
-import { MyPythonCode } from "@/code";
+import { registerNumpyNodeTypes } from "@/codeNodeTypes/numpy";
+import { MyPythonCode } from "@/helpers/code";
 
 export const useNumpyCodeGraph = () => {
   const viewModel = useCodeGraph({ code: new MyPythonCode("numpy") });
