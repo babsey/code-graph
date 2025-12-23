@@ -24,7 +24,6 @@
   }
 
   .baklava-node-interface[data-interface-type="boolean"] {
-    // --baklava-node-interface-port-color: #219;
     --baklava-node-interface-port-color: #d19a66;
   }
 
