@@ -36,24 +36,10 @@
 import { ref } from "vue";
 import { Splitpanes, Pane } from "splitpanes";
 
-import { PythonCode, components, useCodeGraph } from "@babsey/code-graph";
+import { components } from "@babsey/code-graph";
 const { CodeEditor, CodeGraphEditor, CodeGraphInfo } = components;
 
-import { registerNodeTypes } from "./codeNodeTypes";
-
-const viewModel = useCodeGraph({ code: new PythonCode() });
-registerNodeTypes(viewModel);
-
-viewModel.onMounted = () => {
-  if (viewModel.subscribe) viewModel.subscribe();
-  viewModel.engine?.start();
-  viewModel.engine?.runOnce(null);
-};
-
-viewModel.onBeforeUnmount = () => {
-  if (viewModel.unsubscribe) viewModel.unsubscribe();
-  viewModel.engine?.stop();
-};
+import { viewModel } from "./state";
 
 const devMode = ref(false);
 
@@ -61,7 +47,7 @@ const size = ref(70);
 const resize = () => (size.value = size.value == 100 ? 70 : 100);
 </script>
 
-<style lang="scss">
+<style>
 body {
   margin: 0;
 }
