@@ -6,6 +6,7 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {},
   plugins: [
     vue(),
     // vueDevTools(),
@@ -13,7 +14,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      "@codeNodeTypes": fileURLToPath(new URL("../../src/codeNodeTypes", import.meta.url)),
     },
+    preserveSymlinks: true,
   },
 });

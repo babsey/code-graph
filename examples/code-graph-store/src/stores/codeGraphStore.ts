@@ -4,9 +4,6 @@ import { reactive, type UnwrapRef } from "vue";
 import type { IEditorState } from "@baklavajs/core";
 import { defineStore } from "pinia";
 
-import { PythonCode, useCodeGraph } from "@babsey/code-graph";
-import { registerNodeTypes } from "@codeNodeTypes/register";
-
 export const useCodeGraphStore = defineStore(
   "code-graph",
   () => {
@@ -16,63 +13,7 @@ export const useCodeGraphStore = defineStore(
       editorStates: {},
     });
 
-    const token = Symbol("CodeGraphStore");
-
-    const viewModel = useCodeGraph({ code: new PythonCode() });
-    registerNodeTypes(viewModel, ["default", "norse"]);
-
-    viewModel.onMounted = () => {
-      if (viewModel.subscribe) viewModel.subscribe();
-      viewModel.engine?.start();
-      viewModel.engine?.runOnce(null);
-    };
-
-    viewModel.onBeforeUnmount = () => {
-      if (viewModel.unsubscribe) viewModel.unsubscribe();
-      viewModel.engine?.stop();
-    };
-
-    const loadEditor = (editorId?: string) => {
-      // console.log('load editor', editorId?.slice(0,6))
-
-      const editorIds = Object.keys(state.editorStates);
-      if (!editorId || !editorIds.includes(editorId)) return newGraph();
-
-      const editorState = state.editorStates[editorId];
-
-      // load editor from editor state
-      if (editorState) viewModel.loadEditor(editorState);
-
-      return true;
-    };
-
-    const newGraph = () => {
-      // console.log("create new graph")
-      viewModel.newGraph();
-
-      const editorId = saveEditor();
-      return { name: "edit", params: { editorId } };
-    };
-
-    const removeEditorState = (editorId: string) => {
-      delete state.editorStates[editorId];
-    };
-
-    const saveEditor = () => {
-      // console.log('save editor', viewModel.editor.graph.shortId)
-      state.editorStates[viewModel.editor.graph.id] = viewModel.editor.save();
-      return viewModel.editor.graph.id;
-    };
-
-    const subscribe = () => {
-      viewModel.engine?.events.afterRun.subscribe(token, saveEditor);
-    };
-
-    const unsubscribe = () => {
-      viewModel.engine?.events.afterRun.unsubscribe(token);
-    };
-
-    return { loadEditor, newGraph, removeEditorState, state, subscribe, unsubscribe, viewModel };
+    return { state };
   },
   {
     persist: {

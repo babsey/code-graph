@@ -1,11 +1,7 @@
 <template>
   <div style="height: 100vh">
     <CodeGraphInfo v-if="devMode" :viewModel />
-    <NavBar
-      :viewModel
-      :editorStates="codeGraphStore.state.editorStates"
-      @click:remove="codeGraphStore.removeEditorState"
-    >
+    <NavBar :viewModel :editorStates="codeGraphStore.state.editorStates" @click:remove="removeEditorState">
       <template #prepend>
         <NavItem :to="{ name: 'home' }">Home</NavItem>
       </template>
@@ -42,26 +38,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { ref } from "vue";
 import { Splitpanes, Pane } from "splitpanes";
 
 import { components } from "@babsey/code-graph";
 const { CodeEditor, CodeGraphEditor, CodeGraphInfo, NavBar, NavItem } = components;
 
-import { useCodeGraphStore } from "../stores/codeGraphStore";
+import { viewModel } from "@/helpers/state";
+import { removeEditorState } from "@/helpers/editor";
+
+import { useCodeGraphStore } from "@/stores/codeGraphStore";
 const codeGraphStore = useCodeGraphStore();
-const viewModel = computed(() => codeGraphStore.viewModel);
 
 const devMode = ref(false);
 
 const size = ref(70);
 const resize = () => (size.value = size.value == 100 ? 70 : 100);
-
-onMounted(() => {
-  codeGraphStore.subscribe();
-});
-
-onBeforeUnmount(() => {
-  codeGraphStore.unsubscribe();
-});
 </script>
