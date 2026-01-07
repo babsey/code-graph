@@ -107,7 +107,9 @@ const close = () => {
 };
 
 const doneRenaming = () => {
-  node.value?.events.update.emit(null);
+  if (!node.value) return;
+  node.value.state.variableNameNumberAppendix = codeNode.value.state.variableName.length === 0;
+  node.value.events.update.emit(null);
 };
 
 const startResize = (event: MouseEvent) => {

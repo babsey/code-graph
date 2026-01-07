@@ -25,10 +25,11 @@ export interface IAbstractCodeNodeState {
   integrated: boolean;
   lockCode: boolean;
   modules: string[];
-  props?: unknown | null;
   position?: { x: number; y: number };
+  props?: unknown | null;
   script: string;
   variableName: string;
+  variableNameNumberAppendix: boolean;
 }
 
 export abstract class AbstractCodeNode extends AbstractNode {
@@ -57,6 +58,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
       props: null,
       script: "",
       variableName: "",
+      variableNameNumberAppendix: true,
     });
 
     this.codeTemplate = function () {
@@ -103,7 +105,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   get idxByVariableNames(): number {
     return (
       this.graph
-        .getNodesByVariableName(this.state.variableName ?? this._variableName)
+        .getNodesByVariableName(this.state.variableName || this._variableName)
         .filter((node: AbstractCodeNode) => !node.state.integrated)
         .indexOf(this) ?? -1
     );
@@ -153,7 +155,8 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
   get variableName(): string {
     return this.state.variableName || this._variableName
-      ? this.state.variableName || this._variableName + (this.idxByVariableNames + 1)
+      ? (this.state.variableName || this._variableName) +
+          (this.state.variableNameNumberAppendix ? this.idxByVariableNames + 1 : "")
       : "";
   }
 

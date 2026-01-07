@@ -163,8 +163,8 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * @returns a list of node instances
    */
   public getNodesByVariableName(variableName: string): AbstractCodeNode[] {
-    return this.nodes.filter(
-      (node: AbstractCodeNode) => node.state?.variableName === variableName,
+    return this.nodes.filter((node: AbstractCodeNode) =>
+      [node.state.variableName, node._variableName].includes(variableName),
     ) as AbstractCodeNode[];
   }
 
