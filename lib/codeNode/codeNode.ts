@@ -152,7 +152,9 @@ export abstract class AbstractCodeNode extends AbstractNode {
   }
 
   get variableName(): string {
-    return (this.state.variableName ? this.state.variableName : this._variableName) + (this.idxByVariableNames + 1);
+    return this.state.variableName || this._variableName
+      ? this.state.variableName || this._variableName + (this.idxByVariableNames + 1)
+      : "";
   }
 
   abstract afterGraphLoaded(): void;
