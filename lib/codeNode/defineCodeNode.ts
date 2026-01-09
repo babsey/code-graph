@@ -48,7 +48,7 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       this.updateModules(definition.modules);
 
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate;
-      if (definition.variableName != undefined) this._variableName = definition.variableName;
+      if (definition.variableName != undefined) this.variableName = definition.variableName;
 
       this.addInput(
         "_code",

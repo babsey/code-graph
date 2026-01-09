@@ -29,16 +29,15 @@ export interface IAbstractCodeNodeState {
   props?: unknown | null;
   script: string;
   variableName: string;
-  variableNameNumberAppendix: boolean;
 }
 
 export abstract class AbstractCodeNode extends AbstractNode {
+  private _variableName: string = "";
   public codeTemplate: () => string;
-  public isCodeNode = true;
+  public readonly isCodeNode = true;
   public mask: unknown = null;
   public name: string = "";
   public state: UnwrapRef<IAbstractCodeNodeState>;
-  public _variableName: string = "";
 
   public inputs: Record<string, CodeNodeInterface<unknown>> = {};
   public outputs: Record<string, CodeNodeInterface<unknown>> = {};
@@ -58,7 +57,6 @@ export abstract class AbstractCodeNode extends AbstractNode {
       props: null,
       script: "",
       variableName: "",
-      variableNameNumberAppendix: true,
     });
 
     this.codeTemplate = function () {
@@ -105,7 +103,7 @@ export abstract class AbstractCodeNode extends AbstractNode {
   get idxByVariableNames(): number {
     return (
       this.graph
-        .getNodesByVariableName(this.state.variableName || this._variableName)
+        .getNodesByVariableName(this._variableName)
         .filter((node: AbstractCodeNode) => !node.state.integrated)
         .indexOf(this) ?? -1
     );
@@ -155,9 +153,12 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
   get variableName(): string {
     return this.state.variableName || this._variableName
-      ? (this.state.variableName || this._variableName) +
-          (this.state.variableNameNumberAppendix ? this.idxByVariableNames + 1 : "")
+      ? this.state.variableName || this._variableName + (this.idxByVariableNames + 1)
       : "";
+  }
+
+  set variableName(value: string) {
+    this._variableName = value;
   }
 
   abstract afterGraphLoaded(): void;

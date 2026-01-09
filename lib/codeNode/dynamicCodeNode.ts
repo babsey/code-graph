@@ -85,7 +85,7 @@ export function defineDynamicCodeNode<I, O>(
       this.updateModules(definition.modules);
 
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate;
-      if (definition.variableName) this._variableName = definition.variableName;
+      if (definition.variableName) this.variableName = definition.variableName;
 
       this.addInput(
         "_code",

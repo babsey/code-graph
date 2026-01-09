@@ -23,9 +23,8 @@
 
       <template v-if="!renaming">
         <div class="__title-label" style="flex-grow: 1">
-          <span v-if="node.idx > -1">{{ node.idx + 1 }} > </span>
-          <!-- {{ node.title }} -->
-          {{ node.state.variableName.length > 0 ? node.state.variableName : node.title }}
+          <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>
+          {{ node.title }}
           <!-- {{ node.graph.shortId }} {{ node.shortId }} -->
         </div>
         <div class="__menu" style="display: flex">
@@ -50,7 +49,7 @@
         ref="renameInputEl"
         v-model="tempName"
         class="baklava-input"
-        placeholder="Variable name"
+        placeholder="Title"
         style="flex-grow: 1"
         type="text"
         @blur="doneRenaming"
@@ -219,7 +218,7 @@ const onContextMenuClick = async (action: string) => {
       graph.value.removeNode(props.node as AbstractNode);
       break;
     case "rename":
-      tempName.value = props.node.state.variableName; // props.node.title
+      tempName.value = props.node.title;
       renaming.value = true;
       await nextTick();
       renameInputEl.value?.focus();
@@ -231,8 +230,8 @@ const onContextMenuClick = async (action: string) => {
 };
 
 const doneRenaming = () => {
-  node.value.state.variableName = tempName.value; // props.node.title
-  node.value.events.titleChanged.emit(node.value.state.variableName);
+  node.value.title = tempName.value; // props.node.title
+  node.value.events.titleChanged.emit(node.value.title);
   renaming.value = false;
 };
 
