@@ -253,10 +253,10 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.28.5"
 
-"@babsey/code-graph@~0.8":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@babsey/code-graph/-/code-graph-0.8.0.tgz#39751c34ec1fc256b0c112cc9a1bbaa245d0b117"
-  integrity sha512-hBKJ/xwfgsA8UXM8GRJ1lDkiwdr35m9zwBaeW77tbZer6oUrlwos6Gwl/Q/GzPIskd/WSLCRV0Wc7LKs/kO5EQ==
+"@babsey/code-graph@~0.9":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@babsey/code-graph/-/code-graph-0.9.0.tgz#d16d58bc33646c5b1211a56b8ad278dde75f758f"
+  integrity sha512-D9gcYbZ5/UqJ5k7X+SQE+AN/9oyCg8ZBHqn2swPKvT5kJIXufq+lWGptttqOx24uBodmR2HSdN4gRJu4569RbQ==
   dependencies:
     "@codemirror/lang-python" "~6.2"
     "@codemirror/theme-one-dark" "~6.1"
