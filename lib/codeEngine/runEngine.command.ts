@@ -14,7 +14,7 @@ import type { CodeEngine } from "./codeEngine";
 export const registerRunEngineCommands = (graph: CodeGraph, engine: CodeEngine, handler: ICommandHandler) => {
   // Toggle minimap
   handler.registerCommand(RUN_ENGINE_COMMAND, {
-    execute: () => engine.runOnce(null),
+    execute: () => engine.runOnce({}),
     canExecute: () => graph.nodes.length > 0,
   });
 };

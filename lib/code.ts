@@ -52,7 +52,7 @@ export class Code {
 
   set lockCode(value: boolean) {
     this.state.lockCode = value;
-    this.engine?.runOnce(null);
+    // this.engine?.runOnce({});
   }
 
   get modules(): string[] {
@@ -74,7 +74,7 @@ export class Code {
 
   set script(value: string) {
     this.state.script = value;
-    this.engine?.runOnce(null);
+    // this.engine?.runOnce({});
   }
 
   get shortId(): string {

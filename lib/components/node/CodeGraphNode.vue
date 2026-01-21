@@ -25,20 +25,20 @@
         <div class="__title-label" style="flex-grow: 1">
           <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>
           {{ node.title }}
-          <!-- {{ node.graph.shortId }} {{ node.shortId }} -->
+          {{ node.graph.shortId }} {{ node.shortId }}
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="node.isCodeNode">
             <LockCode v-if="node.state.lockCode" class="--clickable mx-1" @click="node.lockCode = false" />
-            <template v-if="node.hasConnectedOutputNodes">
-              <TransitionBottom v-if="!node.state.integrated" class="--clickable mx-1" @click="setIntegrated(true)" />
-              <CodeVariable v-else class="--clickable mx-1" @click="setIntegrated(false)" />
-            </template>
             <LayoutSidebarRightExpand
               class="--clickable mx-1"
               @click="openSidebar"
               v-if="node.isSelected && !viewModel.displayedGraph.sidebar.visible"
             />
+            <template v-if="node.hasConnectedOutputNodes">
+              <TransitionBottom v-if="!node.state.integrated" class="--clickable mx-1" @click="setIntegrated(true)" />
+              <CodeVariable v-else class="--clickable mx-1" @click="setIntegrated(false)" />
+            </template>
           </template>
           <DotsVertical class="--clickable mx-1" @click="openContextMenu" />
           <ContextMenu v-model="showContextMenu" :x="0" :y="0" :items="contextMenuItems" @click="onContextMenuClick" />

@@ -6,7 +6,7 @@ import type {
   NodeInterface,
   NodeInterfaceDefinition,
 } from "@baklavajs/core";
-import { setType } from "@baklavajs/interface-types";
+import { setTypeForMultipleConnections } from "@baklavajs/interface-types";
 import { allowMultipleConnections } from "@baklavajs/engine";
 import { displayInSidebar } from "@baklavajs/renderer-vue";
 
@@ -46,11 +46,11 @@ export interface DynamicNodeUpdateResult {
 export interface IDynamicCodeNodeDefinition<I, O> extends IDynamicNodeDefinition<I, O> {
   afterGraphLoaded?: () => void;
   afterLoaded?: () => void;
+  beforeRun?: () => void;
   codeTemplate?: (node?: AbstractCodeNode) => string;
   name?: string;
   modules?: string[];
   onConnected?: () => void;
-  onGraphUpdate?: () => void;
   onUnconnected?: () => void;
   update?: (node?: AbstractCodeNode) => void;
   variableName?: string;
@@ -89,11 +89,19 @@ export function defineDynamicCodeNode<I, O>(
 
       this.addInput(
         "_code",
-        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface<string[]>("_code", [])
+          .use(setTypeForMultipleConnections, nodeType)
+          .use(allowMultipleConnections)
+          .setHidden(true),
       );
       this.addOutput(
         "_code",
-        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface<string[]>("_code", [])
+          .use(setTypeForMultipleConnections, nodeType)
+          .use(allowMultipleConnections)
+          .setHidden(true),
       );
 
       this.staticInputKeys.push("_code");
@@ -106,6 +114,10 @@ export function defineDynamicCodeNode<I, O>(
 
     public afterLoaded(): void {
       definition.afterLoaded?.call(this);
+    }
+
+    public beforeRun(): void {
+      definition.beforeRun?.call(this);
     }
 
     public onPlaced(): void {
@@ -129,10 +141,6 @@ export function defineDynamicCodeNode<I, O>(
 
     public onDestroy(): void {
       definition.onDestroy?.call(this);
-    }
-
-    public onGraphUpdate(): void {
-      definition.onGraphUpdate?.call(this);
     }
 
     public onUnconnected(): void {

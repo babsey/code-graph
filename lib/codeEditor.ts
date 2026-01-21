@@ -1,10 +1,20 @@
 // codeEditor.ts
 
-import { type IBaklavaEventEmitter, type IBaklavaTapable } from "@baklavajs/events";
-import { type IEditorState, Editor } from "@baklavajs/core";
+import type { IBaklavaEventEmitter, IBaklavaTapable } from "@baklavajs/events";
+import { type IEditorState, type IRegisterNodeTypeOptions, Editor } from "@baklavajs/core";
 
 import { createCodeGraphNodeType, CodeGraph, CodeGraphTemplate } from "./codeGraph";
 import type { Code } from "./code";
+import type { AbstractCodeNodeConstructor } from "./codeNode";
+
+export interface IRegisterCodeNodeTypeOptions extends IRegisterNodeTypeOptions {
+  /** Category of the node. Can be used to structure the node palette view */
+  category?: string;
+  /** Set rank for sorting order */
+  orderRank?: number;
+  /** Set the title of the node in the node palette. Will use the `title` property of the node when not specified */
+  title?: string;
+}
 
 export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklavaTapable {
   public code: Code;
@@ -73,6 +83,24 @@ export class CodeEditor extends Editor implements IBaklavaEventEmitter, IBaklava
     } finally {
       super._loading = false;
     }
+  }
+
+  /**
+   * Register a new node type.
+   * @param nodeType Actual type / constructor of the node
+   * @param options Optionally specify a title and/or a category for this node
+   */
+  override registerNodeType(type: AbstractCodeNodeConstructor, options?: IRegisterCodeNodeTypeOptions): void {
+    if (this.events.beforeRegisterNodeType.emit({ type, options }).prevented) return;
+
+    const nodeInstance = new type();
+    this.nodeTypes.set(nodeInstance.type, {
+      type,
+      category: options?.category ?? "default",
+      title: options?.title ?? nodeInstance.title,
+      orderRank: options?.orderRank,
+    });
+    this.events.registerNodeType.emit({ type, options });
   }
 
   /**

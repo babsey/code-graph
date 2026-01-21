@@ -1,7 +1,7 @@
 // defineCodeNode.ts
 
 import type { CalculationContext, INodeDefinition, Node, NodeInterfaceDefinition } from "@baklavajs/core";
-import { setType } from "@baklavajs/interface-types";
+import { setTypeForMultipleConnections } from "@baklavajs/interface-types";
 import { allowMultipleConnections } from "@baklavajs/engine";
 
 import { CodeNodeInterface } from "@/codeNodeInterfaces";
@@ -15,11 +15,11 @@ export type NodeInstanceOf<T> = T extends new () => Node<infer A, infer B> ? Nod
 export interface ICodeNodeDefinition<I, O> extends INodeDefinition<I, O> {
   afterGraphLoaded?: () => void;
   afterLoaded?: () => void;
+  beforeRun?: () => void;
   codeTemplate?: (node?: AbstractCodeNode) => string;
   modules?: string[];
   name?: string;
   onConnected?: () => void;
-  onGraphUpdate?: () => void;
   onUnconnected?: () => void;
   update?: (node?: AbstractCodeNode) => void;
   variableName?: string;
@@ -52,11 +52,19 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
       this.addInput(
         "_code",
-        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface<string[]>("_code", [])
+          .use(setTypeForMultipleConnections, nodeType)
+          .use(allowMultipleConnections)
+          .setHidden(true),
       );
       this.addOutput(
         "_code",
-        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
+        new CodeNodeInterface<string[]>("_code", [])
+          .use(setTypeForMultipleConnections, nodeType)
+          .use(allowMultipleConnections)
+          .setHidden(true),
       );
     }
 
@@ -66,6 +74,10 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
     public afterLoaded(): void {
       definition.afterLoaded?.call(this);
+    }
+
+    public beforeRun(): void {
+      definition.beforeRun?.call(this);
     }
 
     public onPlaced(): void {
@@ -78,10 +90,6 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
     public onDestroy(): void {
       definition.onDestroy?.call(this);
-    }
-
-    public onGraphUpdate(): void {
-      definition.onGraphUpdate?.call(this);
     }
 
     public onUnconnected(): void {

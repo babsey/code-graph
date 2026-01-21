@@ -1,11 +1,13 @@
 // codeEngine.ts
 
 import type { CalculationResult } from "@baklavajs/core";
-import { BaseEngine, type ITopologicalSortingResult, sortTopologically } from "@baklavajs/engine";
+import { BaseEngine, type ITopologicalSortingResult } from "@baklavajs/engine";
 
 import type { CodeGraph } from "@/codeGraph";
 import type { CodeEditor } from "@/codeEditor";
 import type { CodeNodeInterface } from "@/codeNodeInterfaces";
+
+import { sortTopologically } from "./topologicalSorting";
 
 export const allowMultipleConnections = <T extends Array<unknown>>(intf: CodeNodeInterface<T>) => {
   intf.allowMultipleConnections = true;
@@ -29,7 +31,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     inputs: Map<string, unknown>,
     calculationData: CalculationData,
   ): Promise<CalculationResult> {
-    // console.log(graph.shortId, "run graph");
+    // console.log("run graph: ", graph.shortId);
     if (!this.order.has(graph.id)) this.order.set(graph.id, sortTopologically(graph));
     const { calculationOrder, connectionsFromNode } = this.order.get(graph.id)!;
 
@@ -37,6 +39,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     for (const n of calculationOrder) {
       const inputsForNode: Record<string, unknown> = {};
       Object.entries(n.inputs).forEach(([k, v]) => {
+        if (k === "_code") return;
         inputsForNode[k] = this.getInterfaceValue(inputs, v.id);
       });
 
@@ -51,15 +54,6 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
       let r: Record<string, unknown>;
       if (n.calculate) {
         r = await n.calculate(inputsForNode, { globalValues: calculationData, engine: this });
-
-        // Set calculation result to node interface.
-        if (connectionsFromNode.has(n)) {
-          for (const [k, value] of Object.entries(r)) {
-            this.hooks.transferData.execute(r[k], value);
-
-            connectionsFromNode.get(n)!.forEach((c) => inputs.set(c.to.id, value));
-          }
-        }
       } else {
         r = {};
         for (const [k, intf] of Object.entries(n.outputs)) {

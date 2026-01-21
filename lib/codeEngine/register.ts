@@ -1,4 +1,4 @@
-// codeEngine.ts
+// register.ts
 
 import type { CalculationResult, Editor, IConnection, IEditorState, INodeState } from "@baklavajs/core";
 import { applyResult } from "@baklavajs/engine";
@@ -37,7 +37,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     viewModel.commandHandler.executeCommand<Commands.ClearHistoryCommand>(Commands.CLEAR_HISTORY_COMMAND);
 
     viewModel.engine?.resume();
-    viewModel.engine?.runOnce(null);
+    viewModel.engine?.runOnce({});
   };
 
   /**
@@ -55,7 +55,7 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     viewModel.displayedGraph.id = uuidv4();
 
     viewModel.engine?.resume();
-    viewModel.engine?.runOnce(null);
+    viewModel.engine?.runOnce({});
   };
 
   /**
@@ -63,10 +63,6 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
    */
   viewModel.subscribe = () => {
     // console.log("subscribe");
-
-    viewModel.displayedGraph.nodeEvents.titleChanged.subscribe(token, () => {
-      viewModel.engine?.runOnce(null);
-    });
 
     viewModel.displayedGraph.events.addConnection.subscribe(token, (data: IConnection) => {
       const tgtNode = viewModel.displayedGraph.findNodeById(data.to.nodeId) as AbstractCodeNode;
@@ -83,11 +79,15 @@ export function registerCodeEngine(viewModel: ICodeGraphViewModel): void {
     });
 
     viewModel.engine?.events.beforeRun.subscribe(token, () => {
-      viewModel.displayedGraph.onUpdate();
-
       viewModel.engine?.pause();
 
-      // sort code nodes using toposort.
+      // Update nodes before run graph engine.
+      viewModel.displayedGraph.beforeRun();
+
+      // Sort nodes by order ranks.
+      viewModel.displayedGraph.sortNodesByRank();
+
+      // Sort code nodes using toposort.
       viewModel.displayedGraph.sortNodes();
 
       viewModel.engine?.resume();

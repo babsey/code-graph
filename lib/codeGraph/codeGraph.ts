@@ -130,6 +130,13 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   }
 
   /**
+   * Execute calls of nodes before running graph.
+   */
+  public beforeRun(): void {
+    this.nodes.forEach((node: AbstractCodeNode) => node.beforeRun());
+  }
+
+  /**
    * Clear code graph.
    */
   public clear(): void {
@@ -188,16 +195,9 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   public override load(state: IGraphState): string[] {
     const warnings = super.load(state);
 
-    this.nodes.forEach((node) => node.afterGraphLoaded());
+    this.nodes.forEach((node: AbstractCodeNode) => node.afterGraphLoaded());
 
     return warnings;
-  }
-
-  /**
-   * Trigger on graph update.
-   */
-  public onUpdate(): void {
-    this.nodes.forEach((node) => node.onGraphUpdate());
   }
 
   /**
@@ -243,6 +243,29 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     } catch {
       console.warn("Failed to sort nodes.");
     }
+  }
+
+  /**
+   * Sort nodes by order rank of node types.
+   * @remarks Set `orderRank` in `registerNodeType` function,
+   *          e.g. editor.registerNodeType(nodeType, {orderRank: 0})
+   */
+  public sortNodesByRank(): void {
+    if (this.nodes.length === 0) return;
+
+    const nodeOrderRankMap = new Map();
+    this.nodes.forEach((codeNode: AbstractCodeNode) => {
+      const rank = this.editor.nodeTypes.get(codeNode.type)["orderRank"];
+      if (nodeOrderRankMap.has(rank)) {
+        nodeOrderRankMap.set(rank, [...nodeOrderRankMap.get(rank), codeNode]);
+      } else {
+        nodeOrderRankMap.set(rank, [codeNode]);
+      }
+    });
+
+    const ranks = Array.from(nodeOrderRankMap.keys());
+    ranks.sort((a, b) => a - b);
+    this.nodes = ranks.flatMap((r) => nodeOrderRankMap.get(r));
   }
 }
 

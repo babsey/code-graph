@@ -65,11 +65,12 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
     public template = template;
     public subgraph: CodeGraph | undefined;
 
-    public update(): void {}
-
+    public afterGraphLoaded(): void {}
+    public afterLoaded(): void {}
+    public beforeRun(): void {}
     public onConnected(): void {}
-
     public onUnconnected(): void {}
+    public update(): void {}
 
     public override calculate: CalculateFunction<Record<string, unknown>, Record<string, unknown>> = async (
       inputs,

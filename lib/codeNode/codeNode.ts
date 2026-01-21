@@ -163,8 +163,8 @@ export abstract class AbstractCodeNode extends AbstractNode {
 
   abstract afterGraphLoaded(): void;
   abstract afterLoaded(): void;
+  abstract beforeRun(): void;
   abstract onConnected(): void;
-  abstract onGraphUpdate(): void;
   abstract onUnconnected(): void;
   abstract update(): void;
 
@@ -249,6 +249,13 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Render code of this node.
    */
   renderCode(data: { inputs: Record<string, unknown> }): string {
+    Object.keys(data.inputs)
+      .filter((inputKey) => Array.isArray(data.inputs[inputKey]) && inputKey !== "_code")
+      .forEach((inputKey) => {
+        const inputs: unknown[] = [...data.inputs[inputKey]];
+        inputs.reverse();
+        data.inputs[inputKey] = `[${inputs.join(", ")}]`;
+      });
     return mustache.render(this.state.codeTemplate, data);
   }
 

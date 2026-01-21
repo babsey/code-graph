@@ -80,7 +80,7 @@ export const registerCustomCommands = (
             if (result.length === 0) return;
             const editorState = JSON.parse(result);
             displayedGraph.value.editor.load(editorState);
-            displayedGraph.value.code?.engine?.runOnce(null);
+            displayedGraph.value.code?.engine?.runOnce({});
           }
         };
 
