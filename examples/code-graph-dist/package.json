@@ -10,7 +10,7 @@
     "build-only": "vite build"
   },
   "dependencies": {
-    "@babsey/code-graph": "~0.9",
+    "@babsey/code-graph": "~0.10",
     "@codemirror/lang-python": "~6.2",
     "@codemirror/theme-one-dark": "~6.1",
     "baklavajs": "~2.8",
@@ -28,9 +28,9 @@
     "@vitejs/plugin-vue": "~6.0",
     "@vue/tsconfig": "~0.8",
     "eslint": "~9.39",
-    "eslint-plugin-vue": "~10.6",
+    "eslint-plugin-vue": "~10.7",
     "npm-run-all2": "~8.0",
-    "prettier": "~3.7",
+    "prettier": "~3.8",
     "sass-embedded": "~1.97",
     "typescript": "~5.9",
     "vite": "~7.3",

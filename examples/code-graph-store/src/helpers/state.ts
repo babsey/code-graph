@@ -6,7 +6,7 @@ import { registerNodeTypes } from "../codeNodeTypes/register";
 import { saveEditor } from "./editor";
 
 export const viewModel = useCodeGraph({ code: new PythonCode() });
-registerNodeTypes(viewModel, ["default", "norse", "torch"]);
+registerNodeTypes(viewModel);
 
 const token = Symbol("CodeGraphState");
 
