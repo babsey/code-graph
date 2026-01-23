@@ -4,7 +4,7 @@
 import { NodeInterface, type INodeInterfaceState } from "@baklavajs/core";
 import { markRaw, reactive, type UnwrapRef } from "vue";
 
-import CodeNodeInterfaceComponent from "./CodeNodeInterface.vue";
+import CodeNodeInterfaceComponent from "../components/CodeNodeInterface.vue";
 import type { Code } from "@/code";
 
 export interface ICodeNodeInterfaceRefState {
@@ -14,6 +14,7 @@ export interface ICodeNodeInterfaceRefState {
 export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
   public isCodeNode: boolean = true;
   public code: Code | undefined;
+  public componentName: string = "";
   public state: UnwrapRef<ICodeNodeInterfaceRefState>;
   public type: string | null = null;
 
@@ -53,6 +54,7 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
       value: this.value,
       hidden: this.hidden,
     };
+    if (this.componentName) state.component = this.componentName;
     if (this.state.optional) state.optional = this.state.optional;
     return this.hooks.save.execute(state);
   }
@@ -63,5 +65,3 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
     return this;
   }
 }
-
-export { CodeNodeInterfaceComponent };

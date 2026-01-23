@@ -2,11 +2,12 @@
 
 import {
   CheckboxInterface,
-  CodeNodeInputInterface,
   IntegerInterface,
+  ListInputInterface,
   NumberInterface,
   SelectInterface,
   TextInputInterface,
+  TupleInputInterface,
 } from ".";
 
 export interface IInterfaceProps {
@@ -20,27 +21,31 @@ export interface IInterfaceProps {
   value: unknown;
 }
 
-export const createInterface = (name: string, interfaceProps: IInterfaceProps): CodeNodeInputInterface => {
+export const createInterface = (name: string, interfaceProps: IInterfaceProps) => {
   switch (name) {
     case "CheckBoxInterface":
-      return new CheckboxInterface(interfaceProps.id, interfaceProps.value as boolean);
+      return new CheckboxInterface(interfaceProps.id, Boolean(interfaceProps.value));
     case "IntegerInterface":
       return new IntegerInterface(
         interfaceProps.id,
-        interfaceProps.value as number,
+        Number(interfaceProps.value),
         interfaceProps.min,
         interfaceProps.max,
       );
+    case "ListInputInterface":
+      return new ListInputInterface(interfaceProps.id, String(interfaceProps.value));
     case "NumberInterface":
       return new NumberInterface(
         interfaceProps.id,
-        interfaceProps.value as number,
+        Number(interfaceProps.value),
         interfaceProps.min,
         interfaceProps.max,
       );
     case "SelectInterface":
-      return new SelectInterface(interfaceProps.id, interfaceProps.value as number, interfaceProps.items as string[]);
+      return new SelectInterface(interfaceProps.id, Number(interfaceProps.value), interfaceProps.items as string[]);
+    case "TupleInputInterface":
+      return new TupleInputInterface(interfaceProps.id, String(interfaceProps.value));
     default:
-      return new TextInputInterface(interfaceProps.id, interfaceProps.value as string);
+      return new TextInputInterface(interfaceProps.id, String(interfaceProps.value));
   }
 };

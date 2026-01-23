@@ -1,28 +1,29 @@
 <template>
-  <div style="position: relative">
+  <div>
     <label
       style="
         font-size: 12px;
         padding: 0 6px;
         position: absolute;
-        top: -8px;
+        top: -6px;
         background-color: var(--baklava-node-color-background);
       "
     >
       {{ intf.name }}
     </label>
-    <input v-model="v" type="text" class="baklava-input" :placeholder="intf.name" :title="intf.name" />
+
+    <textarea v-model="v" rows="5" class="baklava-input" :placeholder="intf.name" :title="intf.name" />
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import type { TextInputInterface } from "./textInputInterface";
+import type { TextareaInputInterface } from "../textareaInput/textareaInputInterface";
 
 export default defineComponent({
   props: {
     intf: {
-      type: Object as () => TextInputInterface,
+      type: Object as () => TextareaInputInterface,
       required: true,
     },
     modelValue: {

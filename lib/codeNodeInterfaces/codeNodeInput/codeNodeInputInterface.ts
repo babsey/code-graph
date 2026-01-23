@@ -3,7 +3,8 @@
 import { displayInSidebar } from "@baklavajs/renderer-vue";
 import { markRaw } from "vue";
 
-import { CodeNodeInterface, CodeNodeInterfaceComponent } from "../codeNode";
+import { CodeNodeInterface } from "../codeNode/codeNodeInterface";
+import { CodeNodeInterface as CodeNodeInterfaceComponent } from "../components";
 
 export class CodeNodeInputInterface<T = unknown> extends CodeNodeInterface<T> {
   constructor(name: string = "", value?: T) {

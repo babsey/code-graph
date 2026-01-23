@@ -52,6 +52,7 @@ export interface IDynamicCodeNodeDefinition<I, O> extends IDynamicNodeDefinition
   modules?: string[];
   onConnected?: () => void;
   onUnconnected?: () => void;
+  onUpdate?: (this: DynamicCodeNode<I, O>, inputs: I, outputs: O) => DynamicNodeUpdateResult;
   update?: (node?: AbstractCodeNode) => void;
   variableName?: string;
 }

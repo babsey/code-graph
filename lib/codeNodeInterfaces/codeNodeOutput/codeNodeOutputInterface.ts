@@ -4,7 +4,9 @@ import { markRaw } from "vue";
 import { useGraph } from "@baklavajs/renderer-vue";
 
 import { type AbstractCodeNode } from "@/codeNode";
-import { CodeNodeInterface, CodeNodeInterfaceComponent } from "../codeNode";
+
+import { CodeNodeInterface } from "../codeNode/codeNodeInterface";
+import { CodeNodeInterface as CodeNodeInterfaceComponent } from "../components";
 
 export class CodeNodeOutputInterface extends CodeNodeInterface<string> {
   public isCodeNodeOutput: boolean = true;
@@ -17,7 +19,7 @@ export class CodeNodeOutputInterface extends CodeNodeInterface<string> {
   }
 
   get codeValue(): string {
-    return this.node?.outputs._code.value ?? "";
+    return this.node?.outputs._code?.value ?? "";
   }
 
   get node(): AbstractCodeNode | undefined {
