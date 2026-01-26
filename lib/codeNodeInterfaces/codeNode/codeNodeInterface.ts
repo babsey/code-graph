@@ -2,7 +2,7 @@
 
 // import { BaklavaEvent } from "@baklavajs/events";
 import { NodeInterface, type INodeInterfaceState } from "@baklavajs/core";
-import { markRaw, reactive, type UnwrapRef } from "vue";
+import { markRaw, reactive, type ComponentOptions, type UnwrapRef } from "vue";
 
 import CodeNodeInterfaceComponent from "../components/CodeNodeInterface.vue";
 import type { Code } from "@/code";
@@ -12,20 +12,14 @@ export interface ICodeNodeInterfaceRefState {
 }
 
 export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
+  public component: ComponentOptions = markRaw(CodeNodeInterfaceComponent) as ComponentOptions;
   public isCodeNode: boolean = true;
   public code: Code | undefined;
   public componentName: string = "";
-  public state: UnwrapRef<ICodeNodeInterfaceRefState>;
+  public state: UnwrapRef<ICodeNodeInterfaceRefState> = reactive({
+    optional: false,
+  });
   public type: string | null = null;
-
-  constructor(name: string, value: T) {
-    super(name, value);
-    this.setComponent(markRaw(CodeNodeInterfaceComponent));
-
-    this.state = reactive({
-      optional: false,
-    });
-  }
 
   get optional(): boolean {
     return this.state.optional;
@@ -40,22 +34,33 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
   override load(state: INodeInterfaceState<T>): void {
     this.id = state.id;
     this.templateId = state.templateId;
-    if (this.name === "_code") return;
-    if (state.optional) this.state.optional = state.optional;
+
+    if (["_code", "out"].includes(this.name)) return;
+
     this.value = state.value;
-    this.hooks.load.execute(state);
     this.hidden = state.hidden;
+
+    if (state.component) this.componentName = state.component;
+    if (state.optional) this.state.optional = state.optional;
+
+    this.hooks.load.execute(state);
   }
 
   override save(): INodeInterfaceState<T> {
     const state: INodeInterfaceState<T> = {
       id: this.id,
       templateId: this.templateId,
-      value: this.value,
-      hidden: this.hidden,
+      value: "" as T,
     };
-    if (this.componentName) state.component = this.componentName;
-    if (this.state.optional) state.optional = this.state.optional;
+
+    if (!["_code", "out"].includes(this.name)) {
+      state.value = this.value;
+      state.hidden = this.hidden;
+
+      if (this.componentName) state.component = this.componentName;
+      if (this.state.optional) state.optional = this.state.optional;
+    }
+
     return this.hooks.save.execute(state);
   }
 

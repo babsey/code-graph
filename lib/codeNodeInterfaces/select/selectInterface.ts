@@ -13,11 +13,12 @@ export interface IAdvancedSelectInterfaceItem<V> {
 export type SelectInterfaceItem<V> = string | IAdvancedSelectInterfaceItem<V>;
 
 export class SelectInterface<V = string> extends BaseStringInterface {
-  component = markRaw(SelectInterfaceComponent) as ComponentOptions;
-  items: SelectInterfaceItem<V>[];
+  public component: ComponentOptions = markRaw(SelectInterfaceComponent) as ComponentOptions;
+  public componentName: string = "SelectInterface";
+  public items: SelectInterfaceItem<V>[] = [];
 
-  constructor(name: string, value: V, items: SelectInterfaceItem<V>[]) {
+  constructor(name: string, value: V, items: SelectInterfaceItem<V>[] | undefined) {
     super(name, value as string);
-    this.items = items;
+    if (items) this.items = items;
   }
 }

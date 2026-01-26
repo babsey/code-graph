@@ -6,5 +6,6 @@ import { markRaw, type ComponentOptions } from "vue";
 import { BaseNumericInterface } from "../baseNumericInterface";
 
 export class NumberInterface extends BaseNumericInterface {
-  component = markRaw(NumberInterfaceComponent) as ComponentOptions;
+  public component: ComponentOptions = markRaw(NumberInterfaceComponent) as ComponentOptions;
+  public componentName: string = "NumberInterface";
 }

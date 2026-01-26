@@ -31,7 +31,6 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
     inputs: Map<string, unknown>,
     calculationData: CalculationData,
   ): Promise<CalculationResult> {
-    // console.log("run graph: ", graph.shortId);
     if (!this.order.has(graph.id)) this.order.set(graph.id, sortTopologically(graph));
     const { calculationOrder, connectionsFromNode } = this.order.get(graph.id)!;
 

@@ -14,6 +14,7 @@ import {
   CodeNodeInterface,
   CodeNodeOutputInterface,
   IntegerInterface,
+  NumberInterface,
   TextInputInterface,
   createInterface,
 } from "@/codeNodeInterfaces";
@@ -90,7 +91,6 @@ export function defineDynamicCodeNode<I, O>(
 
       this.addInput(
         "_code",
-        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
         new CodeNodeInterface<string[]>("_code", [])
           .use(setTypeForMultipleConnections, nodeType)
           .use(allowMultipleConnections)
@@ -98,7 +98,6 @@ export function defineDynamicCodeNode<I, O>(
       );
       this.addOutput(
         "_code",
-        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
         new CodeNodeInterface<string[]>("_code", [])
           .use(setTypeForMultipleConnections, nodeType)
           .use(allowMultipleConnections)
@@ -187,9 +186,13 @@ export function defineDynamicCodeNode<I, O>(
           if (inputState.component) {
             inputInterface = createInterface(inputState.component, { ...inputState, ...{ id: k } });
           } else if (typeof value == "number") {
-            inputInterface = new IntegerInterface(k, value as number);
+            if (0 < value && value < 1) {
+              inputInterface = new NumberInterface(k, Number(value));
+            } else {
+              inputInterface = new IntegerInterface(k, Number(value));
+            }
           } else {
-            inputInterface = new TextInputInterface(k, JSON.stringify(value));
+            inputInterface = new TextInputInterface(k, String(value));
           }
 
           inputInterface.use(displayInSidebar, true);

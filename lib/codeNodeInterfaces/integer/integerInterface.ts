@@ -1,16 +1,13 @@
 // integerInterface.ts
 
 import { IntegerInterfaceComponent } from "@baklavajs/renderer-vue";
-import { markRaw } from "vue";
+import { markRaw, type ComponentOptions } from "vue";
 
 import { BaseNumericInterface } from "../baseNumericInterface";
 
 export class IntegerInterface extends BaseNumericInterface {
-  constructor(name: string, value: number = 0) {
-    super(name, value);
-    this.componentName = "IntegerInterface";
-    this.setComponent(markRaw(IntegerInterfaceComponent));
-  }
+  public component: ComponentOptions = markRaw(IntegerInterfaceComponent) as ComponentOptions;
+  public componentName: string = "IntegerInterface";
 
   public validate(v: number) {
     return Number.isInteger(v) && super.validate(v);

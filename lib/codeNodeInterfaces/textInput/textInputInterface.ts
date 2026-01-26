@@ -6,5 +6,5 @@ import { TextInputInterface as TextInputInterfaceComponent } from "../components
 import { BaseStringInterface } from "../baseStringInterface";
 
 export class TextInputInterface extends BaseStringInterface {
-  component = markRaw(TextInputInterfaceComponent) as ComponentOptions;
+  public component: ComponentOptions = markRaw(TextInputInterfaceComponent) as ComponentOptions;
 }

@@ -52,7 +52,6 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
 
       this.addInput(
         "_code",
-        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
         new CodeNodeInterface<string[]>("_code", [])
           .use(setTypeForMultipleConnections, nodeType)
           .use(allowMultipleConnections)
@@ -60,7 +59,6 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       );
       this.addOutput(
         "_code",
-        // new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
         new CodeNodeInterface<string[]>("_code", [])
           .use(setTypeForMultipleConnections, nodeType)
           .use(allowMultipleConnections)
