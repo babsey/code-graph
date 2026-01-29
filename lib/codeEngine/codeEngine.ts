@@ -46,7 +46,7 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
 
       // Update code nodes.
       if (n.isCodeNode) {
-        n.update()
+        n.update();
         n.updateCodeTemplate();
         n.updateOutputNames();
       }

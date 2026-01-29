@@ -1,4 +1,4 @@
 // utils
 
-export * from "./download"
-export * from "./object"
+export * from "./download";
+export * from "./object";
