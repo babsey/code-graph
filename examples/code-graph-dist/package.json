@@ -10,7 +10,7 @@
     "build-only": "vite build"
   },
   "dependencies": {
-    "@babsey/code-graph": "~0.10",
+    "@babsey/code-graph": "~0.11",
     "@codemirror/lang-python": "~6.2",
     "@codemirror/theme-one-dark": "~6.1",
     "baklavajs": "~2.8",
