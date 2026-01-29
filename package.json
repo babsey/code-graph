@@ -1,6 +1,6 @@
 {
   "name": "@babsey/code-graph",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "author": "babsey <spreizer@web.de>",
   "license": "MIT",
   "type": "module",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@tsconfig/node-lts": "~24.0",
     "@types/mustache": "~4.2",
-    "@types/node": "~25.0",
+    "@types/node": "~25.1",
     "@types/toposort": "~2.0",
     "@vitejs/plugin-vue": "~6.0",
     "@vue/eslint-config-prettier": "~10.2",
