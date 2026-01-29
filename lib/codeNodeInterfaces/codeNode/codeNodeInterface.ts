@@ -2,10 +2,15 @@
 
 // import { BaklavaEvent } from "@baklavajs/events";
 import { NodeInterface, type INodeInterfaceState } from "@baklavajs/core";
+import { allowMultipleConnections } from "@baklavajs/engine";
 import { markRaw, reactive, type ComponentOptions, type UnwrapRef } from "vue";
+import { setTypeForMultipleConnections } from "@baklavajs/interface-types";
 
-import CodeNodeInterfaceComponent from "../components/CodeNodeInterface.vue";
+import type { AbstractCodeNode } from "@/codeNode";
 import type { Code } from "@/code";
+import { nodeType } from "@/interfaceTypes";
+
+import { CodeNodeInterface as CodeNodeInterfaceComponent } from "../components";
 
 export interface ICodeNodeInterfaceRefState {
   optional: boolean;
@@ -70,3 +75,20 @@ export class CodeNodeInterface<T = unknown> extends NodeInterface<T> {
     return this;
   }
 }
+
+export const addCodeInterfaces = (codeNode: AbstractCodeNode) => {
+  codeNode.addInput(
+    "_code",
+    new CodeNodeInterface<string[]>("_code", [])
+      .use(setTypeForMultipleConnections, nodeType)
+      .use(allowMultipleConnections)
+      .setHidden(true),
+  );
+  codeNode.addOutput(
+    "_code",
+    new CodeNodeInterface<string[]>("_code", [])
+      .use(setTypeForMultipleConnections, nodeType)
+      .use(allowMultipleConnections)
+      .setHidden(true),
+  );
+};

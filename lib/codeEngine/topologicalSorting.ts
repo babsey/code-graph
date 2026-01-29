@@ -2,8 +2,8 @@
 
 import { type IConnection } from "@baklavajs/core";
 
-import type { AbstractCodeNode } from "../codeNode";
-import { CodeGraph } from "../codeGraph";
+import type { AbstractCodeNode } from "@/codeNode";
+import { CodeGraph } from "@/codeGraph";
 
 export interface ITopologicalSortingResult {
   calculationOrder: AbstractCodeNode[];

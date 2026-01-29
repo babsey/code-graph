@@ -63,7 +63,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
     return this.nodes.map((node: AbstractCodeNode) => node.id);
   }
 
-  get nodes(): AbstractCodeNode[] {
+  override get nodes(): readonly AbstractCodeNode[] {
     return super.nodes as AbstractCodeNode[];
   }
 
@@ -78,6 +78,10 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   get selectedNodeIds(): string[] {
     return this.selectedNodes.map((node: AbstractCodeNode) => node.id);
   }
+
+  // override get selectedNodes(): AbstractCodeNode[] {
+  //   return super.selectedNodes as AbstractCodeNode[];
+  // }
 
   get shortId(): string {
     return this.id.slice(0, 6);
@@ -95,6 +99,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * Add code node to graph.
    * @param node code node
    * @param props optional
+   * @returns code node intstance
    */
   public override addNode(node: AbstractCodeNode, props?: unknown): AbstractCodeNode | undefined {
     if (node.state && props) node.state.props = props;
@@ -106,7 +111,7 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * @param node code node
    * @param position position
    * @param props optional
-   * @returns code node
+   * @returns code node instance
    */
   public addNodeAtCoordinates = (
     node: AbstractCodeNode,
@@ -122,11 +127,12 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
    * Add connection of code nodes
    * @param from code node interface
    * @param to code node interface
+   * @returns connection intstance
    */
-  public override addConnection(from: CodeNodeInterface, to: CodeNodeInterface): void {
+  public override addConnection(from: CodeNodeInterface, to: CodeNodeInterface): Connection | undefined {
     if (from && from?.name !== "_code") from.hidden = false;
     if (to && to?.name !== "_code") to.hidden = false;
-    super.addConnection(from, to);
+    return super.addConnection(from, to);
   }
 
   /**

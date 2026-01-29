@@ -72,11 +72,6 @@ export class Code {
     return this.state.script;
   }
 
-  set script(value: string) {
-    this.state.script = value;
-    // this.engine?.runOnce({});
-  }
-
   get shortId(): string {
     return this.id.slice(0, 6);
   }
@@ -89,7 +84,6 @@ export class Code {
    * Clear code.
    */
   clear(): void {
-    // this.graph?.clear();
     this.state.script = "";
   }
 

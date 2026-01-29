@@ -14,7 +14,12 @@ import {
 import { reactive, type UnwrapRef } from "vue";
 
 import type { Code } from "@/code";
-import type { CodeNodeInputInterface, CodeNodeInterface, CodeNodeOutputInterface } from "@/codeNodeInterfaces";
+import {
+  CodeNodeInterface,
+  formatInputs,
+  type CodeNodeInputInterface,
+  type CodeNodeOutputInterface,
+} from "@/codeNodeInterfaces";
 import type { CodeGraph } from "@/codeGraph";
 
 mustache.escape = (value: string) => value;
@@ -357,30 +362,14 @@ export abstract class CodeNode<I, O> extends AbstractCodeNode {
     });
   }
 
-  override load(state: ICodeNodeState<I, O>): void {
+  public load(state: ICodeNodeState<I, O>): void {
     super.load(state);
     this.afterLoaded();
+  }
+
+  public save(): ICodeNodeState<I, O> {
+    return super.save() as ICodeNodeState<I, O>;
   }
 }
 
 export type AbstractCodeNodeConstructor = new () => AbstractCodeNode;
-
-/**
- * Format inputs for mustache templates.
- * @param intfs code node input interfaces
- * @returns a list of string
- */
-export const formatInputs = (intfs: Record<string, CodeNodeInputInterface>, withKeywords: boolean = true): string[] => {
-  const args: string[] = [];
-
-  const inputKeys = Object.keys(intfs);
-  inputKeys.forEach((inputKey: string) => {
-    const intf = intfs[inputKey];
-    if (intf?.hidden) return;
-
-    const keyword = withKeywords && args.length < inputKeys.indexOf(inputKey) ? `${inputKey}=` : "";
-    args.push(`${keyword}{{ inputs.${inputKey} }}`);
-  });
-
-  return args;
-};

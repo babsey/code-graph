@@ -6,19 +6,16 @@ import type {
   NodeInterface,
   NodeInterfaceDefinition,
 } from "@baklavajs/core";
-import { setTypeForMultipleConnections } from "@baklavajs/interface-types";
-import { allowMultipleConnections } from "@baklavajs/engine";
 import { displayInSidebar } from "@baklavajs/renderer-vue";
 
 import {
-  CodeNodeInterface,
   CodeNodeOutputInterface,
   IntegerInterface,
   NumberInterface,
   TextInputInterface,
+  addCodeInterfaces,
   createInterface,
 } from "@/codeNodeInterfaces";
-import { nodeType } from "@/interfaceTypes";
 
 import { CodeNode, type AbstractCodeNode, type ICodeNodeState } from "./codeNode";
 
@@ -89,20 +86,7 @@ export function defineDynamicCodeNode<I, O>(
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate;
       if (definition.variableName) this.variableName = definition.variableName;
 
-      this.addInput(
-        "_code",
-        new CodeNodeInterface<string[]>("_code", [])
-          .use(setTypeForMultipleConnections, nodeType)
-          .use(allowMultipleConnections)
-          .setHidden(true),
-      );
-      this.addOutput(
-        "_code",
-        new CodeNodeInterface<string[]>("_code", [])
-          .use(setTypeForMultipleConnections, nodeType)
-          .use(allowMultipleConnections)
-          .setHidden(true),
-      );
+      addCodeInterfaces(this);
 
       this.staticInputKeys.push("_code");
       this.staticOutputKeys.push("_code");

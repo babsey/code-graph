@@ -1,6 +1,7 @@
 // codeNodeInterfaces
 
 export * from "./createInterface";
+export * from "./formatInputs";
 
 export * from "./checkbox/checkboxInterface";
 export * from "./codeNode/codeNodeInterface";

@@ -10,17 +10,15 @@ import {
   type IGraphNode,
   type INodeState,
 } from "@baklavajs/core";
-import { allowMultipleConnections, applyResult } from "@baklavajs/engine";
-import { setType } from "@baklavajs/interface-types";
+import { applyResult } from "@baklavajs/engine";
+import mustache from "mustache";
 
-import { CodeNodeInterface } from "@/codeNodeInterfaces";
-import { AbstractCodeNode } from "@/codeNode";
-import { nodeType } from "@/interfaceTypes";
+import { AbstractCodeNode, type ICodeNodeState } from "@/codeNode";
+import { CodeGraphInputNode, CodeGraphOutputNode } from "@/subgraph";
+import { CodeNodeInterface, addCodeInterfaces } from "@/codeNodeInterfaces";
 
 import type { CodeGraph, ICodeGraphState } from "./codeGraph";
-import { CodeGraphInputNode, CodeGraphOutputNode } from "../subgraph/graphInterface";
 import type { CodeGraphTemplate } from "./codeGraphTemplate";
-import mustache from "mustache";
 
 export interface IGraphCodeNodeState extends INodeState<unknown, unknown> {
   graphState: ICodeGraphState;
@@ -65,12 +63,12 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
     public template = template;
     public subgraph: CodeGraph | undefined;
 
-    public afterGraphLoaded(): void {}
-    public afterLoaded(): void {}
-    public beforeRun(): void {}
-    public onConnected(): void {}
-    public onUnconnected(): void {}
-    public update(): void {}
+    // public afterGraphLoaded(): void {}
+    // public afterLoaded(): void {}
+    // public beforeRun(): void {}
+    // public onConnected(): void {}
+    // public onUnconnected(): void {}
+    // public update(): void {}
 
     public override calculate: CalculateFunction<Record<string, unknown>, Record<string, unknown>> = async (
       inputs,
@@ -147,6 +145,12 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
 
       this.subgraph = this.template.createGraph();
       this._title = this.template.name;
+
+      const outputNode = this.template.nodes.find(
+        (node: ICodeNodeState<unknown, unknown>) => node.type === "__baklava_SubgraphOutputNode",
+      );
+      this.variableName = (outputNode?.inputs.name?.value as string) ?? "s";
+
       this.updateInterfaces();
       this.state.codeTemplate = "{{ #nodes }}{{ script }}\n{{ /nodes }}";
       this.events.update.emit(null);
@@ -190,14 +194,7 @@ export function createCodeGraphNodeType(template: GraphTemplate): new () => Abst
         }
       }
 
-      this.addInput(
-        "_code",
-        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
-      );
-      this.addOutput(
-        "_code",
-        new CodeNodeInterface("_code", []).use(setType, nodeType).use(allowMultipleConnections).setHidden(true),
-      );
+      addCodeInterfaces(this);
 
       // Add an internal output to allow accessing the calculation results of nodes inside the graph
       this.addOutput("_calculationResults", new NodeInterface("_calculationResults", undefined).setHidden(true));

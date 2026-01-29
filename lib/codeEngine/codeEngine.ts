@@ -39,11 +39,14 @@ export class CodeEngine<CalculationData = unknown> extends BaseEngine<Calculatio
       const inputsForNode: Record<string, unknown> = {};
       Object.entries(n.inputs).forEach(([k, v]) => {
         if (k === "_code") return;
-        inputsForNode[k] = this.getInterfaceValue(inputs, v.id);
+        try {
+          inputsForNode[k] = this.getInterfaceValue(inputs, v.id);
+        } catch {}
       });
 
       // Update code nodes.
       if (n.isCodeNode) {
+        n.update()
         n.updateCodeTemplate();
         n.updateOutputNames();
       }

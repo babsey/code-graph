@@ -1,13 +1,8 @@
 // defineCodeNode.ts
 
 import type { CalculationContext, INodeDefinition, Node, NodeInterfaceDefinition } from "@baklavajs/core";
-import { setTypeForMultipleConnections } from "@baklavajs/interface-types";
-import { allowMultipleConnections } from "@baklavajs/engine";
-
-import { CodeNodeInterface } from "@/codeNodeInterfaces";
-import { nodeType } from "@/interfaceTypes";
-
 import { CodeNode, type AbstractCodeNode } from "./codeNode";
+import { addCodeInterfaces } from "@/codeNodeInterfaces";
 
 export type NodeConstructor<I, O> = new () => Node<I, O>;
 export type NodeInstanceOf<T> = T extends new () => Node<infer A, infer B> ? Node<A, B> : never;
@@ -50,20 +45,7 @@ export function defineCodeNode<I, O>(definition: ICodeNodeDefinition<I, O>): new
       if (definition.codeTemplate) this.codeTemplate = definition.codeTemplate;
       if (definition.variableName != undefined) this.variableName = definition.variableName;
 
-      this.addInput(
-        "_code",
-        new CodeNodeInterface<string[]>("_code", [])
-          .use(setTypeForMultipleConnections, nodeType)
-          .use(allowMultipleConnections)
-          .setHidden(true),
-      );
-      this.addOutput(
-        "_code",
-        new CodeNodeInterface<string[]>("_code", [])
-          .use(setTypeForMultipleConnections, nodeType)
-          .use(allowMultipleConnections)
-          .setHidden(true),
-      );
+      addCodeInterfaces(this)
     }
 
     public afterGraphLoaded(): void {
