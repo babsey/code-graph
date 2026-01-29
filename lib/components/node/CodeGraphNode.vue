@@ -25,7 +25,7 @@
         <div class="__title-label" style="flex-grow: 1">
           <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>
           {{ node.title }}
-          {{ node.graph.shortId }} {{ node.shortId }}
+          <!-- {{ node.graph.shortId }} {{ node.shortId }} -->
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="node.isCodeNode">
