@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@tsconfig/node-lts": "~24.0",
-    "@types/node": "~25.0",
+    "@types/node": "~25.1",
     "@vitejs/plugin-vue": "~6.0",
     "@vue/tsconfig": "~0.8",
     "eslint": "~9.39",

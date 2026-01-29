@@ -28,7 +28,7 @@
       <pane :size="100 - size">
         <CodeEditor
           v-if="viewModel.code"
-          v-model="viewModel.code.script"
+          v-model="viewModel.code.state.script"
           :locked="viewModel.code.lockCode"
           @update:locked="(v: boolean) => (viewModel.code.lockCode = v)"
         />

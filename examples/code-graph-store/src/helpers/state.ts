@@ -7,6 +7,7 @@ import { saveEditor } from "./editor";
 
 export const viewModel = useCodeGraph({ code: new PythonCode() });
 registerNodeTypes(viewModel);
+// registerNodeTypes(viewModel, ['default', 'norse', 'torch']); // for datipilot
 
 const token = Symbol("CodeGraphState");
 
