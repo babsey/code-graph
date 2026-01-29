@@ -52,7 +52,7 @@ export class Code {
 
   set lockCode(value: boolean) {
     this.state.lockCode = value;
-    // this.engine?.runOnce({});
+    if (!value) this.engine?.runOnce({});
   }
 
   get modules(): string[] {
