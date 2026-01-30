@@ -10,6 +10,7 @@ export class SliderInterface extends BaseNumericInterface {
   public componentName: string = "SliderInterface";
   public min: number = 0;
   public max: number = 1;
+  public step: number = 0.01;
 
   override getValue = (): string => `${Math.round(this.value * 1000) / 1000}`;
 }

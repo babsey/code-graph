@@ -48,6 +48,7 @@ export interface ICodeGraphViewModel {
     /** Called whenever an interface is rendered */
     renderInterface: SequentialHook<{ intf: CodeNodeInterface<unknown>; el: HTMLElement }, null>;
   };
+  showNodeId: boolean;
   switchGraph: (newGraph: CodeGraph | CodeGraphTemplate) => void;
 
   engine?: CodeEngine;
@@ -98,6 +99,7 @@ export function useCodeGraph(props?: { existingEditor?: CodeEditor; code?: Code 
     onBeforeUnmount: () => {},
     onMounted: () => {},
     settings,
+    showNodeId: false,
     switchGraph,
   }) as ICodeGraphViewModel;
 

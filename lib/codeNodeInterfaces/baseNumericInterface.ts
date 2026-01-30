@@ -20,11 +20,13 @@ function isValidator(intf: unknown): intf is IValidator {
 export class BaseNumericInterface extends CodeNodeInputInterface<number> implements IValidator {
   public min?: number;
   public max?: number;
+  public step?: number;
 
-  constructor(name: string, value: number, min?: number, max?: number) {
+  constructor(name: string, value: number, min?: number, max?: number, step?: number) {
     super(name, value);
     this.min = min;
     this.max = max;
+    this.step = step;
 
     this.use(setType, numberType);
   }

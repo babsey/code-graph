@@ -25,7 +25,7 @@
         <div class="__title-label" style="flex-grow: 1">
           <span v-if="node.idx > -1">{{ node.idx + 1 }} - </span>
           {{ node.title }}
-          <!-- {{ node.graph.shortId }} {{ node.shortId }} -->
+          <span v-if="viewModel.showNodeId">{{ node.shortId }}</span>
         </div>
         <div class="__menu" style="display: flex">
           <template v-if="node.isCodeNode">
@@ -113,9 +113,10 @@
 <script setup lang="ts">
 import { AbstractNode, GRAPH_NODE_TYPE_PREFIX, type IGraphNode } from "@baklavajs/core";
 import { Components, useGraph, useViewModel } from "@baklavajs/renderer-vue";
-import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, type Ref } from "vue";
 
 import type { AbstractCodeNode } from "@/codeNode";
+import type { ICodeGraphViewModel } from "@/viewModel";
 import { CodeGraphNodeInterface } from "@/components";
 import { CodeVariable, DotsVertical, LayoutSidebarRightExpand, LockCode, TransitionBottom } from "@/icons";
 
@@ -139,7 +140,7 @@ const emit = defineEmits<{
   (e: "update"): void;
 }>();
 
-const { viewModel } = useViewModel();
+const { viewModel }: { viewModel: Ref<ICodeGraphViewModel> } = useViewModel();
 const { graph, switchGraph } = useGraph();
 
 const el = ref<HTMLElement | null>(null);

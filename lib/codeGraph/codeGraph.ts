@@ -207,6 +207,16 @@ export class CodeGraph extends Graph implements IBaklavaEventEmitter, IBaklavaTa
   }
 
   /**
+   * Remove connections to or from the node.
+   * @param nodeId node ID
+   */
+  public removeConnectionsByNodeId(nodeId: string): void {
+    this.connections
+      .filter((connection: Connection) => connection.to.nodeId === nodeId || connection.from.nodeId === nodeId)
+      .forEach((connection: Connection) => this.removeConnection(connection));
+  }
+
+  /**
    * Render code script.
    */
   public renderCode(data: { nodes: AbstractCodeNode[] }): string {

@@ -247,7 +247,19 @@ export abstract class AbstractCodeNode extends AbstractNode {
    * Remove this node from the graph.
    */
   remove(): void {
-    this.graph?.removeNode(this);
+    if (!this.graph) return;
+
+    // this.removeConnections();
+    this.graph.removeNode(this);
+  }
+
+  /**
+   * Remove connections of this node.
+   */
+  removeConnections(): void {
+    if (!this.graph) return;
+
+    this.graph.removeConnectionsByNodeId(this.id);
   }
 
   /**

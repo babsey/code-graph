@@ -26,7 +26,7 @@ export interface IInterfaceProps {
 
 export const createInterface = (name: string, interfaceProps: IInterfaceProps) => {
   switch (name) {
-    case "CheckBoxInterface":
+    case "CheckboxInterface":
       return new CheckboxInterface(interfaceProps.id, Boolean(interfaceProps.value));
 
     case "IntegerInterface":
