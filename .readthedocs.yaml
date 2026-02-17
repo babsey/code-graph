@@ -13,14 +13,12 @@ build:
     python: "3.12"
     nodejs: "22"
   commands:
-    - cd docs
     # Install myst
     - npm install -g mystmd
     # Build the site
-    - myst build --html
+    - myst build --html docs
     # Copy the output to Read the Docs expected location
     - mkdir -p $READTHEDOCS_OUTPUT/html/
-    - ls 
     - cp -r _build/html/. "$READTHEDOCS_OUTPUT/html"
     # Clean up build artifacts
     - rm -rf _build
