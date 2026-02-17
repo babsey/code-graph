@@ -15,8 +15,6 @@ build:
   commands:
     # Install myst
     - npm install -g mystmd
-    # Go to docs folder
-    - cd docs
     # Build the site
     - myst build --html
     # Copy the output to Read the Docs expected location
