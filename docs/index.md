@@ -1,37 +1,37 @@
 ---
-title: Code Graph
-subtitle: From graph to code
-description: Code Graph is designed to visualize code nodes in graph.
+# https://vitepress.dev/reference/default-theme-home-page
+layout: home
+
+hero:
+  name: Code Graph
+  tagline: Graph to code in minutes
+  image:
+    src: /images/code-graph.png
+    alt: Code-graph
+  actions:
+    - theme: brand
+      text: What is Code Graph?
+      link: /guide/what-is-code-graph
+    - theme: alt
+      text: Quickstart
+      link: /guide/getting-started
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/babsey/code-graph
+
+
+features:
+  - icon: 
+      src: /flaticon/interactive.png
+    title: Interactive Graph
+    details: Effortlessly easy code generation with interactive graph
+  - icon: 
+      src: /flaticon/web-plugin.png
+    title: Extensible
+    details: Own code node types can be easily edited and registered
+  - icon: 
+      src: /flaticon/stability.png
+    title: Stable
+    details: A web-based application is built with Vue 3 and Typescript
 ---
-
-```{note}
-  This documentation is in a development mode. Use it with caution.
-```
-
-:::{figure} static/images/code-graph-nest.png
-:::
-
-### Overview
-```code-graph``` is a web-based, interactive graph editor and visualization application built with Vue 3 and TypeScript. 
-It provides a graphical interface for constructing, editing, and exploring node-and-edge network graphs. 
-
-The project is authored by Sebastian Spreizer, also the creator of NEST Desktop — a web-based GUI for the NEST spiking neural network simulator — making ```code-graph``` likely a modular, reusable graph editor designed for domain-specific scientific network visualization.
-
-With 210+ commits and 11 tagged releases, it is an actively maintained project.
-
-
-----
-
-### Prerequisites
-- Node.js v18+ (```node --version```)
-- Yarn — ```npm install -g yarn``` ([docs](https://yarnpkg.com/getting-started/install))
-- Git
-- Docker (optional, for containerized deployment)
-
-
-:::{card} Get Started With Code graph 👩‍💻
-:link: ./quickstart.md
-Start here to get up and running with code graph interface.
-:::
-
 
