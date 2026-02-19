@@ -32,8 +32,8 @@ features:
     details: Generate code from graph nodes.
   - icon: 
       src: /flaticon/web-plugin.png
-    title: Extensible
-    details: Own code node types can be easily edited and registered
+    title: Extensible node types
+    details: Write own code node types that can be easily registered
   - icon: 
       src: /flaticon/stability.png
     title: Stable
