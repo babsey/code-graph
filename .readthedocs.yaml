@@ -5,14 +5,17 @@
 version: 2
 
 build:
-  os: ubuntu-24.04
+  os: ubuntu-lts-latest
   tools:
-    nodejs: "22"
-  commands:
-    # Install vitepress and build the docs
-    - npm install -g vitepress@2.0.0-alpha.16; npm run docs:build
-    # Copy the output to Read the Docs expected location
-    - mkdir -p $READTHEDOCS_OUTPUT/html/
-    - cp -r docs/.vitepress/dist/. "$READTHEDOCS_OUTPUT/html"
-    # Clean up build artifacts
-    - rm -rf docs/.vitepress
+    nodejs: "latest"
+  jobs:
+    install:
+      - npm install vitepress
+    build:
+      html:
+        # The site was created by running `vitepress init`
+        # and following the official guide
+        # https://vitepress.dev/guide/getting-started
+        - vitepress build docs
+        - mkdir -p $READTHEDOCS_OUTPUT/
+        - mv docs/.vitepress/dist $READTHEDOCS_OUTPUT/html
