@@ -11,6 +11,7 @@ build:
     nodejs: "latest"
   jobs:
     install:
+      - rm package.json yarn.lock
       - npm install vitepress@next
     build:
       html:
