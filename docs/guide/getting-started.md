@@ -4,8 +4,10 @@
 
 ### Prerequisites
 
+- Terminal
 - Node.js version 22 or higher
-- Terminal for accessing Code graph.
+- Git
+- Docker (optional, for containerized deployment)
 
 Code graph can be used on its own, or be installed into a node project.
 

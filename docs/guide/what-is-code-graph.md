@@ -1,7 +1,13 @@
 # What is Code Graph?
 
-Code graph is a web-based interactive graph editor desigend for making own code script.
-In a nutshell, Code Graph takes code nodes and generates Python code.
+Code Graph is a web-based, interactive graph editor and visualization application built with Vue 3 and TypeScript. 
+It provides a graphical interface for constructing, editing, and exploring node-and-edge network graphs.
+
+The project is authored by Sebastian Spreizer, also the creator of NEST Desktop
+ — a web-based GUI for the NEST spiking neural network simulator — 
+ making code-graph likely a modular, reusable graph editor designed for domain-specific scientific network visualization.
+
+With 210+ commits and 11 tagged releases, it is an actively maintained project.
 
 <div class="tip custom-block" style="padding-top: 8px">
 

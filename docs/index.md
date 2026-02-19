@@ -6,7 +6,7 @@ hero:
   name: Code Graph
   tagline: Graph to code in minutes
   image:
-    src: /images/code-graph.png
+    src: /flaticon/computer-engineer.png
     alt: Code-graph
   actions:
     - theme: brand

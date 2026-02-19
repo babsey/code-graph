@@ -18,6 +18,14 @@ export default defineConfig({
     //   { text: 'Examples', link: '/markdown-examples' }
     // ],
 
+    footer: {
+      message: [
+        'Released under the <a href="https://github.com/vuejs/vitepress/blob/main/LICENSE">MIT License</a>.',
+        'Credits for <a href="/resources/credits#resource-attributions">Icons and stickers</a>'
+    ].join('<br />'),
+      copyright: 'Copyright © 2026-present <a href="https://github.com/babsey">Sebastian Spreizer</a>'
+    },
+
     sidebar: [
       {
         text: "Introduction",

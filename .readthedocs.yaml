@@ -11,7 +11,7 @@ build:
     nodejs: "latest"
   jobs:
     install:
-      - rm package.json yarn.lock # remove existed package config because of conflicts.
+      - rm package.json yarn.lock # remove existed package file because of conflicts.
       - npm install vitepress@next # install vitepress v2
     build:
       html:
