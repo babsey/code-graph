@@ -1,5 +1,6 @@
 # Read the Docs configuration file
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+# Deploying VitePress on Read the Docs https://docs.readthedocs.com/platform/stable/intro/vitepress.html
 
 # Required
 version: 2
@@ -10,7 +11,7 @@ build:
     nodejs: "latest"
   jobs:
     install:
-      - npm install vitepress
+      - npm install -g vitepress
     build:
       html:
         # The site was created by running `vitepress init`
