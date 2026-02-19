@@ -11,12 +11,12 @@ build:
     nodejs: "latest"
   jobs:
     install:
-      - cd docs; npm install vitepress@next
+      - npm install vitepress@next
     build:
       html:
         # The site was created by running `vitepress init`
         # and following the official guide
         # https://vitepress.dev/guide/getting-started
-        - cd docs; vitepress build
+        - vitepress build
         - mkdir -p $READTHEDOCS_OUTPUT/
         - mv docs/.vitepress/dist $READTHEDOCS_OUTPUT/html
