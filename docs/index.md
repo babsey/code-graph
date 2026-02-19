@@ -4,6 +4,7 @@ layout: home
 
 hero:
   name: Code Graph
+  text: Modular Code Generator
   tagline: Graph to code in minutes
   image:
     src: /flaticon/computer-engineer.png
@@ -24,7 +25,11 @@ features:
   - icon: 
       src: /flaticon/interactive.png
     title: Interactive Graph
-    details: Effortlessly easy code generation with interactive graph
+    details: Effortlessly easy usage of interactive graph
+  - icon: 
+      src: /flaticon/modular.png
+    title: Modular Code templates
+    details: Generate code from graph nodes.
   - icon: 
       src: /flaticon/web-plugin.png
     title: Extensible

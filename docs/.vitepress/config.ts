@@ -21,8 +21,8 @@ export default defineConfig({
     footer: {
       message: [
         'Released under the <a href="https://github.com/vuejs/vitepress/blob/main/LICENSE">MIT License</a>.',
-        'Credits for <a href="/resources/credits#resource-attributions">Icons and stickers</a>'
-    ].join('<br />'),
+        'Credits for <a href="/resources/credits#resource-attributions">icons and stickers</a>'
+    ].join(' '),
       copyright: 'Copyright © 2026-present <a href="https://github.com/babsey">Sebastian Spreizer</a>'
     },
 
