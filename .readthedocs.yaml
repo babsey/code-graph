@@ -11,8 +11,8 @@ build:
     nodejs: "latest"
   jobs:
     install:
-      - rm package.json yarn.lock
-      - npm install vitepress@next
+      - rm package.json yarn.lock # remove existed package config because of conflicts.
+      - npm install vitepress@next # install vitepress v2
     build:
       html:
         # The site was created by running `vitepress init`
