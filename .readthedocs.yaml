@@ -7,10 +7,10 @@ version: 2
 build:
   os: ubuntu-24.04
   tools:
-    nodejs: "24"
+    nodejs: "22"
   commands:
     # Install vitepress
-    - npm install vitepress@2.0.0-alpha.16
+    - npm install -g vitepress@2.0.0-alpha.16
     # Build the site
     - npm run docs:build
     # Copy the output to Read the Docs expected location
