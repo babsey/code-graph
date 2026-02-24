@@ -12,10 +12,10 @@ hero:
   actions:
     - theme: brand
       text: What is Code Graph?
-      link: /guide/what-is-code-graph
+      link: /introduction/what-is-code-graph
     - theme: alt
       text: Quickstart
-      link: /guide/getting-started
+      link: /introduction/getting-started
     - theme: alt
       text: View on GitHub
       link: https://github.com/babsey/code-graph
@@ -24,19 +24,19 @@ hero:
 features:
   - icon: 
       src: /flaticon/interactive.png
-    title: Interactive Graph
+    title: Interactive graph
     details: Effortlessly easy usage of interactive graph
   - icon: 
       src: /flaticon/modular.png
-    title: Modular Code templates
-    details: Generate code from graph nodes.
+    title: Modular code templates
+    details: Generate code from graph nodes
   - icon: 
       src: /flaticon/web-plugin.png
     title: Extensible node types
     details: Write own code node types that can be easily registered
   - icon: 
       src: /flaticon/stability.png
-    title: Stable
+    title: Stable interface
     details: A web-based application is built with Vue 3 and Typescript
 ---
 

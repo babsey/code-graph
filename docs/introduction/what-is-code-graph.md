@@ -8,8 +8,6 @@ The project is authored by Sebastian Spreizer, also the creator of NEST Desktop 
 neural network simulator — making code-graph likely a modular, reusable graph editor designed for domain-specific
 scientific network visualization.
 
-With 210+ commits and 11 tagged releases, it is an actively maintained project.
-
 <div class="tip custom-block" style="padding-top: 8px">
 
 Just want to try it out? Skip to the [Quickstart](./getting-started).

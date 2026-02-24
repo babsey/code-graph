@@ -21,7 +21,7 @@ export default defineConfig({
     footer: {
       message: [
         'Released under the <a href="https://github.com/babsey/code-graph/blob/main/LICENSE">MIT License</a>.',
-        '<a href="resources/credits#resource-attributions">Icons and stickers from Flaticon</a>'
+        '<a href="resources/credits#flaticon">Icons and stickers from Flaticon</a>'
     ].join(' '),
       copyright: 'Copyright © 2026-present <a href="https://github.com/babsey">Sebastian Spreizer</a>'
     },
@@ -30,10 +30,22 @@ export default defineConfig({
       {
         text: "Introduction",
         items: [
-          { text: "What is Code Graph?", link: "/guide/what-is-code-graph" },
-          { text: "Get started", link: "/guide/getting-started" },
-          { text: "Basic usage", link: "/guide/basic-usage" },
+          { text: "What is Code Graph?", link: "/introduction/what-is-code-graph" },
+          { text: "Get started", link: "/introduction/getting-started" },
+          { text: "First steps", link: "/introduction/first-steps" },
         ],
+      },
+      { text: "User guide",
+        items: [
+          { text: "Code node", link: "/user/code-node"}
+        ]
+      },
+      { text: "Developer guide",
+        items: [
+          { text: "Interface design", link: "/developer/interface-design"},
+          { text: "Code node type", link: "/developer/code-node-type"},
+          { text: "Code generation engine", link: "/developer/code-generation-engine"}
+        ]
       },
       {
         text: "Resources",
