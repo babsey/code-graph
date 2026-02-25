@@ -42,8 +42,10 @@ export default defineConfig({
       },
       { text: "Developer guide",
         items: [
-          { text: "Interface design", link: "/developer/interface-design"},
+          { text: "Implement as component", link: "/developer/implement-as-component"},
+          // { text: "Interface design", link: "/developer/interface-design"},
           { text: "Code node type", link: "/developer/code-node-type"},
+          { text: "Code node interfaces", link: "/developer/code-node-interfaces"},
           { text: "Code generation engine", link: "/developer/code-generation-engine"}
         ]
       },

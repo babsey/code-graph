@@ -25,13 +25,13 @@ To connect nodes, first click a right port, then move towards to another node an
 
 ![Connecting nodes](/images/connecting-nodes.png)
 
-## Edit the generated code
+## Code editor
 
 On user action code generation engine runs and the results can be viewed and edited in code editor (left).
 Once the user modified the code script, it shows the lock icon indicating that the code script is locked from 
 being overwritten. Clicking on lock icon restores the code script to the generative mode.
 
 <div style="display: flex">
-  <img src="/images/code-editor.png" alt="Image 1" style="width: 260px; margin: auto;">
-  <img src="/images/code-editor-locked.png" alt="Image 2" style="width: 260px; margin: auto;">
+  <img src="/images/code-editor.png" alt="Code editor" style="width: 260px; margin: auto;">
+  <img src="/images/code-editor-locked.png" alt="Locked code editor" style="width: 260px; margin: auto;">
 </div>

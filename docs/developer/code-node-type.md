@@ -66,17 +66,21 @@ Available properties:
 Additional to the node type properties, you can add node event handlers:
 
 ::: info
-  The inherited lifecycle of node events is explained in BaklavaJS documentation.
+  The inherited node events is explained in BaklavaJS documentation.
   - https://baklava.tech/nodes/lifecycle.html
 :::
 
-- `beforeRun`
-- `onConnected`
-- `onUnconnected`
-
-Additionally the `defineDynamicCodeNode` function you can use these properties:
+When the `defineDynamicCodeNode` function is applied, you can use these properties:
 
 - `onUpdate`
+
+Among the inherited events the function `defineCodeNode` provides users to use these node events:
+
+| Event | Description |
+| ----- | ----------- |
+| `beforeRun` | Call the event before running the code generation engine. |
+| `onConnected` | Call the event on node connection. |
+| `onUnconnected` | Call the event on node disconnection. |
 
 ## Node registration
 

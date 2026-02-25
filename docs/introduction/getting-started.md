@@ -1,20 +1,23 @@
 # Getting Started
 
-## Installation
+This guide shows the minimal setup to use Code Graph on your computer.
 
-### Prerequisites
+## Prerequisites
 
 - Terminal
 - Node.js version 22 or higher
 - Git
 - Docker (optional, for containerized deployment)
 
-Code graph can be used on its own, or be installed into a node project.
+Code Graph can be used on its own, or be installed into an existing nodejs project (Vue3 projects are recommended).
 
-### Quickstart with an example
+## Installation of source code
 
-#### 1. Clone the repository
+Here, you can start sample project quickly with these steps:
 
+### 1. Clone the repository
+
+Code graph is open-source and hosted on Github. 
 First clone from the public repository in shell.
 
 ```shell
@@ -22,9 +25,9 @@ git clone https://github.com/babsey/code-graph
 cd code-graph
 ```
 
-#### 2. Install dependencies
+### 2. Install dependencies
 
-Then, install required node dependencies for code graph.
+Next, install required node dependencies for code graph.
 
 ```shell
 npm install
@@ -32,7 +35,7 @@ npm install
 yarn install
 ```
 
-#### 3. Start the development server
+### 3. Start the development server
 
 Start the development server that supports Hot Module Replacement (HMR) for instant feedback as you edit files.
 
@@ -42,14 +45,20 @@ npm run dev
 yarn dev
 ```
 
-Open http://localhost:5173 in your browser. 
+Open http://localhost:5173 in your browser.
 
-### Install in an node project
+With `CTRL` + `c` you can stop the server instance.
 
-First clone from the public repository in shell.
+
+## Run as a docker container
+
+Docker uses code graph example with persistent storage option. To build and run docker container, execute these lines:
 
 ```shell
-npm install @babsey/code-graph
-# or
-yarn add @babsey/code-graph
+docker build -f docker/Dockerfile -t code-graph:dev .
+docker run -it -p 8080:80 -t code-graph:dev
 ```
+
+Open http://localhost:8080 in your browser. 
+
+With `CTRL` + `c` you can stop the docker container.
