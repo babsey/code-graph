@@ -4,6 +4,8 @@ Code Graph is a web-based, interactive graph editor and visualization applicatio
 provides a graphical interface for constructing, editing, and exploring node-and-edge network graphs using
 [BaklavaJS](https://baklava.tech).
 
+![Code Graph](/images/code-graph.png)
+
 The project is authored by Sebastian Spreizer, also the creator of NEST Desktop — a web-based GUI for the NEST spiking
 neural network simulator — making code-graph likely a modular, reusable graph editor designed for domain-specific
 scientific network visualization.

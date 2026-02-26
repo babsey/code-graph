@@ -40,3 +40,6 @@ features:
     details: A web-based application is built with Vue 3 and Typescript
 ---
 
+<br />
+
+![Code Graph](/images/code-graph.png)
